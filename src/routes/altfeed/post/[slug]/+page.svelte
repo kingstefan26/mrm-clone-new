@@ -30,8 +30,6 @@
         //     }
         // }
 
-        console.log(data.post);
-
 
         data.post.post.chapters.forEach(chapter => {
             let allmedia = [];
@@ -39,8 +37,8 @@
             chapter.chapter_media.forEach(media => {
                 allmedia.push({
                     url: media.path.startsWith("http") ? media.path : "/asset" + media.path + (savedata ? "?q=1" : ""),
-                    height: 200,
-                    witdh: 200,
+                    height: media.height,
+                    width: media.width,
                     name: "hehe"
                 });
             });

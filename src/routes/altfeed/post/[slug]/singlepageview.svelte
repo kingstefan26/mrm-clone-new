@@ -1,22 +1,26 @@
 <script>
+    import Spiner from '$lib/spiner.svelte'
 
     export let fetchchapter;
     export let getImage;
     export let data;
     export let doublePageview;
 
-    import moment from "moment";
-
-    import Lazy from "$lib/Lazy.svelte";
-
     let currentChapter = 0;
 
-    console.log(data.post.post._created);
+    function formatTime(unixTimeStamp) {
+        // Create a new JavaScript Date object based on the timestamp
+        // multiplied by 1000 so that the argument is in milliseconds, not seconds.
+        const a = new Date(unixTimeStamp * 1000);
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        return `${(a.getDate())} ${months[a.getMonth()]} ${(a.getFullYear())}`;
+    }
 
 </script>
 
 <svelte:head>
-    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;600;700;900&display=swap"
+          rel="stylesheet">
 </svelte:head>
 
 <main class="singlepage-wrapper">
@@ -24,119 +28,196 @@
         {#if !data.post.post}
             <h1>Post not Fount</h1>
         {:else}
-            <button class="switchvieverstylebtn" on:click={() => {history.back();}}>Go Back</button>
-            <button class="switchvieverstylebtn" on:click={() => { $doublePageview = !$doublePageview; }}>Reader mode
-            </button>
-
             <header>
-                <h2 class="title">{data.post.post.title}</h2>
+                <button class="switchvieverstylebtn" on:click={() => { $doublePageview = !$doublePageview; }}>
+                    Reader mode
+                </button>
+                <h2 class="title">
+                    <a class="title_author" href="/search?artist={data.post.post.author}">[{data.post.post.author}]</a>
+                    {data.post.post.title}
+                </h2>
 
                 <p class="entry-meta">
-                    <time id="creation" datetime="{new Date(data.post.post._created)}">{moment(data.post.post._created, 'x').format('MMM D, YYYY')}</time>
-
+                    <time id="creation"
+                          datetime="{new Date(data.post.post.created)}">{formatTime(data.post.post.created)}</time>
                 </p>
 
                 <p class="entry-meta">
                     {#if currentChapter > 0}
                         <h3 id="chaptertitle">Chapter: {currentChapter}</h3>
                     {/if}
-                    {#if data.post.post.author}
-                        <span class="entry-categories">Author: <a href="/search?artist={data.post.post.author}">{data.post.post.author}</a></span>
-                    {/if}
                 </p>
+
+                <section>
+
+                    {#if data.post.post.tags.length != 0}
+                        <p class="tags">
+                            Tags:
+                            {#each data.post.post.tags as tag }
+                                <a class="tag" href="/search?tag={tag}">{tag} </a>
+                            {/each}
+                        </p>
+
+                    {/if}
+
+                    {#if data.post.post.geners.length != 0}
+                        <p class="tags">
+                            Genres:
+                            {#each data.post.post.geners as tag }
+                                <a class="tag" href="/search?genre={tag}">{tag} </a>
+                            {/each}
+                        </p>
+
+                    {/if}
+
+                    {#if data.post.post.categories.length != 0}
+                        <p class="tags">
+                            Categores:
+                            {#each data.post.post.categories as tag }
+                                <a class="tag" href="/search?category={tag}">{tag}</a>
+                            {/each}
+                        </p>
+
+                    {/if}
+
+                </section>
 
 
             </header>
 
+            <hr class="separator">
 
-            {#await fetchchapter}
-                <p>...waiting</p>
-            {:then chapters}
+            <section class="content_container">
+                {#await fetchchapter}
+                    <div class="center">
+                        <Spiner></Spiner>
+                    </div>
+                {:then chapters}
+                    {#each chapters as chapter, index}
+                        {#if currentChapter === index}
+                            {#each chapter as image, imgindex}
+                                <div class="image-wrapper">
 
-
-                {#each chapters as chapter, index}
-                    {#if currentChapter === index}
-                        {#each chapter as image, imgindex}
-                            <div class="image-wrapper">
-                                <Lazy height={image.height} offset="300" placeholder="{image.name}">
                                     {#await getImage(image.url)}
-                                        <p>loading image</p>
+                                        <div class="center">
+                                            <Spiner></Spiner>
+                                        </div>
                                     {:then imageurl}
-                                        <img style="margin-left: auto; margin-right: auto; display: block" src="{imageurl}"
-                                             alt="{image.name}">
+                                        {#if imgindex === 0}
+                                            <img class="content_image" src="{imageurl}"
+                                                 alt="{image.name}" loading="eager" height="{image.height}"
+                                                 width="{image.width}">
+                                        {:else}
+                                            <img class="content_image" src="{imageurl}"
+                                                 alt="{image.name}" loading="lazy" height="{image.height}"
+                                                 width="{image.width}">
+                                        {/if}
+
                                     {:catch _}
                                         <p>error</p>
                                     {/await}
 
-                                </Lazy>
+                                </div>
+                            {/each}
+                        {/if}
+                    {/each}
 
-                            </div>
-                        {/each}
+                    {#if chapters.length > 1}
+                        <div id="linkwrapper">
+
+                            {#if currentChapter - 1 >= 0}
+                                <a href="#{currentChapter - 1}" on:click={() => {currentChapter--;}}>« Previous</a>
+                            {/if}
+
+                            {#each chapters as chapter, index}
+                                <a href=" " class="{index === currentChapter ? 'iamselected' : ''}"
+                                   on:click={() => {currentChapter = index;}}>{index}</a>
+                            {/each}
+
+                            {#if currentChapter + 1 < chapters.length}
+                                <a href="#{currentChapter + 1}" on:click={() => {currentChapter++;}}>Next »</a>
+                            {/if}
+
+                        </div>
                     {/if}
-                {/each}
+
+                {:catch error}
+                    <p>An error occurred!</p>
+                {/await}
+            </section>
 
 
-                {#if chapters.length > 1}
-                    <div id="linkwrapper">
-
-                        {#if currentChapter - 1 >= 0}
-                            <a href="#{currentChapter - 1}" on:click={() => {currentChapter--;}}>« Previous</a>
-                        {/if}
-
-                        {#each chapters as chapter, index}
-                            <a class="{index === currentChapter ? 'iamselected' : ''}"
-                               on:click={() => {currentChapter = index;}}>{index}</a>
-                        {/each}
-
-                        {#if currentChapter + 1 < chapters.length}
-                            <a href="#{currentChapter + 1}" on:click={() => {currentChapter++;}}>Next »</a>
-                        {/if}
-
-                    </div>
-                {/if}
-
-
-            {:catch error}
-                <p>An error occurred!</p>
-            {/await}
         {/if}
     </article>
 </main>
-<div class="">
-
-
-</div>
-
 
 <style>
     .iamselected {
         color: red;
     }
 
-    .entry-categories {
-        color: rgb(153, 153, 153);
+    header {
+        margin-bottom: 1.5em;
     }
 
-    .entry-categories a {
-        color: white;
+    .separator {
+        color: #5b5b5b;
+
+        margin-bottom: 1.5em;
+        width: 70%;
     }
 
     .title {
+        margin-top: 10px;
         font-weight: 900;
-        size: 3em;
+        font-size: 2em;
         font-family: 'Public Sans', sans-serif;
         color: #c5c4c4;
-
     }
 
-    .entry-meta {
+    .tags {
+        color: #a2a2a2;
+        margin: 0 0 5px;
+    }
 
+    .tag {
+        color: #5fb0e1;
+        margin-left: 2px;
+        margin-right: 2px;
+        text-decoration: none;
+    }
+
+    .tag:hover {
+        text-decoration: underline;
+        color: #9dcef1;
+        transition: 0.1s;
+    }
+
+    .title_author {
+        color: #a2a2a2;
+        font-family: 'Public Sans', sans-serif;
+        font-weight: 800;
+    }
+
+    .title_author:hover {
+        color: #b6b6b6;
+    }
+
+    #creation {
+        font-family: 'Public Sans', sans-serif;
+        color: #808080;
     }
 
     #chaptertitle {
         font-family: 'Public Sans', sans-serif;
         font-weight: 500;
         font-size: 1.2em;
+    }
+
+    .content_image {
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
     }
 
     #linkwrapper * {
@@ -164,8 +245,15 @@
         border-radius: 0;
         background-color: #2c2c2c;
         border: 0;
-        padding: 2px;
+        padding: 5px;
         margin: 2px
+    }
+
+    .switchvieverstylebtn:hover {
+        background-color: #cccccc;
+        color: #313131;
+        transition: 0.2s;
+        cursor: pointer;
     }
 
     .image-wrapper {
@@ -174,14 +262,15 @@
 
     img {
         max-width: 100%;
+        height: fit-content;
         object-fit: scale-down;
     }
 
     .content {
-        padding: 20px 10px 10px;
-        box-shadow: 0 1px 3px 0 #141414;
-        border-top: 2px solid #999;
-        margin-top: 20px;
+        /*padding-top: 20px;*/
+        padding-right: 10px;
+        padding-left: 10px;
+        padding-bottom: 10px;
     }
 
 
@@ -191,10 +280,18 @@
     }
 
     .singlepage-content {
-        padding: 10px 30px 14px;
-        /*width: 90%;*/
+        /*padding-top: 10px;*/
+        padding-right: 30px;
+        padding-left: 30px;
+        padding-bottom: 14px;
         margin-right: auto;
         margin-left: auto;
+    }
+
+    .center {
+        max-width: 100%;
+        display: flex;
+        justify-content: center;
     }
 
 
@@ -204,5 +301,9 @@
             padding: 10px 0 0 0;
             margin: 0;
         }
+        header {
+            text-align: center;
+        }
+
     }
 </style>

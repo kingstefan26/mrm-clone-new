@@ -1,12 +1,16 @@
 <script>
+    import Lazy from "$lib/Lazy.svelte";
+
     export let post = {
         title: undefined,
-        coverpicurl: undefined,
+        coverpicurl: "",
         id: 0,
         author: undefined,
         lang: undefined,
-        link: `/altfeed/post/${post.title}`
+        link: `/altfeed/post/${post.title}`,
+        chapter_count: 0
     };
+
 
 </script>
 
@@ -14,35 +18,73 @@
 <article class="wrapper">
     <header class="thehead">
         <div class="linkconta">
-            <a sveltekit:prefetch href="/altfeed/post/{post.title}" class="thaspelank" style="margin: auto; padding-top: 2px">
+            <a sveltekit:prefetch href="/altfeed/post/{post.title}" class="title_link">
                 <h2>{post.title}</h2>
             </a>
         </div>
-        <p style="margin: auto; color: #b9b9b9; font-family: helvetica neue, Helvetica, Arial, sans-serif;
-        font-weight: 300;">
+        <p class="about_text">
             {#if post.lang}
                 [{post.lang.toUpperCase()}]
-            {/if }
+            {/if}
             {#if post.author}
-                <a href="/tag/{post.author}">{post.author}</a>
-            {/if }
+                <a class="author_link" href="/tag/{post.author}">[{post.author}]</a>
+            {/if}
         </p>
-
-
     </header>
-    <a sveltekit:prefetch class="center" href="/altfeed/post/{post.title}">
 
-        <!--        <Lazy height="260" offset="300" placeholder="cover">-->
-        <img src={post.coverpicurl} style="object-fit: cover" alt="post" height="260" width="180" loading="lazy">
-        <!--        </Lazy>-->
-
-    </a>
+    <section>
+        <a sveltekit:prefetch class="center" href="/altfeed/post/{post.title}">
+            <img src={post.coverpicurl} style="object-fit: cover" alt="post" height="260" width="180" loading="lazy">
+        </a>
+        {#if post.chapter_count > 1}
+            <div class="chapter_links_container">
+                <!--weird trick to make a 'range' in js-->
+                {#each [...Array(post.chapter_count).keys()] as chapter}
+                    <a class="chapter_link" href="/about">{chapter}</a>
+                {/each}
+            </div>
+        {/if}
+    </section>
 
 
 </article>
 
 
 <style>
+    .chapter_links_container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        max-width: 100%;
+    }
+
+    .about_text {
+        margin: auto;
+        color: #929292;
+        font-family: helvetica neue, Helvetica, Arial, sans-serif;
+        font-weight: 300;
+    }
+
+    .title_link {
+        margin: auto;
+        padding-top: 2px
+    }
+
+    .title_link:hover > h2 {
+        transition: 0.2s;
+        color: #6eb9df;
+    }
+
+    .chapter_link {
+        padding: 0 3px 0 3px;
+        color: #4992af;
+        font-weight: 400;
+    }
+
+    .author_link:hover {
+        transition: 0.2s;
+        color: #6eb9df;
+    }
 
     .thehead {
         height: 70px;
