@@ -1,12 +1,11 @@
 <script>
-    import Spiner from '$lib/spiner.svelte'
 
-    export let fetchchapter;
-    export let getImage;
-    export let data;
     export let doublePageview;
 
-    let currentChapter = 0;
+    export let chapter;
+    export let meta;
+    export let current_chapter;
+
 
     function formatTime(unixTimeStamp) {
         // Create a new JavaScript Date object based on the timestamp
@@ -15,6 +14,8 @@
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         return `${(a.getDate())} ${months[a.getMonth()]} ${(a.getFullYear())}`;
     }
+
+    const chapterLink = (index) => `/altfeed/post/${meta.title}/${index}`
 
 </script>
 
@@ -25,55 +26,58 @@
 
 <main class="singlepage-wrapper">
     <article class="content singlepage-content">
-        {#if !data.post.post}
-            <h1>Post not Fount</h1>
+        {#if !meta}
+            <h1>Post not Found</h1>
         {:else}
             <header>
                 <button class="switchvieverstylebtn" on:click={() => { $doublePageview = !$doublePageview; }}>
                     Reader mode
                 </button>
                 <h2 class="title">
-                    <a class="title_author" href="/search?artist={data.post.post.author}">[{data.post.post.author}]</a>
-                    {data.post.post.title}
+                    <a class="title_author" href="/search?artist={meta.author}">[{meta.author}]</a>
+                    {meta.title}
                 </h2>
 
                 <p class="entry-meta">
                     <time id="creation"
-                          datetime="{new Date(data.post.post.created)}">{formatTime(data.post.post.created)}</time>
+                          datetime="{new Date(meta.created)}">{formatTime(meta.created)}</time>
                 </p>
 
                 <p class="entry-meta">
-                    {#if currentChapter > 0}
-                        <h3 id="chaptertitle">Chapter: {currentChapter}</h3>
+                    {#if current_chapter > 0}
+                        <h3 id="chaptertitle">Chapter: {current_chapter}</h3>
                     {/if}
                 </p>
 
                 <section>
 
-                    {#if data.post.post.tags.length != 0}
+                    {#if meta.tags.length !== 0}
                         <p class="tags">
                             Tags:
-                            {#each data.post.post.tags as tag }
+                            {#each meta.tags as tag }
                                 <a class="tag" href="/search?tag={tag}">{tag} </a>
                             {/each}
                         </p>
 
                     {/if}
 
-                    {#if data.post.post.geners.length != 0}
-                        <p class="tags">
-                            Genres:
-                            {#each data.post.post.geners as tag }
-                                <a class="tag" href="/search?genre={tag}">{tag} </a>
-                            {/each}
-                        </p>
+                    <!--{#if post.geners}-->
+                    <!--    {#if post.geners.length !== 0}-->
+                    <!--        <p class="tags">-->
+                    <!--            Genres:-->
+                    <!--            {#each post.post.geners as tag }-->
+                    <!--                <a class="tag" href="/search?genre={tag}">{tag} </a>-->
+                    <!--            {/each}-->
+                    <!--        </p>-->
 
-                    {/if}
+                    <!--    {/if}-->
+                    <!--{/if}-->
 
-                    {#if data.post.post.categories.length != 0}
+
+                    {#if meta.categories.length !== 0}
                         <p class="tags">
                             Categores:
-                            {#each data.post.post.categories as tag }
+                            {#each meta.categories as tag }
                                 <a class="tag" href="/search?category={tag}">{tag}</a>
                             {/each}
                         </p>
@@ -88,62 +92,38 @@
             <hr class="separator">
 
             <section class="content_container">
-                {#await fetchchapter}
-                    <div class="center">
-                        <Spiner></Spiner>
-                    </div>
-                {:then chapters}
-                    {#each chapters as chapter, index}
-                        {#if currentChapter === index}
-                            {#each chapter as image, imgindex}
-                                <div class="image-wrapper">
-
-                                    {#await getImage(image.url)}
-                                        <div class="center">
-                                            <Spiner></Spiner>
-                                        </div>
-                                    {:then imageurl}
-                                        {#if imgindex === 0}
-                                            <img class="content_image" src="{imageurl}"
-                                                 alt="{image.name}" loading="eager" height="{image.height}"
-                                                 width="{image.width}">
-                                        {:else}
-                                            <img class="content_image" src="{imageurl}"
-                                                 alt="{image.name}" loading="lazy" height="{image.height}"
-                                                 width="{image.width}">
-                                        {/if}
-
-                                    {:catch _}
-                                        <p>error</p>
-                                    {/await}
-
-                                </div>
-                            {/each}
+                {#each chapter.chapter_media as image, imgindex}
+                    <div class="image-wrapper">
+                        {#if imgindex < 2}
+                            <img class="content_image" src="{image.path}"
+                                 alt="{image.name}" loading="eager" height="{image.height}"
+                                 width="{image.width}">
+                        {:else}
+                            <img class="content_image" src="{image.path}"
+                                 alt="{image.name}" loading="lazy" height="{image.height}"
+                                 width="{image.width}">
                         {/if}
-                    {/each}
+                    </div>
+                {/each}
 
-                    {#if chapters.length > 1}
-                        <div id="linkwrapper">
+                {#if meta.chapter_count > 1}
+                    <div id="linkwrapper">
 
-                            {#if currentChapter - 1 >= 0}
-                                <a href="#{currentChapter - 1}" on:click={() => {currentChapter--;}}>« Previous</a>
-                            {/if}
+                        {#if current_chapter - 1 >= 0}
+                            <a href="{chapterLink(current_chapter - 1)}" >« Previous</a>
+                        {/if}
 
-                            {#each chapters as chapter, index}
-                                <a href=" " class="{index === currentChapter ? 'iamselected' : ''}"
-                                   on:click={() => {currentChapter = index;}}>{index}</a>
-                            {/each}
+                        {#each [...Array(meta.chapter_count).keys()] as chapter, index}
+                            <a href="{chapterLink(index)}" class="{index === current_chapter ? 'iamselected' : ''}">{index}</a>
+                        {/each}
 
-                            {#if currentChapter + 1 < chapters.length}
-                                <a href="#{currentChapter + 1}" on:click={() => {currentChapter++;}}>Next »</a>
-                            {/if}
+                        {#if current_chapter + 1 < meta.chapter_count}
+                            <a href="{chapterLink(current_chapter + 1)} ">Next »</a>
+                        {/if}
 
-                        </div>
-                    {/if}
+                    </div>
+                {/if}
 
-                {:catch error}
-                    <p>An error occurred!</p>
-                {/await}
             </section>
 
 
@@ -301,6 +281,7 @@
             padding: 10px 0 0 0;
             margin: 0;
         }
+
         header {
             text-align: center;
         }

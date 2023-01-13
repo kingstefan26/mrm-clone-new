@@ -1,34 +1,12 @@
-export async function load({params, fetch}) {
-    // const res = await fetch(`http://192.168.1.38:1337/api/posts?filters[title][$eq]=${params.slug}&populate=*`);
-    // const res = await fetch(`/altfeed/posts/${params.slug}`);
-    //
-    // if (res.ok && res.status === 200) {
-    //     let data = await res.json();
-    //
-    //     const post = data.entries[0];
-    //
-    //     let metadata = {
-    //         description: undefined,
-    //         author_long: undefined,
-    //         lang: undefined
-    //     };
-    //
-    //     // if (post.lang) {
-    //     //   metadata.lang = post.lang;
-    //     // }
-    //
-    //     if (post.author) {
-    //         metadata.author = post.author.shortname;
-    //     }
-    //
-    //     return {
-    //         props: {post, metadata}
-    //     };
-    // } else {
-        // const data = JSON.parse("{\"entries\":[{\"_id\":\"62426f66aad26860dd2b9182\",\"title\":\"test\",\"author\":\"test\",\"chapters\":[{\"_id\":\"62426f4377b2de1b8f62a652\",\"name\":\"test\",\"chapter_media\":[{\"meta\":{\"title\":\"\",\"asset\":\"62426f38bb7e4767a6400222\"},\"path\":\"https://cdn.glitch.global/17cc8f98-08bf-484d-a833-5a8e854d7d9f/index.png?v=1648708320976\"},{\"meta\":{\"title\":\"\",\"asset\":\"62426f38c0488a43543d8b72\"},\"path\":\"https://cdn.glitch.global/17cc8f98-08bf-484d-a833-5a8e854d7d9f/vertical.png?v=1648708320939\"},{\"meta\":{\"title\":\"\",\"asset\":\"62426f38cede4a53cb211d82\"},\"path\":\"https://cdn.glitch.global/17cc8f98-08bf-484d-a833-5a8e854d7d9f/horisontal.png?v=1648708321328\"}],\"_mby\":\"623f7bda63ec7431f5343042\",\"_by\":\"623f7bda63ec7431f5343042\",\"_modified\":1648521027,\"_created\":1648521027,\"_link\":\"chapters\"},{\"_id\":\"62426f50625b7b3d560d9a02\",\"name\":\"test2\",\"chapter_media\":[{\"meta\":{\"title\":\"\",\"asset\":\"62426f38bb7e4767a6400222\"},\"path\":\"https://cdn.glitch.global/17cc8f98-08bf-484d-a833-5a8e854d7d9f/index.png?v=1648708320976\"},{\"meta\":{\"title\":\"\",\"asset\":\"62426f38c0488a43543d8b72\"},\"path\":\"https://cdn.glitch.global/17cc8f98-08bf-484d-a833-5a8e854d7d9f/vertical.png?v=1648708320939\"},{\"meta\":{\"title\":\"\",\"asset\":\"62426f38cede4a53cb211d82\"},\"path\":\"https://cdn.glitch.global/17cc8f98-08bf-484d-a833-5a8e854d7d9f/horisontal.png?v=1648708321328\"}],\"_mby\":\"623f7bda63ec7431f5343042\",\"_by\":\"623f7bda63ec7431f5343042\",\"_modified\":1648521040,\"_created\":1648521040,\"_link\":\"chapters\"}],\"poster\":{\"path\":\"https://cdn.glitch.global/17cc8f98-08bf-484d-a833-5a8e854d7d9f/vertical.png?v=1648708320939\"},\"_mby\":\"623f7bda63ec7431f5343042\",\"_by\":\"623f7bda63ec7431f5343042\",\"_modified\":1648521062,\"_created\":1648521062}],\"total\":1}");
-        // const post = data.entries[0];
+// import Cockpit from "$lib/api/cockpit.js";
+// import { cockpitOrgin } from "$lib/shared/host.js";
 
-        const json = {
+export async function GET() {
+
+    // const cockpit = new Cockpit({ host: cockpitOrgin, token: "74cbd466156296523850841132baa4" });
+
+    return new Response(
+        JSON.stringify({
             entries: [
                 {
                     id: "123",
@@ -44,92 +22,92 @@ export async function load({params, fetch}) {
                             name: "first",
                             chapter_media: [
                                 {
-                                    "path": "/[atcesolcyc]%20Gladiolus/0.jpg",
+                                    "path": "/[atcesolcyc]%20Gladiolus/0.jpg.avif",
                                     "height": 825,
                                     "width": 989
                                 },
                                 {
-                                    "path": "/[atcesolcyc]%20Gladiolus/1.jpg",
+                                    "path": "/[atcesolcyc]%20Gladiolus/1.jpg.avif",
                                     "height": 1047,
                                     "width": 845
                                 },
                                 {
-                                    "path": "/[atcesolcyc]%20Gladiolus/2.jpg",
+                                    "path": "/[atcesolcyc]%20Gladiolus/2.jpg.avif",
                                     "height": 1178,
                                     "width": 950
                                 },
                                 {
-                                    "path": "/[atcesolcyc]%20Gladiolus/3.jpg",
+                                    "path": "/[atcesolcyc]%20Gladiolus/3.jpg.avif",
                                     "height": 1178,
                                     "width": 950
                                 },
                                 {
-                                    "path": "/[atcesolcyc]%20Gladiolus/4.jpg",
+                                    "path": "/[atcesolcyc]%20Gladiolus/4.jpg.avif",
                                     "height": 1178,
                                     "width": 950
                                 },
                                 {
-                                    "path": "/[atcesolcyc]%20Gladiolus/5.jpg",
+                                    "path": "/[atcesolcyc]%20Gladiolus/5.jpg.avif",
                                     "height": 1210,
                                     "width": 950
                                 },
                                 {
-                                    "path": "/[atcesolcyc]%20Gladiolus/6.jpg",
+                                    "path": "/[atcesolcyc]%20Gladiolus/6.jpg.avif",
                                     "height": 1178,
                                     "width": 950
                                 },
                                 {
-                                    "path": "/[atcesolcyc]%20Gladiolus/7.jpg",
+                                    "path": "/[atcesolcyc]%20Gladiolus/7.jpg.avif",
                                     "height": 1178,
                                     "width": 950
                                 },
                                 {
-                                    "path": "/[atcesolcyc]%20Gladiolus/8.jpg",
+                                    "path": "/[atcesolcyc]%20Gladiolus/8.jpg.avif",
                                     "height": 1178,
                                     "width": 950
                                 },
                                 {
-                                    "path": "/[atcesolcyc]%20Gladiolus/9.jpg",
+                                    "path": "/[atcesolcyc]%20Gladiolus/9.jpg.avif",
                                     "height": 1178,
                                     "width": 950
                                 },
                                 {
-                                    "path": "/[atcesolcyc]%20Gladiolus/10.jpg",
+                                    "path": "/[atcesolcyc]%20Gladiolus/10.jpg.avif",
                                     "height": 1178,
                                     "width": 950
                                 },
                                 {
-                                    "path": "/[atcesolcyc]%20Gladiolus/11.jpg",
+                                    "path": "/[atcesolcyc]%20Gladiolus/11.jpg.avif",
                                     "height": 1178,
                                     "width": 950
                                 },
                                 {
-                                    "path": "/[atcesolcyc]%20Gladiolus/12.jpg",
+                                    "path": "/[atcesolcyc]%20Gladiolus/12.jpg.avif",
                                     "height": 1178,
                                     "width": 950
                                 },
                                 {
-                                    "path": "/[atcesolcyc]%20Gladiolus/13.jpg",
+                                    "path": "/[atcesolcyc]%20Gladiolus/13.jpg.avif",
                                     "height": 1178,
                                     "width": 950
                                 },
                                 {
-                                    "path": "/[atcesolcyc]%20Gladiolus/14.jpg",
+                                    "path": "/[atcesolcyc]%20Gladiolus/14.jpg.avif",
                                     "height": 1178,
                                     "width": 950
                                 },
                                 {
-                                    "path": "/[atcesolcyc]%20Gladiolus/15.jpg",
+                                    "path": "/[atcesolcyc]%20Gladiolus/15.jpg.avif",
                                     "height": 1178,
                                     "width": 950
                                 },
                                 {
-                                    "path": "/[atcesolcyc]%20Gladiolus/16.jpg",
+                                    "path": "/[atcesolcyc]%20Gladiolus/16.jpg.avif",
                                     "height": 1178,
                                     "width": 950
                                 },
                                 {
-                                    "path": "/[atcesolcyc]%20Gladiolus/17.jpg",
+                                    "path": "/[atcesolcyc]%20Gladiolus/17.jpg.avif",
                                     "height": 1178,
                                     "width": 950
                                 }
@@ -138,7 +116,7 @@ export async function load({params, fetch}) {
                         }
                     ],
                     "poster": {
-                        "path": "/asset/[atcesolcyc] Gladiolus/0.jpg"
+                        "path": "/asset/[atcesolcyc] Gladiolus/thumb.avif"
                     }
                 },
                 {
@@ -227,37 +205,59 @@ export async function load({params, fetch}) {
                             ]
                         }
                     ],
-                    "poster": {
-                        "path": "/asset/Tarutoru_Jogging/1.jpg"
+                    poster: {
+                        path: "/asset/Tarutoru_Jogging/thumb.avif"
                     }
+                },
+                {
+                    id: "62426f4377b2de1b8f62a652",
+                    title: "Testing story",
+                    author: "Kokoniara",
+                    created: 1673640145,
+                    geners: ["Testing genere"],
+                    tags: ["Test tag 1", "Test tag 2"],
+                    categories: ["CG/ Art"],
+                    poster: {
+                        path: "/asset/test/1.png"
+                    },
+                    chapters: [
+                        {
+                            id: "12312df2as",
+                            name: "The beggining",
+                            chapter_media: [
+                                {
+                                    "path": "/test/1.png",
+                                    height: 188,
+                                    width: 268
+                                },
+                                {
+                                    "path": "/test/2.png",
+                                    width: 720,
+                                    height: 1280
+                                },
+                                {
+                                    "path": "/test/3.png",
+                                    height: 720,
+                                    width: 1280
+                                }
+                            ]
+                        },
+                        {
+                            id: "1s2312df2as",
+                            name: "The Middle",
+                            chapter_media: [
+                                {
+                                    "path": "/test/4.jpg",
+                                    height: 461,
+                                    width: 576
+                                }
+                            ]
+                        }
+                    ]
                 }
             ],
-            total:2
-        }
+            total: 3
+        })
+    )
 
-        const name = params.slug
-
-        let post
-
-        for (const entry in json.entries) {
-            if(name === json.entries[entry].title){
-                post = json.entries[entry]
-            }
-        }
-
-
-        let metadata = {
-            description: undefined,
-            author_long: post.author,
-            lang: post.lang
-        };
-
-
-        return {
-            post: {
-                post,
-                metadata
-            }
-        };
-    // }
 }

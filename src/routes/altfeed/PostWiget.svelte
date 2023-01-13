@@ -1,6 +1,4 @@
 <script>
-    import Lazy from "$lib/Lazy.svelte";
-
     export let post = {
         title: undefined,
         coverpicurl: "",
@@ -10,8 +8,6 @@
         link: `/altfeed/post/${post.title}`,
         chapter_count: 0
     };
-
-
 </script>
 
 
@@ -34,7 +30,7 @@
 
     <section>
         <a sveltekit:prefetch class="center" href="/altfeed/post/{post.title}">
-            <img src={post.coverpicurl} style="object-fit: cover" alt="post" height="260" width="180" loading="lazy">
+            <img src={post.coverpicurl} style="object-fit: cover; background: rgb(96, 96, 96)" alt="post" height="260" width="180">
         </a>
         {#if post.chapter_count > 1}
             <div class="chapter_links_container">
