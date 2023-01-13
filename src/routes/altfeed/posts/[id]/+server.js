@@ -2,10 +2,8 @@ import axios from "axios";
 
 export async function get({ params }) {
 
-
     return axios.get(`http://localhost:8080/api/collections/get/potss?populate=1&filter[title]=${params.id}`)
         .then(response => {
-
 
             if (!response.data.entries) {
                 return {
@@ -29,5 +27,4 @@ export async function get({ params }) {
                 body: JSON.stringify({ message: "nah you slut" })
             };
         });
-
 }

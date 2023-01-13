@@ -62,7 +62,7 @@
         border-bottom: 5px solid #f15123;
     }
     .titile-area {
-        margin: 0px;
+        margin: 0;
         display: grid;
         max-width: 1024px;
         width: 100%;
