@@ -12,27 +12,24 @@
 
     #wrapper {
         height: 100vh;
-        width: 100vw;
         display: grid;
         grid-template-rows: auto 1fr auto;
     }
     main {
         position: relative;
-        max-width: 56em;
         background: #343434;
         padding-top: 2%;
         padding-bottom: 2%;
         width: 100%;
         max-width: 100%;
-        /* overflow-x: hidden; */
-
+         /*overflow-x: hidden;*/
         margin: 0 auto;
         box-sizing: border-box;
     }
 </style>
 
 
-<div id="wrapper">
+<div id="wrapper" class="w-screen">
     <nav>
         <Nav/>
     </nav>

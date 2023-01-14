@@ -1,5 +1,8 @@
 <script>
 
+    import PageTransision from "$lib/components/PageTransision.svelte";
+    import { lazyLoad } from '$lib/LazyLoad.js'
+
     export let doublePageview;
 
     export let chapter;
@@ -91,40 +94,45 @@
 
             <hr class="separator">
 
-            <section class="content_container">
-                {#each chapter.chapter_media as image, imgindex}
-                    <div class="image-wrapper">
-                        {#if imgindex < 2}
-                            <img class="content_image" src="{image.path}"
-                                 alt="{image.name}" loading="eager" height="{image.height}"
-                                 width="{image.width}">
-                        {:else}
-                            <img class="content_image" src="{image.path}"
-                                 alt="{image.name}" loading="lazy" height="{image.height}"
-                                 width="{image.width}">
-                        {/if}
-                    </div>
-                {/each}
+            <PageTransision pathname={current_chapter}>
+                <section class="content_container">
+                    {#each chapter.chapter_media as image, imgindex}
+                        <div class="image-wrapper">
+                            {#if imgindex < 2}
+                                <img class="content_image" src="{image.path}"
+                                     alt="{image.name}" loading="eager" height="{image.height}"
+                                     width="{image.width}">
+                            {:else}
+                                <img use:lazyLoad={image.path}
+                                     class="content_image"
+                                     alt="{image.name}"
+                                     height="{image.height}"
+                                     width="{image.width}">
+                            {/if}
+                        </div>
+                    {/each}
 
-                {#if meta.chapter_count > 1}
-                    <div id="linkwrapper">
+                    {#if meta.chapter_count > 1}
+                        <div id="linkwrapper">
 
-                        {#if current_chapter - 1 >= 0}
-                            <a href="{chapterLink(current_chapter - 1)}" >« Previous</a>
-                        {/if}
+                            {#if current_chapter - 1 >= 0}
+                                <a href="{chapterLink(current_chapter - 1)}" >« Previous</a>
+                            {/if}
 
-                        {#each [...Array(meta.chapter_count).keys()] as chapter, index}
-                            <a href="{chapterLink(index)}" class="{index === current_chapter ? 'iamselected' : ''}">{index}</a>
-                        {/each}
+                            {#each [...Array(meta.chapter_count).keys()] as chapter, index}
+                                <a href="{chapterLink(index)}" class="{index === current_chapter ? 'iamselected' : ''}">{index}</a>
+                            {/each}
 
-                        {#if current_chapter + 1 < meta.chapter_count}
-                            <a href="{chapterLink(current_chapter + 1)} ">Next »</a>
-                        {/if}
+                            {#if current_chapter + 1 < meta.chapter_count}
+                                <a href="{chapterLink(current_chapter + 1)} ">Next »</a>
+                            {/if}
 
-                    </div>
-                {/if}
+                        </div>
+                    {/if}
 
-            </section>
+                </section>
+            </PageTransision>
+
 
 
         {/if}

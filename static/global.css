@@ -2,7 +2,7 @@
     color: white;
 }
 
-html::-webkit-scrollbar { width: 0px; /* For Chrome, Safari, and Opera */ }
+/*html::-webkit-scrollbar { width: 0px; !* For Chrome, Safari, and Opera *! }*/
 
 
 

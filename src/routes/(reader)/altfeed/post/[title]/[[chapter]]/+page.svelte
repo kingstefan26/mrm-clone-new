@@ -1,7 +1,7 @@
 <!-- http://localhost:1337/api/posts?filters[title][$eq]=City%20Boy%20to%20Seto%20no%20Shima%203&populate=chapters,localizations,chapter_media-->
 <script>
-    import Dobulepage from "./dobulepage.svelte";
-    import Singlepage from "./singlepageview.svelte";
+    import Dobulepage from "$lib/components/reader/dobulepage.svelte";
+    import Singlepage from "$lib/components/reader/singlepageview.svelte";
     import doublePageview from "$lib/shared/stores/doublepageview.js";
 
     /** @type {import('./$types').Data} */
@@ -12,7 +12,7 @@
         { current_chapter, chapter, meta } = data
     )
 
-    const BASE_URL = "yes";
+    const BASE_URL = "https://boney.kokoniara.software";
 </script>
 
 
@@ -24,10 +24,10 @@
             <meta property="og:description" content="{meta.description}">
             <meta property="twitter:description" content="{meta.description}">
         {/if}
-        {#if meta.poster}
-            <meta property="twitter:image" content="{BASE_URL + meta.poster.path}">
-            <meta property="og:image" content="{BASE_URL + meta.poster.path}">
-            <meta property="twitter:card" content="{BASE_URL + meta.poster.path}">
+        {#if meta.poster_path}
+            <meta property="twitter:image" content="{BASE_URL + meta.poster_path}">
+            <meta property="og:image" content="{BASE_URL + meta.poster_path}">
+            <meta property="twitter:card" content="{BASE_URL + meta.poster_path}">
         {/if}
         <meta name="title" content="{meta.title}, read now on Mrm-clone">
         <meta property="og:type" content="website">
@@ -41,10 +41,10 @@
 </svelte:head>
 
 {#if meta}
-    <!--{#if ($doublePageview)}-->
-<!--        <Dobulepage {doublePageview} {fetchchapter} {post} {getImage} />-->
-<!--    {:else }-->
+    {#if $doublePageview}
+        <Dobulepage {doublePageview} {chapter} {meta} {current_chapter} />
+    {:else }
         <Singlepage {doublePageview} {chapter} {meta} {current_chapter} />
-    <!--{/if}-->
+    {/if}
 {/if}
 

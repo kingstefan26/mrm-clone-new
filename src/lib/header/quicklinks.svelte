@@ -1,14 +1,13 @@
-
 <script>
     export let links;
 </script>
 
 
-<div class="wrapper">
-    <div id="quick-links">
+<div class="mx">
+    <div class="flex justify-center max-w-screen-lg items-center flex-wrap mb-10 w-max max-h-max">
         {#each links as link}
-            <div class="quick-link-element">
-                <a sveltekit:prefetch class="link" href={link.link}> {link.Name.toUpperCase()} </a>
+            <div class="quick-link-element pt-10 pr-20 pl-20 pb-10">
+                <a sveltekit:prefetch class="link text-xs font-bold text-gray-700 font-extrabold hover:text-white no-underline" href={link.link}> {link.Name.toUpperCase()} </a>
             </div>
         {/each}
     </div>
@@ -16,59 +15,36 @@
 
 
 <style>
-
-    .wrapper {
+    /*shout out to tailwind for not working*/
+    .flex {
         display: flex;
+    }
+    .justify-center {
         justify-content: center;
 
     }
-
-
-
-    #quick-links {
-        width: 100%;
-        max-width: 1024px;
-
-        max-height: min-content;
-        overflow: hidden;
-        margin-bottom: 10px;
-        display: flex;
-        flex-wrap: wrap;
-    }
-
-    @media screen and (min-width: 1024px){
-        #quick-links {
-            justify-content: flex-start;
-        }
-    }
-    @media screen and (max-width: 1024px){
-        #quick-links {
-            justify-content: center;
-        }
-    }
-
-    .quick-link-element {
-        padding: 10px 20px 10px 20px;
-        /* margin: 10px; */
-    }
-
-    .link {
-        text-decoration: none;
-        color: #999;
-
-        font-size: 16px;
+    .font-bold {
         font-weight: 700;
-        line-height: 1.5;
     }
 
-    .link:hover {
-        color: #fff;
-        text-decoration: none;
-    }
-    .selected {
-        color: #fff;
+    .no-underline {
         text-decoration: none;
     }
 
+    .pt-10 {
+        padding-top: 10px;
+    }
+    .pr-20 {
+        padding-right: 20px;
+    }
+    .pl-20 {
+        padding-left: 20px;
+    }
+    .pb-10 {
+        padding-bottom: 10px;
+    }
 
+    .text-gray-700 {
+        color: #999;
+    }
 </style>

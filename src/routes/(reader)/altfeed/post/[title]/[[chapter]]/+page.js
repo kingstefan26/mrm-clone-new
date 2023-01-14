@@ -37,7 +37,8 @@ export async function load({params, fetch}) {
             created: post.created,
             author: post.author,
             chapter_count: post.chapters.length,
-            description: "HEY"
+            description: "HEY",
+            poster_path: post.poster.path
         }
     }
 }

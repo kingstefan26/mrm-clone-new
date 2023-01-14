@@ -17,9 +17,6 @@
         {Name:"feed", link:"/altfeed"}
     ]
 
-    const pkg = {
-        links: links
-    }
 </script>
 
 <div class="navbar-container">
@@ -39,13 +36,17 @@
     </div>
 
     <div class="quicklinks-container">
-        <Quicklinks {...pkg} />
+        <Quicklinks {links} />
     </div>
 
 
 </div>
 
 <style>
+
+    .navbar-container {
+        width: 100%;
+    }
 
     .quicklinks-container {
         box-shadow: 1px 1px 1px #000;

@@ -15,14 +15,10 @@
 
 
 <style>
-
     .wrapper {
         display: flex;
         justify-content: center;
-
     }
-
-
 
     #quick-links {
         width: 100%;

@@ -116,7 +116,7 @@ export async function GET() {
                         }
                     ],
                     "poster": {
-                        "path": "/asset/[atcesolcyc] Gladiolus/thumb.avif"
+                        "path": "/asset/[atcesolcyc] Gladiolus/0.jpg"
                     }
                 },
                 {
