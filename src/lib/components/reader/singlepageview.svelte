@@ -18,14 +18,9 @@
         return `${(a.getDate())} ${months[a.getMonth()]} ${(a.getFullYear())}`;
     }
 
-    const chapterLink = (index) => `/altfeed/post/${meta.title}/${index}`
+    const chapterLink = (index) => `/post/${meta.title}/${index}`
 
 </script>
-
-<svelte:head>
-    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;600;700;900&display=swap"
-          rel="stylesheet">
-</svelte:head>
 
 <main class="singlepage-wrapper">
     <article class="content singlepage-content">
@@ -100,11 +95,11 @@
                         <div class="image-wrapper">
                             {#if imgindex < 2}
                                 <img class="content_image" src="{image.path}"
-                                     alt="{image.name}" loading="eager" height="{image.height}"
+                                     alt="{image.name}" loading="eager" fetchpriority="high" height="{image.height}"
                                      width="{image.width}">
                             {:else}
                                 <img use:lazyLoad={image.path}
-                                     class="content_image"
+                                     class="content_image pusle_anim"
                                      alt="{image.name}"
                                      height="{image.height}"
                                      width="{image.width}">
@@ -276,11 +271,27 @@
         margin-left: auto;
     }
 
-    .center {
-        max-width: 100%;
-        display: flex;
-        justify-content: center;
+    .pusle_anim {
+        animation: loading-animation 2s ease-in-out infinite;
+        background-color: #343434;
+        background-repeat: no-repeat;
+        background-image: linear-gradient(
+                90deg,
+                #343434,
+                #505050,
+                #343434
+        );
     }
+
+    @keyframes loading-animation {
+        0% {
+            background-position: -1000px 0;
+        }
+        100% {
+            background-position: calc(1000px + 100%) 0;
+        }
+    }
+
 
 
     @media screen and (max-width: 500px) {

@@ -1,12 +1,11 @@
 <script>
     import PostWidget from "./PostWiget.svelte";
 
-    import Spinner from "$lib/spiner.svelte";
-
     import {cockpitOrgin} from "$lib/shared/host.js";
 
     import {onMount} from "svelte";
     import PostWigetSkeleton from "./PostWigetSkeleton.svelte";
+    import {getFeedPage} from "$lib/api/client/util.js";
 
     const BASE_URL = cockpitOrgin;
     const BASE_IMAGE_URL = `${BASE_URL}/storage/uploads`;
@@ -15,33 +14,17 @@
 
     let iserrror = false;
 
+    let currentPage = 0
+
     const fetchcocks = async () => {
 
         console.log('featching cocks');
 
-        let json = await fetch("/altfeed/feed.json").then(res => res.json());
+        let feed = await getFeedPage(currentPage, fetch);
 
-        // if (!json.entries) {
-        // let json = JSON.parse('{"entries":[{"_id":"62426f66aad26860dd2b9182","title":"test","author":"test","chapters":[{"_id":"62426f4377b2de1b8f62a652","name":"test","chapter_media":[{"meta":{"title":"","asset":"62426f38bb7e4767a6400222"},"path":"https://cdn.glitch.global/17cc8f98-08bf-484d-a833-5a8e854d7d9f/index.png?v=1648708320976"},{"meta":{"title":"","asset":"62426f38c0488a43543d8b72"},"path":"https://cdn.glitch.global/17cc8f98-08bf-484d-a833-5a8e854d7d9f/vertical.png?v=1648708320939"},{"meta":{"title":"","asset":"62426f38cede4a53cb211d82"},"path":"https://cdn.glitch.global/17cc8f98-08bf-484d-a833-5a8e854d7d9f/horisontal.png?v=1648708321328"}],"_mby":"623f7bda63ec7431f5343042","_by":"623f7bda63ec7431f5343042","_modified":1648521027,"_created":1648521027,"_link":"chapters"},{"_id":"62426f50625b7b3d560d9a02","name":"test2","chapter_media":[{"meta":{"title":"","asset":"62426f38bb7e4767a6400222"},"path":"https://cdn.glitch.global/17cc8f98-08bf-484d-a833-5a8e854d7d9f/index.png?v=1648708320976"},{"meta":{"title":"","asset":"62426f38c0488a43543d8b72"},"path":"https://cdn.glitch.global/17cc8f98-08bf-484d-a833-5a8e854d7d9f/vertical.png?v=1648708320939"},{"meta":{"title":"","asset":"62426f38cede4a53cb211d82"},"path":"https://cdn.glitch.global/17cc8f98-08bf-484d-a833-5a8e854d7d9f/horisontal.png?v=1648708321328"}],"_mby":"623f7bda63ec7431f5343042","_by":"623f7bda63ec7431f5343042","_modified":1648521040,"_created":1648521040,"_link":"chapters"}],"poster":{"path":"https://cdn.glitch.global/17cc8f98-08bf-484d-a833-5a8e854d7d9f/vertical.png?v=1648708320939"},"_mby":"623f7bda63ec7431f5343042","_by":"623f7bda63ec7431f5343042","_modified":1648521062,"_created":1648521062}],"total":1}')
-        // }
+        await new Promise(r => setTimeout(r, 1000));
 
-        const posts = [];
-
-        for (const post of json.entries) {
-            posts.push({
-                id: post._id,
-                author: post.author,
-                lang: post.lang,
-                title: post.title,
-                coverpicurl: post.poster.path,
-                chapter_count: post.chapter_count
-            });
-        }
-
-
-        await new Promise(r => setTimeout(r, 2000));
-
-        return posts;
+        return feed.posts;
     };
 
     onMount(() => {

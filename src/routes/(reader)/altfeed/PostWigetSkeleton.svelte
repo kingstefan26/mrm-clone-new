@@ -1,13 +1,13 @@
 <style>
     .pusle_anim {
         animation: loading-animation 1.2s ease-in-out infinite;
-        background-color: rgb(96, 96, 96);
+        background-color: #4b4b4b;
         background-repeat: no-repeat;
         background-image: linear-gradient(
                 90deg,
-                rgb(96, 96, 96),
-                rgb(155, 155, 155),
-                rgb(96, 96, 96)
+                #4b4b4b,
+                #626262,
+                #4b4b4b
         );
     }
 

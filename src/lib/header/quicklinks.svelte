@@ -1,5 +1,10 @@
 <script>
-    export let links;
+    export let links = [
+        {
+            Name: undefined,
+            link: undefined
+        }
+    ];
 </script>
 
 
@@ -7,7 +12,7 @@
     <div class="flex justify-center max-w-screen-lg items-center flex-wrap mb-10 w-max max-h-max">
         {#each links as link}
             <div class="quick-link-element pt-10 pr-20 pl-20 pb-10">
-                <a sveltekit:prefetch class="link text-xs font-bold text-gray-700 font-extrabold hover:text-white no-underline" href={link.link}> {link.Name.toUpperCase()} </a>
+                <a data-sveltekit-preload-data class="link text-xs font-bold text-gray-700 font-extrabold hover:text-white no-underline" href={link.link}> {link.Name.toUpperCase()} </a>
             </div>
         {/each}
     </div>

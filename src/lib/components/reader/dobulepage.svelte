@@ -71,7 +71,7 @@
         return currentimage
     };
 
-    const chapterLink = (index) => `/altfeed/post/${meta.title}/${index}`
+    const chapterLink = (index) => `/post/${meta.title}/${index}`
 
     $: (
         goto(chapterLink(current_chapter))
@@ -218,7 +218,7 @@
                     </select>
 
                     <select class="image-picker" bind:value={currentimage} id="image">
-                        {#each chapter.chapter_media as image, index}
+                        {#each chapter.chapter_media as _, index}
                             <option value="{index}">{index}</option>
                         {/each}
                     </select>
@@ -416,14 +416,6 @@
         border-radius: 3px;
         border: 1px solid black;
         padding: 4px;
-    }
-
-    .load-wrapper {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center
     }
 
     .backbtn {

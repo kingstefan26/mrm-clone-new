@@ -1,5 +1,10 @@
 <script>
-    export let links;
+    export let links = [
+        {
+            Name: undefined,
+            link: undefined
+        }
+    ];
 </script>
 
 
@@ -7,7 +12,7 @@
     <div id="quick-links">
         {#each links as link}
             <div class="quick-link-element">
-                <a sveltekit:prefetch class="link" href={link.link}> {link.Name.toUpperCase()} </a>
+                <a data-sveltekit-preload-data class="link" href={link.link}> {link.Name.toUpperCase()} </a>
             </div>
         {/each}
     </div>
@@ -64,10 +69,5 @@
         color: #fff;
         text-decoration: none;
     }
-    .selected {
-        color: #fff;
-        text-decoration: none;
-    }
-
 
 </style>

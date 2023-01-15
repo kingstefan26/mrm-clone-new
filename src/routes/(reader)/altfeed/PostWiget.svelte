@@ -5,7 +5,7 @@
         id: 0,
         author: undefined,
         lang: undefined,
-        link: `/altfeed/post/${post.title}`,
+        link: `/post/${post.title}`,
         chapter_count: 0
     };
 </script>
@@ -14,7 +14,7 @@
 <article class="wrapper">
     <header class="thehead">
         <div class="linkconta">
-            <a sveltekit:prefetch href="/altfeed/post/{post.title}" class="title_link">
+            <a data-sveltekit-preload-code="hover" href="/post/{post.title}" class="title_link">
                 <h2>{post.title}</h2>
             </a>
         </div>
@@ -29,14 +29,14 @@
     </header>
 
     <section>
-        <a sveltekit:prefetch class="center" href="/altfeed/post/{post.title}">
-            <img src={post.coverpicurl} style="object-fit: cover; background: rgb(96, 96, 96)" alt="post" height="260" width="180">
+        <a data-sveltekit-preload-data class="center" href="/post/{post.title}">
+            <img src={post.poster.path} style="object-fit: cover; background: rgb(96, 96, 96)" height="260" width="180">
         </a>
         {#if post.chapter_count > 1}
             <div class="chapter_links_container">
                 <!--weird trick to make a 'range' in js-->
                 {#each [...Array(post.chapter_count).keys()] as chapter}
-                    <a class="chapter_link" href="/about">{chapter}</a>
+                    <a class="chapter_link" href="/post/{post.id}/{chapter}">{chapter}</a>
                 {/each}
             </div>
         {/if}
@@ -47,6 +47,9 @@
 
 
 <style>
+    * {
+        font-weight: 500;
+    }
     .chapter_links_container {
         display: flex;
         flex-wrap: wrap;

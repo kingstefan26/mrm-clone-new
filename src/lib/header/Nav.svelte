@@ -79,6 +79,8 @@
         /* font-family: helvetica neue, Helvetica, Arial, sans-serif; */
         font-family: Arial, sans-serif;
         font-weight: 700;
+        margin: 0 0 0.5em 0;
+        line-height: 1.2;
 
         color: #abb1b3;
     }
