@@ -2,7 +2,7 @@
 
 async function getFeedPage(index = 0, fetch) {
 
-    await new Promise(r => setTimeout(r, 1000));
+    // await new Promise(r => setTimeout(r, 1000));
 
     const reqUrl = `/api/feed${index > 0 ? `?page=${index}` : ""}`
 

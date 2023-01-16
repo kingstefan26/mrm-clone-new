@@ -26,17 +26,17 @@
 
 
 {#if $navigating}
-    <div class="skelly_container">
-        <div class="wiget_skelly">
-            <PostWigetSkeleton/>
-        </div>
-        <div class="wiget_skelly">
-            <PostWigetSkeleton/>
-        </div>
-        <div class="wiget_skelly">
-            <PostWigetSkeleton/>
-        </div>
-    </div>
+<!--    <div class="skelly_container">-->
+<!--        <div class="wiget_skelly">-->
+<!--            <PostWigetSkeleton/>-->
+<!--        </div>-->
+<!--        <div class="wiget_skelly">-->
+<!--            <PostWigetSkeleton/>-->
+<!--        </div>-->
+<!--        <div class="wiget_skelly">-->
+<!--            <PostWigetSkeleton/>-->
+<!--        </div>-->
+<!--    </div>-->
 {:else}
     <div class="content">
         {#if data.feed.posts.length < 0}
