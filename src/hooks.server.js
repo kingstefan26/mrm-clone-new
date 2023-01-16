@@ -1,7 +1,10 @@
+import {verifyUserToken} from "$lib/api/server/controler.js";
+
 /** @type {import('@sveltejs/kit').Handle} */
-export function handle({ event, resolve }) {
+export async function handle({event, resolve}) {
     const jwt = event.cookies.get('jwt');
-    event.locals.user = jwt ? JSON.parse(atob(jwt)) : null;
+    let user = await verifyUserToken(jwt)
+    event.locals.user = user ? user : null
 
     return resolve(event);
 }

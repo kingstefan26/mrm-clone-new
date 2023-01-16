@@ -2,5 +2,9 @@
     export let data;
 </script>
 
-
-<h1 style="color: black">LOGGED IN AS: {data.user.email}</h1>
+<div class="w-full h-full dark:bg-stone-600">
+    <h1 class="text-center text-9xl dark:text-white">
+        Not much here
+        m8
+    </h1>
+</div>

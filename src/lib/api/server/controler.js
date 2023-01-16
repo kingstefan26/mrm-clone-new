@@ -1,3 +1,5 @@
+import {TokenGenerator} from "$lib/api/server/token-util.js";
+
 const mockData = {
     entries: [
         {
@@ -254,6 +256,68 @@ const mockData = {
     total: 3
 }
 
+const mockUsers = [
+    {
+        username: "kokoniara",
+        email: "kokoniara@kokoniara.software",
+        id: "49e83ec0-5b61-41e8-b227-4054be3e447d",
+        passHash: "7fcc7ca181147588e8a0515d7ec889611ccbe5d622a2ec169e592c711598ba8a",
+        salt: "ar@",
+        admin: true
+    }
+]
+
+// gg from https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest
+const getSHA256 = async (text = "") => {
+    const msgUint8   = new TextEncoder().encode(text);                           // encode as (utf-8) Uint8Array
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);     // hash the message
+    const hashArray  = Array.from(new Uint8Array(hashBuffer));                      // convert buffer to byte array
+    return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+function verifyUserToken(token){
+    try {
+        return new TokenGenerator().decode(token, 'a')
+    } catch (_) {
+        return {}
+    }
+}
+async function authenticateUser(email, passwrd){
+    for (const user of mockUsers) {
+        if (user.email !== email) {
+            continue;
+        }
+        const hash = await getSHA256(user.salt + passwrd)
+        if (hash !== user.passHash) {
+            break
+        } else {
+            return new TokenGenerator(
+                'a',
+                'a',
+                {
+                    algorithm: 'HS256',
+                    keyid: '1',
+                    noTimestamp: false,
+                    expiresIn: '10d',
+                    notBefore: '0'
+                }
+            ).sign({
+                username: user.username,
+                id: user.id,
+                admin: user.admin
+            }, {
+                audience: 'myaud',
+                issuer: 'mrm-main-server',
+                jwtid: '1',
+                subject: 'user'
+            });
+        }
+    }
+
+    return ""
+}
+
+
 function getFeed(pageIndex = 0, pageSize = 10){
 
     const splitStart = pageIndex * pageSize
@@ -316,4 +380,4 @@ function getPost(postId = "") {
 
 
 
-export { getFeed, getChapter, getPost }
+export { getFeed, getChapter, getPost, authenticateUser, verifyUserToken }
