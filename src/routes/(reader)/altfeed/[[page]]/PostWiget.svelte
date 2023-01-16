@@ -30,7 +30,7 @@
 
     <section>
         <a data-sveltekit-preload-data class="center" href="/post/{post.title}">
-            <img src={post.poster.path} style="object-fit: cover; background: rgb(96, 96, 96)" height="260" width="180">
+            <img alt="Poster for {post.title}" src={post.poster.path} style="object-fit: cover; background: rgb(96, 96, 96)" height="260" width="180">
         </a>
         {#if post.chapter_count > 1}
             <div class="chapter_links_container">

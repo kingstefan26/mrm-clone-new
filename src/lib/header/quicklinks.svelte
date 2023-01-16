@@ -50,6 +50,6 @@
     }
 
     .text-gray-700 {
-        color: #999;
+        color: #cacaca;
     }
 </style>
