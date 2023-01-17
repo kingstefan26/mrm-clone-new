@@ -6,9 +6,17 @@
 
 </script>
 
-<AdminNav user={data.user} />
 
-<slot />
+<main class="grid grid-rows-[auto,1fr] h-screen">
+    <nav>
+        <AdminNav user={data.user} />
+    </nav>
+
+    <section>
+        <slot />
+    </section>
+</main>
+
 
 
 

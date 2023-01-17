@@ -42,8 +42,8 @@
 </div>
 
 <div class="w-full h-10 dark:bg-stone-700 flex justify-center">
-    <a class="dark:text-white text-xl my-auto pl-2 pr-2 underline" href="/admin/posts">Manage Users</a>
-    <a class="dark:text-white text-xl my-auto pl-2 pr-2 underline" href="/admin/posts">Manage Posts</a>
-    <a class="dark:text-white text-xl my-auto pl-2 pr-2 underline" href="/admin/posts">Blah</a>
-    <a class="dark:text-white text-xl my-auto pl-2 pr-2 underline" href="/admin/posts">Blah</a>
+    <a class="dark:text-white text-xl my-auto pl-2 pr-2 underline" href="/admin/manage/posts">Manage Users</a>
+    <a class="dark:text-white text-xl my-auto pl-2 pr-2 underline" href="/admin/manage/posts">Manage Posts</a>
+    <a class="dark:text-white text-xl my-auto pl-2 pr-2 underline" href="/admin/manage/posts">Blah</a>
+    <a class="dark:text-white text-xl my-auto pl-2 pr-2 underline" href="/admin/manage/posts">Blah</a>
 </div>
