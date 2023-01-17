@@ -5,7 +5,6 @@ import {error} from "@sveltejs/kit";
 export async function load({fetch, params}) {
     let feed = await getFeedPage(params.page, fetch);
 
-    console.log(feed)
     if(feed.posts.length === 0){
         throw error(404, {
             message: "No posts found"

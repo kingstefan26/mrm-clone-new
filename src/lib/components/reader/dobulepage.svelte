@@ -3,7 +3,7 @@
     import ArrowControl from "$lib/components/reader/arrowkeys.svelte";
     import {onMount} from "svelte";
 
-    import logo from "$lib/logo-128.png";
+    import logo from "$lib/img/logo-128.png";
 
     export let doublePageview;
     export let chapter;

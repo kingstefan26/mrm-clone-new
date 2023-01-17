@@ -1,5 +1,6 @@
 <script>
-    import Layout from '$lib/classic_layout.svelte';
+    import Layout from '$lib/components/layout/readerLayout.svelte';
+    import '../../app.css';
     import "@fontsource/public-sans";
 </script>
 

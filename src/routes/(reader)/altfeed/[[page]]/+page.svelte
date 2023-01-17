@@ -1,13 +1,12 @@
 <script>
-    import PostWidget from "./PostWiget.svelte";
+    import PostWidget from "$lib/components/feed/PostWiget.svelte";
 
     import {invalidate} from '$app/navigation';
 
-    import PostWigetSkeleton from "./PostWigetSkeleton.svelte";
-    import {navigating} from "$app/stores";
+    // import PostWigetSkeleton from "$lib/components/feed/PostWigetSkeleton.svelte";
+    // import {navigating} from "$app/stores";
 
     export let data;
-
     let feed = data.feed;
 
 </script>
@@ -17,7 +16,7 @@
 </svelte:head>
 
 <section>
-    <button id="refresh" on:click={() => {
+    <button class="text-white p-2 bg-gray-600 rounded-xl ml-2" on:click={() => {
         invalidate("/api/feed")
     }}>
         Refresh cache
@@ -25,7 +24,7 @@
 </section>
 
 
-{#if $navigating}
+<!--{#if $navigating}-->
 <!--    <div class="skelly_container">-->
 <!--        <div class="wiget_skelly">-->
 <!--            <PostWigetSkeleton/>-->
@@ -37,19 +36,19 @@
 <!--            <PostWigetSkeleton/>-->
 <!--        </div>-->
 <!--    </div>-->
-{:else}
-    <div class="content">
+<!--{:else}-->
+    <div class="content flex flex-wrap justify-center max-w-full">
         {#if data.feed.posts.length < 0}
             no posts here 🤷
         {:else}
             {#each feed.posts as item}
-                <div style="flex-basis: min-content; margin: 5px">
+                <div class="m-2" style="flex-basis: min-content;">
                     <PostWidget post={item}/>
                 </div>
             {/each}
         {/if}
     </div>
-{/if}
+<!--{/if}-->
 
 
 {#if data.feed.pagesAvalible > 1}
@@ -59,35 +58,3 @@
         {/each}
     </div>
 {/if}
-
-
-<style>
-
-    .flex {
-        display: flex;
-    }
-
-    .content {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        overflow: hidden;
-        max-width: 100%;
-    }
-
-    #refresh {
-        color: black;
-    }
-
-    .wiget_skelly {
-        margin: 6px;
-    }
-
-    .skelly_container {
-        display: flex;
-        justify-content: center;
-        align-content: center;
-        flex-wrap: wrap;
-    }
-
-</style>

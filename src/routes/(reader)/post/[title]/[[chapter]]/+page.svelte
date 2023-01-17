@@ -12,7 +12,7 @@
         { current_chapter, chapter, meta } = data
     )
 
-    const BASE_URL = "https://boney.kokoniara.software";
+    const BASE_URL = "https://boney.kokoniara.software/";
 </script>
 
 
@@ -36,8 +36,7 @@
         <meta property="twitter:title" content="{meta.title}, read now on Mrm-clone">
     {/if}
 
-    <meta property="twitter:url" content="https://mrm-clone.vercel.app/">
-
+    <meta property="twitter:url" content="https://boney.kokoniara.software/">
 </svelte:head>
 
 {#if meta}

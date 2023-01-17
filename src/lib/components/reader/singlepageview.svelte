@@ -1,10 +1,8 @@
 <script>
-
-    import PageTransision from "$lib/components/PageTransision.svelte";
-    import { lazyLoad } from '$lib/LazyLoad.js'
+    import PageTransision from "$lib/components/util/pageTransision.svelte";
+    import {lazyLoad} from '$lib/LazyLoad.js'
 
     export let doublePageview;
-
     export let chapter;
     export let meta;
     export let current_chapter;
@@ -22,30 +20,26 @@
 
 </script>
 
-<main class="singlepage-wrapper">
-    <article class="content singlepage-content">
+<main class="flex justify-center">
+    <article class="content pr-12 pl-12 pb-10 mx-auto">
         {#if !meta}
             <h1>Post not Found</h1>
         {:else}
             <header>
-                <button class="switchvieverstylebtn" on:click={() => { $doublePageview = !$doublePageview; }}>
-                    Reader mode
-                </button>
-                <h2 class="title">
-                    <a class="title_author" href="/search?artist={meta.author}">[{meta.author}]</a>
-                    {meta.title}
-                </h2>
+                <section>
+                    <button class="switchvieverstylebtn" on:click={() => { $doublePageview = !$doublePageview; }}>
+                        Reader mode
+                    </button>
+                    <h2 class="title">
+                        <a class="title_author" href="/search?artist={meta.author}">[{meta.author}]</a>
+                        {meta.title}
+                    </h2>
 
-                <p class="entry-meta">
-                    <time id="creation"
-                          datetime="{new Date(meta.created)}">{formatTime(meta.created)}</time>
-                </p>
-
-                <p class="entry-meta">
-                    {#if current_chapter > 0}
-                        <h3 id="chaptertitle">Chapter: {current_chapter}</h3>
-                    {/if}
-                </p>
+                    <p class="entry-meta">
+                        <time id="creation"
+                              datetime="{new Date(meta.created)}">{formatTime(meta.created)}</time>
+                    </p>
+                </section>
 
                 <section>
 
@@ -59,17 +53,16 @@
 
                     {/if}
 
-                    <!--{#if post.geners}-->
-                    <!--    {#if post.geners.length !== 0}-->
-                    <!--        <p class="tags">-->
-                    <!--            Genres:-->
-                    <!--            {#each post.post.geners as tag }-->
-                    <!--                <a class="tag" href="/search?genre={tag}">{tag} </a>-->
-                    <!--            {/each}-->
-                    <!--        </p>-->
-
-                    <!--    {/if}-->
-                    <!--{/if}-->
+                    {#if meta.geners}
+                        {#if meta.geners.length !== 0}
+                            <p class="tags">
+                                Genres:
+                                {#each meta.geners as tag }
+                                    <a class="tag" href="/search?genre={tag}">{tag} </a>
+                                {/each}
+                            </p>
+                        {/if}
+                    {/if}
 
 
                     {#if meta.categories.length !== 0}
@@ -85,12 +78,17 @@
                 </section>
 
 
+                <p class="entry-meta">
+                    {#if current_chapter > 0}
+                        <p class="tags font-bold mr-2">Chapter: #{current_chapter}</p>
+                    {/if}
+                </p>
+
             </header>
 
-            <hr class="separator">
-
-            <PageTransision pathname={current_chapter}>
-                <section class="content_container">
+            <main class="content_container">
+                <hr class="separator mx-auto w-5/6 mb-4">
+                <PageTransision pathname={current_chapter}>
                     {#each chapter.chapter_media as image, imgindex}
                         <div class="image-wrapper">
                             {#if imgindex < 2}
@@ -111,11 +109,12 @@
                         <div id="linkwrapper">
 
                             {#if current_chapter - 1 >= 0}
-                                <a href="{chapterLink(current_chapter - 1)}" >« Previous</a>
+                                <a href="{chapterLink(current_chapter - 1)}">« Previous</a>
                             {/if}
 
                             {#each [...Array(meta.chapter_count).keys()] as chapter, index}
-                                <a href="{chapterLink(index)}" class="{index === current_chapter ? 'iamselected' : ''}">{index}</a>
+                                <a href="{chapterLink(index)}"
+                                   class="{index === current_chapter ? 'iamselected' : ''}">{index}</a>
                             {/each}
 
                             {#if current_chapter + 1 < meta.chapter_count}
@@ -124,10 +123,9 @@
 
                         </div>
                     {/if}
+                </PageTransision>
 
-                </section>
-            </PageTransision>
-
+            </main>
 
 
         {/if}
@@ -145,9 +143,6 @@
 
     .separator {
         color: #5b5b5b;
-
-        margin-bottom: 1.5em;
-        width: 70%;
     }
 
     .title {
@@ -191,11 +186,11 @@
         color: #808080;
     }
 
-    #chaptertitle {
-        font-family: 'Public Sans', sans-serif;
-        font-weight: 500;
-        font-size: 1.2em;
-    }
+    /*#chaptertitle {*/
+    /*    font-family: 'Public Sans', sans-serif;*/
+    /*    font-weight: 500;*/
+    /*    font-size: 1.2em;*/
+    /*}*/
 
     .content_image {
         margin-left: auto;
@@ -256,21 +251,6 @@
         padding-bottom: 10px;
     }
 
-
-    .singlepage-wrapper {
-        display: flex;
-        justify-content: center;
-    }
-
-    .singlepage-content {
-        /*padding-top: 10px;*/
-        padding-right: 30px;
-        padding-left: 30px;
-        padding-bottom: 14px;
-        margin-right: auto;
-        margin-left: auto;
-    }
-
     .pusle_anim {
         animation: loading-animation 2s ease-in-out infinite;
         background-color: #343434;
@@ -291,7 +271,6 @@
             background-position: calc(1000px + 100%) 0;
         }
     }
-
 
 
     @media screen and (max-width: 500px) {

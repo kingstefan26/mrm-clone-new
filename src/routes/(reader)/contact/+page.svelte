@@ -1,5 +1,5 @@
 <script>
-    import InformationPage from "$lib/Information_page.svelte";
+    import InformationPage from "$lib/components/layout/InformationPage.svelte";
 </script>
 
 <InformationPage pagetitle={"About"}>

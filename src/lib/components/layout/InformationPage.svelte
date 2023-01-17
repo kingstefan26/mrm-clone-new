@@ -1,17 +1,13 @@
 <script>
-
     export let pagetitle = "Info";
 </script>
-
 
 <svelte:head>
     <title>{pagetitle}</title>
 </svelte:head>
 
 <div class="container">
-
     <slot></slot>
-
 </div>
 
 

@@ -12,62 +12,44 @@
 
 
 <article class="wrapper">
-    <header class="thehead">
-        <div class="linkconta">
-            <a data-sveltekit-preload-code="hover" href="/post/{post.title}" class="title_link">
-                <h2>{post.title}</h2>
+    <header class="thehead grid h-20">
+        <div>
+            <a class="title_link " data-sveltekit-preload-code="hover" href="/post/{post.title}" >
+                <h2 class="text-xl font-medium">{post.title}</h2>
             </a>
         </div>
-        <p class="about_text">
+        <p class="about_text m-auto font-light">
             {#if post.lang}
                 [{post.lang.toUpperCase()}]
             {/if}
             {#if post.author}
-                <a class="author_link" href="/tag/{post.author}">[{post.author}]</a>
+                <a class="author_link no-underline" href="/tag/{post.author}">[{post.author}]</a>
             {/if}
         </p>
     </header>
 
     <section>
-        <a data-sveltekit-preload-data class="center" href="/post/{post.title}">
-            <img alt="Poster for {post.title}" src={post.poster.path} style="object-fit: cover; background: rgb(96, 96, 96)" height="260" width="180">
+        <a data-sveltekit-preload-data class="center no-underline w-[180px] h-[260px]" href="/post/{post.title}">
+            <img alt="Poster for {post.title}" src={post.poster.path} class="object-cover" style="background: rgb(96, 96, 96)" height="260" width="180">
         </a>
         {#if post.chapter_count > 1}
-            <div class="chapter_links_container">
+            <div class="chapter_links_container flex flex-wrap justify-center max-w-full">
                 <!--weird trick to make a 'range' in js-->
                 {#each [...Array(post.chapter_count).keys()] as chapter}
-                    <a class="chapter_link" href="/post/{post.id}/{chapter}">{chapter}</a>
+                    <a class="chapter_link pl-0.5 pr-0.5 font-light" href="/post/{post.id}/{chapter}">{chapter}</a>
                 {/each}
             </div>
         {/if}
     </section>
-
-
 </article>
 
 
 <style>
-    * {
-        font-weight: 500;
-    }
-    .chapter_links_container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        max-width: 100%;
-    }
-
     .about_text {
-        margin: auto;
         color: #929292;
         font-family: helvetica neue, Helvetica, Arial, sans-serif;
-        font-weight: 300;
     }
 
-    .title_link {
-        margin: auto;
-        padding-top: 2px
-    }
 
     .title_link:hover > h2 {
         transition: 0.2s;
@@ -75,9 +57,7 @@
     }
 
     .chapter_link {
-        padding: 0 3px 0 3px;
         color: #4992af;
-        font-weight: 400;
     }
 
     .author_link:hover {
@@ -86,15 +66,12 @@
     }
 
     .thehead {
-        height: 70px;
-        display: grid;
+        /*height: 70px;*/
         grid-auto-rows: 50% 50%;
     }
 
     h2 {
         font-family: helvetica neue, Helvetica, Arial, sans-serif;
-        font-weight: 500;
-        font-size: 1.16em;
         color: #c9c9c9;
     }
 
@@ -115,17 +92,11 @@
         border-bottom: 100px;
     }
 
-    header {
-        height: 100px;
-    }
-
     .center {
         max-width: 100%;
         display: flex;
         justify-content: center;
     }
-
-
     a {
         text-decoration: none;
     }
