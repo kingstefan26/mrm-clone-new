@@ -1,13 +1,13 @@
 import { error } from '@sveltejs/kit';
-import { getChapter, getPost } from "$lib/api/client/util.js";
+import {getChapter, getPost} from "$lib/api/server/controler.js";
 
 /** @type {import('./$types').Load} */
-export async function load({params, fetch}) {
-    const post = await getPost(params.id, fetch)
+export async function load({params}) {
+    const post = await getPost(params.id)
 
     let chapters = []
     for (let i = 0; i < post.chapter_count; i++) {
-        chapters[i] = await getChapter(params.id, i, fetch)
+        chapters[i] = await getChapter(params.id, i)
     }
 
     console.log(chapters)

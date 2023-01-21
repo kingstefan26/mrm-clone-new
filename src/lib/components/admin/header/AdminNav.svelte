@@ -25,7 +25,7 @@
 <div class="w-full h-24 min-h-fit border-b-4 dark:border-stone-800 flex dark:bg-stone-800 justify-between">
     <div class="mt-2 ml-1.5">
         <h3 class="font-medium text-2xl dark:text-white">Mrm-Admin-Panel</h3>
-        <h4 class="font-extralight text-xl dark:text-white" > Logged in as whore {user.username}</h4>
+        <h4 class="font-extralight text-xl dark:text-white" > Logged in as {user.username}</h4>
     </div>
     <p class="font-extralight text-slate-900 dark:text-stone-400 m-auto">
         {#key toLaunch}

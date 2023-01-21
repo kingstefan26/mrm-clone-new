@@ -8,7 +8,7 @@
     let expanded = false
 </script>
 
-<div class="grid grid-cols-1 w-full bg-gray-400 border-4">
+<div class="grid grid-cols-1 max-w-[300px] bg-gray-400 border-4">
     <div>
         <span>{name}</span>
         <button on:click={() => {
@@ -28,7 +28,7 @@
         {#key options}
             {#each options as option}
                 <span>
-                    <input type="text" bind:value={option} autofocus>
+                    <input class="p-1 bg-stone-700" type="text" bind:value={option} autofocus>
                     <button on:click={()=>{options.splice(options.indexOf(option), 1); options = options}}>🗑️</button>
                 </span>
             {/each}

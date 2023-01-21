@@ -1,21 +1,21 @@
 import { error } from '@sveltejs/kit';
-import { getChapter, getPost } from "$lib/api/client/util.js";
+import {getChapter, getPost} from "$lib/api/server/controler.js";
 
 /** @type {import('./$types').Load} */
-export async function load({params, fetch}) {
+export async function load({params}) {
     const chapterIndex = params.chapter ? Number.parseInt(params.chapter) : 0
     const postId = params.title
 
-    const post = await getPost(postId, fetch)
+    const post = await getPost(params.title)
 
     if (!post) {
         throw error(404, "Could not find this post");
     }
 
-    const { chapter } = await getChapter(postId, chapterIndex, fetch)
+    const { chapter } = await getChapter(postId, chapterIndex)
 
     chapter.chapter_media.forEach(mediaElement => {
-        mediaElement.path = mediaElement.path.startsWith("http") ? mediaElement.path : "/asset" + mediaElement.path
+        mediaElement.path = mediaElement.path.startsWith("http") ? mediaElement.path :  mediaElement.path
     })
 
     return {
