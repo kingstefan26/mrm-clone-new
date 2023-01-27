@@ -1,23 +1,45 @@
 {
 	"background_color": "#ffffff",
 	"theme_color": "#333333",
-	"name": "mrm-clone",
-	"short_name": "mrm",
-	"display": "minimal-ui",
+	"name": "Reader App",
+	"short_name": "MRM",
+	"display": "fullscreen",
 	"start_url": "/",
+	"id": "/",
 	"scope": "/",
 	"icons": [
 		{
 			"src": "logo-192.png",
 			"sizes": "192x192",
 			"type": "image/png",
-			"purpose": "any maskable"
+			"purpose": "any"
 		},
 		{
 			"src": "logo-512.png",
 			"sizes": "512x512",
 			"type": "image/png",
-			"purpose": "any maskable"
+			"purpose": "any"
+		},
+		{
+			"src": "/maskable_icon.png",
+			"sizes": "538x538",
+			"type": "image/png",
+			"purpose": "maskable"
+		}
+	],
+	"description": "A website designed to help you find the drawn corn on the internet. Made in the image or myreadmingmanga. info",
+	"screenshots": [
+		{
+			"src": "/ss1.jpg",
+			"type": "image/jpeg",
+			"sizes": "720x1600",
+			"form_factor": "narrow"
+		},
+		{
+			"src": "/ss2.jpg",
+			"type": "image/jpeg",
+			"sizes": "720x1600",
+			"form_factor": "wide"
 		}
 	]
 }

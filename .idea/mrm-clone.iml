@@ -8,6 +8,8 @@
       <excludeFolder url="file://$MODULE_DIR$/.svelte-kit/build" />
       <excludeFolder url="file://$MODULE_DIR$/.svelte-kit/generated" />
       <excludeFolder url="file://$MODULE_DIR$/.svelte-kit/output" />
+      <excludeFolder url="file://$MODULE_DIR$/.svelte-kit" />
+      <excludeFolder url="file://$MODULE_DIR$/upload" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

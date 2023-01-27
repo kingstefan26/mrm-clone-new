@@ -8,23 +8,24 @@ export async function load({ locals }) {
 /** @type {import('./$types').Actions} */
 export const actions = {
     default: async ({ cookies, request }) => {
-        const data = await request.formData();
+        // const data = await request.formData();
+        //
+        // const body = {
+        //     user: {
+        //         email: data.get('email'),
+        //         password: data.get('password')
+        //     }
+        // };
 
-        const body = {
-            user: {
-                email: data.get('email'),
-                password: data.get('password')
-            }
-        };
 
+        // if (body.errors) {
+        //     return fail(401, body);
+            return fail(401, "L BOZO");
+        // }
 
-        if (body.errors) {
-            return fail(401, body);
-        }
+        // const value = btoa(JSON.stringify(body.user));
+        // cookies.set('jwt', value, { path: '/' });
 
-        const value = btoa(JSON.stringify(body.user));
-        cookies.set('jwt', value, { path: '/' });
-
-        throw redirect(307, '/admin');
+        // throw redirect(307, '/admin');
     }
 };

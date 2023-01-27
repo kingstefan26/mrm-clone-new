@@ -32,6 +32,9 @@ self.addEventListener('fetch', (event) => {
     // ignore POST requests etc
     if (event.request.method !== 'GET') return;
 
+    // ignore requests to /api/asset
+    if (event.request.url.includes('/api/asset')) return;
+
     async function respond() {
         const url = new URL(event.request.url);
         const cache = await caches.open(CACHE);

@@ -1,144 +1,143 @@
 <script>
     import PageTransision from "$lib/components/util/pageTransision.svelte";
     import {lazyLoad} from '$lib/LazyLoad.js'
-
+    import "@fontsource/public-sans";
     export let doublePageview;
     export let chapter;
-    export let meta;
+    export let post;
     export let current_chapter;
 
-
     function formatTime(unixTimeStamp) {
-        // Create a new JavaScript Date object based on the timestamp
-        // multiplied by 1000 so that the argument is in milliseconds, not seconds.
-        const a = new Date(unixTimeStamp * 1000);
+        const a = new Date(unixTimeStamp);
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         return `${(a.getDate())} ${months[a.getMonth()]} ${(a.getFullYear())}`;
     }
 
-    const chapterLink = (index) => `/post/${meta.title}/${index}`
+    const chapterLink = (index) => `/post/${post.title}/${index}`
 
 </script>
 
-<main class="flex justify-center">
-    <article class="content pr-12 pl-12 pb-10 mx-auto">
-        {#if !meta}
-            <h1>Post not Found</h1>
+<div class="mx-auto max-w-[1020px]">
+    <div class="mr-2 ml-2">
+        <button class="switchvieverstylebtn" on:click={() => { $doublePageview = !$doublePageview; }}>
+            Reader mode
+        </button>
+
+        {#if !post.Author}
+            <a href="/search?artist=annon" class="title_author">
+                [annon]
+            </a>
         {:else}
-            <header>
-                <section>
-                    <button class="switchvieverstylebtn" on:click={() => { $doublePageview = !$doublePageview; }}>
-                        Reader mode
-                    </button>
-                    <h2 class="title">
-                        <a class="title_author" href="/search?artist={meta.author}">[{meta.author}]</a>
-                        {meta.title}
-                    </h2>
+            <a href="/search?artist={post.Author.name}" class="title_author">
+                [{post.Author.name}]
+            </a>
+        {/if}
 
-                    <p class="entry-meta">
-                        <time id="creation"
-                              datetime="{new Date(meta.created)}">{formatTime(meta.created)}</time>
-                    </p>
-                </section>
+        <h1 class="title">
+            {post.title}
+        </h1>
 
-                <section>
+        <time class="creation" datetime="{new Date(post.createdAt)}">
+            {formatTime(post.createdAt)}
+        </time>
 
-                    {#if meta.tags.length !== 0}
-                        <p class="tags">
-                            Tags:
-                            {#each meta.tags as tag }
-                                <a class="tag" href="/search?tag={tag}">{tag} </a>
-                            {/each}
-                        </p>
-
-                    {/if}
-
-                    {#if meta.geners}
-                        {#if meta.geners.length !== 0}
-                            <p class="tags">
-                                Genres:
-                                {#each meta.geners as tag }
-                                    <a class="tag" href="/search?genre={tag}">{tag} </a>
-                                {/each}
-                            </p>
-                        {/if}
-                    {/if}
+        <div class="tags">
+            {#if post.tags.length !== 0}
+                Tags:
+                {#each post.tags as tag }
+                    <a class="tag" href="/search?tag={tag.name}">{tag.name} </a>
+                {/each}
+            {/if}
+        </div>
 
 
-                    {#if meta.categories.length !== 0}
-                        <p class="tags">
-                            Categores:
-                            {#each meta.categories as tag }
-                                <a class="tag" href="/search?category={tag}">{tag}</a>
-                            {/each}
-                        </p>
 
-                    {/if}
+        {#if post.description}
+            <p class="">{post.description}</p>
+        {/if}
 
-                </section>
-
-
-                <p class="entry-meta">
-                    {#if current_chapter > 0}
-                        <p class="tags font-bold mr-2">Chapter: #{current_chapter}</p>
-                    {/if}
-                </p>
-
-            </header>
-
-            <main class="content_container">
-                <hr class="separator mx-auto w-5/6 mb-4">
-                <PageTransision pathname={current_chapter}>
-                    {#each chapter.chapter_media as image, imgindex}
-                        <div class="image-wrapper">
-                            {#if imgindex < 2}
-                                <img class="content_image" src="{image.path}"
-                                     alt="{image.name}" loading="eager" fetchpriority="high" height="{image.height}"
-                                     width="{image.width}">
-                            {:else}
-                                <img use:lazyLoad={image.path}
-                                     class="content_image pusle_anim"
-                                     alt="{image.name}"
-                                     height="{image.height}"
-                                     width="{image.width}">
-                            {/if}
-                        </div>
+        <div class="tags">
+            {#if post.geners}
+                {#if post.geners.length !== 0}
+                    Genres:
+                    {#each post.geners as tag }
+                        <a class="tag" href="/search?genre={tag}">{tag} </a>
                     {/each}
+                {/if}
+            {/if}
+        </div>
 
-                    {#if meta.chapter_count > 1}
-                        <div id="linkwrapper">
 
-                            {#if current_chapter - 1 >= 0}
-                                <a href="{chapterLink(current_chapter - 1)}">« Previous</a>
-                            {/if}
 
-                            {#each [...Array(meta.chapter_count).keys()] as chapter, index}
-                                <a href="{chapterLink(index)}"
-                                   class="{index === current_chapter ? 'iamselected' : ''}">{index}</a>
-                            {/each}
+        {#if post.categories.length !== 0}
 
-                            {#if current_chapter + 1 < meta.chapter_count}
-                                <a href="{chapterLink(current_chapter + 1)} ">Next »</a>
-                            {/if}
-
-                        </div>
-                    {/if}
-                </PageTransision>
-
-            </main>
-
+            Categores:
+            {#each post.categories as tag }
+                <a href="/search?category={tag}">{tag}</a>
+            {/each}
 
         {/if}
-    </article>
-</main>
+
+
+        {#if current_chapter > 0}
+            <p class="font-bold mr-2">
+                Chapter: #{current_chapter}
+            </p>
+        {/if}
+
+    </div>
+
+    <hr class="separator bg-[#5b5b5b] mx-auto w-5/6 mb-5">
+
+    <PageTransision pathname={current_chapter}>
+        {#each chapter.assets as asset}
+            <div>
+                {#if asset.indexInChapter < 2}
+                    <img class="h-auto w-full"
+                         src="/api/asset/proxy/{asset.id}"
+                         alt="{asset.indexInChapter}"
+                         loading="eager"
+                         fetchpriority="high"
+                         height="{asset.height}"
+                         width="{asset.width}">
+                {:else}
+                    <img use:lazyLoad={`/api/asset/proxy/${asset.id}`}
+                         class="pusle_anim h-auto w-full"
+                         alt="{asset.indexInChapter}"
+                         height="{asset.height}"
+                         width="{asset.width}"
+                         loading="eager"
+                         fetchpriority="high">
+                {/if}
+            </div>
+        {/each}
+
+        {#if post.chapterCount > 1}
+            <div id="linkwrapper">
+
+                {#if current_chapter - 1 >= 0}
+                    <a href="{chapterLink(current_chapter - 1)}">« Previous</a>
+                {/if}
+
+                {#each [...Array(post.chapterCount).keys()] as chapter, index}
+                    <a href="{chapterLink(index)}"
+                       class="{index === current_chapter ? 'iamselected' : ''}">{index}</a>
+                {/each}
+
+                {#if current_chapter + 1 < post.chapterCount}
+                    <a href="{chapterLink(current_chapter + 1)} ">Next »</a>
+                {/if}
+
+            </div>
+        {/if}
+    </PageTransision>
+</div>
+
+
 
 <style>
     .iamselected {
         color: red;
-    }
-
-    header {
-        margin-bottom: 1.5em;
     }
 
     .separator {
@@ -181,21 +180,15 @@
         color: #b6b6b6;
     }
 
-    #creation {
+    .creation {
         font-family: 'Public Sans', sans-serif;
         color: #808080;
     }
 
-    /*#chaptertitle {*/
-    /*    font-family: 'Public Sans', sans-serif;*/
-    /*    font-weight: 500;*/
-    /*    font-size: 1.2em;*/
-    /*}*/
-
-    .content_image {
-        margin-left: auto;
-        margin-right: auto;
-        display: block;
+    #chaptertitle {
+        font-family: 'Public Sans', sans-serif;
+        font-weight: 500;
+        font-size: 1.2em;
     }
 
     #linkwrapper * {
@@ -234,33 +227,11 @@
         cursor: pointer;
     }
 
-    .image-wrapper {
-        margin-bottom: 2px;
-    }
-
-    img {
-        max-width: 100%;
-        height: fit-content;
-        object-fit: scale-down;
-    }
-
-    .content {
-        /*padding-top: 20px;*/
-        padding-right: 10px;
-        padding-left: 10px;
-        padding-bottom: 10px;
-    }
-
     .pusle_anim {
         animation: loading-animation 2s ease-in-out infinite;
         background-color: #343434;
         background-repeat: no-repeat;
-        background-image: linear-gradient(
-                90deg,
-                #343434,
-                #505050,
-                #343434
-        );
+        background-image: linear-gradient(90deg, #343434, #505050, #343434);
     }
 
     @keyframes loading-animation {
@@ -270,19 +241,5 @@
         100% {
             background-position: calc(1000px + 100%) 0;
         }
-    }
-
-
-    @media screen and (max-width: 500px) {
-        .content {
-            width: 100%;
-            padding: 10px 0 0 0;
-            margin: 0;
-        }
-
-        header {
-            text-align: center;
-        }
-
     }
 </style>

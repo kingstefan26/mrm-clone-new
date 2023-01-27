@@ -7,7 +7,7 @@
 
     export let doublePageview;
     export let chapter;
-    export let meta;
+    export let post;
     export let current_chapter;
 
     const preloadImage = (url) => {
@@ -34,7 +34,7 @@
                     // go back a chapter
                     current_chapter -= 1;
                     // and return the end of the previos (now current) chapter
-                    return chapter.chapter_media.length - 1;
+                    return chapter.assets.length - 1;
                 }
             } else {
                 return currentimage;
@@ -46,10 +46,10 @@
     const getnextimage = () => {
         // if current image + 1 exisist switch to it
         const nextImageIndex = currentimage + 1;
-        if (nextImageIndex < chapter.chapter_media.length) { // does next image exists
+        if (nextImageIndex < chapter.assets.length) { // does next image exists
 
             // if the image after that exists preload it
-            const imageAfterThat = chapter.chapter_media[currentimage + 2]
+            const imageAfterThat = chapter.assets[currentimage + 2]
             if (imageAfterThat) {
 
                 preloadImage(imageAfterThat.path)
@@ -57,7 +57,7 @@
 
             // return the image index to be displayed
             return nextImageIndex;
-        } else if (current_chapter + 1 < meta.chapter_count) { // next image does not exist, check for next chapter
+        } else if (current_chapter + 1 < post.chapter_count) { // next image does not exist, check for next chapter
 
             // reset image state to beginning
             currentimage = 0;
@@ -71,7 +71,7 @@
         return currentimage
     };
 
-    const chapterLink = (index) => `/post/${meta.title}/${index}`
+    const chapterLink = (index) => `/post/${post.id}/${index}`
 
     $: (
         goto(chapterLink(current_chapter))
@@ -111,7 +111,7 @@
         if (bookmarks) {
             let bookmarkobj = JSON.parse(bookmarks);
 
-            const thisstorybooksmarks = bookmarkobj.filter(bookmark => bookmark.id === meta.id);
+            const thisstorybooksmarks = bookmarkobj.filter(bookmark => bookmark.id === post.id);
 
 
             let largestchapter = 0;
@@ -136,9 +136,9 @@
         let bookmark = {
             chapter: current_chapter,
             image: currentimage,
-            id: meta.id,
-            title: meta.title,
-            poster: meta.poster_path
+            id: post.id,
+            title: post.title,
+            poster: post.poster_path
         };
         const bookmarksks = JSON.parse(localStorage.getItem("bookmarks"));
         console.log(bookmarksks);
@@ -208,17 +208,17 @@
 
             <div class="head-wrapper">
                 <div class="head">
-                    <h2>{meta.title}</h2>
+                    <h2>{post.title}</h2>
 
                     <select class="chapter-picker" bind:value={current_chapter} id="chapter">
 
-                        {#each [...Array(meta.chapter_count).keys()] as i}
-                            <option value="{i}">ch.{i}</option>
-                        {/each}
+                        <!--{#each [...Array(post.chapter_count).keys()] as i}-->
+                        <!--    <option value="{i}">ch.{i}</option>-->
+                        <!--{/each}-->
                     </select>
 
                     <select class="image-picker" bind:value={currentimage} id="image">
-                        {#each chapter.chapter_media as _, index}
+                        {#each chapter.assets as _, index}
                             <option value="{index}">{index}</option>
                         {/each}
                     </select>
@@ -233,7 +233,7 @@
 
                 <!--          <button id="back-touch" on:click={() => { currentimage = getpreviosimage(chapters); }}></button>-->
 
-                <img src="{chapter.chapter_media[currentimage].path}" alt="{currentimage}">
+                <img src="/api/asset/proxy/{chapter.assets[currentimage].id}" alt="{currentimage}">
 
 
                 <!--          <button id="forward-touch" on:click={() => { currentimage = getnextimage(chapters) }}></button>-->

@@ -1,1 +1,2 @@
 avifenc -a tune=ssim -d 10 -y 420 -s 0 -j all -a cq-level=16 -a sharpness=1 -a color:sharpness=1 in.file out.file
+for file in ./folder/*; avifenc -a tune=ssim -d 10 -y 420 -s 0 -j all -a cq-level=16 -a sharpness=1 -a color:sharpness=1 $file $file.avif; end

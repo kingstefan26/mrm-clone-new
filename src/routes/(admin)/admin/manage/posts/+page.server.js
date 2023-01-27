@@ -3,7 +3,7 @@ import {getFeed} from "$lib/api/server/controler.js";
 
 /** @type {import('./$types').Load} */
 export async function load() {
-    let feed = getFeed(0, 10);
+    let feed = await getFeed(0, 10, true);
 
     if (feed.posts.length === 0) {
         throw error(404, {
@@ -11,23 +11,5 @@ export async function load() {
         })
     }
 
-    // the test post!!!
-    // const feed1 = {
-    //     posts: []
-    // }
-    //
-    // for (let i = 0; i < feed.posts.length; i++) {
-    //     if(feed.posts[i].id === 'Testing story'){
-    //         feed1.posts.push(feed.posts[i])
-    //         feed1.posts.push(feed.posts[i])
-    //         feed1.posts.push(feed.posts[i])
-    //     }
-    // }
-    //
-    // feed = feed1
-
-    return {
-        feed
-    }
-
+    return {feed}
 }

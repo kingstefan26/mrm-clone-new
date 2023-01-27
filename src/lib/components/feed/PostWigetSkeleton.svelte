@@ -1,5 +1,5 @@
 <style>
-    .pusle_anim {
+    .pulse_anim {
         animation: loading-animation 1.2s ease-in-out infinite;
         background-color: #4b4b4b;
         background-repeat: no-repeat;
@@ -22,13 +22,13 @@
 </style>
 
 <article class="wrapper">
-    <div class="pusle_anim"
+    <div class="pulse_anim"
          style="width: 140px; height: 30px; margin-bottom: 7px; margin-right: auto; margin-left: auto"></div>
-    <div class="pusle_anim"
+    <div class="pulse_anim"
          style="width: 165px; height: 20px; margin-bottom: 5px; margin-right: auto; margin-left: auto"></div>
 
-    <div class="pusle_anim" style="height: 260px; width: 180px; "></div>
-    <div class="pusle_anim"
+    <div class="pulse_anim" style="height: 260px; width: 180px; "></div>
+    <div class="pulse_anim"
          style="width: 80px; height: 20px; margin-top: 1px; margin-right: auto; margin-left: auto"></div>
 
 </article>

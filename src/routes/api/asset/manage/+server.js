@@ -1,0 +1,59 @@
+import {Asset, Author, Chapter, Post} from "$lib/api/server/db.js";
+
+
+export async function POST({locals, request}) {
+    if(!locals.user.admin) {
+        return new Response(
+            JSON.stringify({status: "error", message: "You are not logged in"}),
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+        )
+    }
+
+    let returnData = {status: "ok"}
+
+    const jsonres = await request.json()
+
+    const { reason } = jsonres
+
+    if(!reason) {
+        return new Response(
+            JSON.stringify({status: "Bad Request"}),
+            {
+                status: 404,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+        )
+    }
+
+    if(reason === "getRecent") {
+
+        let recentAssets = await Asset.findAll({
+            limit: 10,
+            order: [
+                ['createdAt', 'DESC']
+            ]
+        })
+
+        recentAssets = JSON.parse(JSON.stringify(recentAssets))
+
+        returnData = {status: "ok", recentAssets}
+
+    }
+
+
+
+    return new Response(
+        JSON.stringify(returnData),
+        {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+    )
+}

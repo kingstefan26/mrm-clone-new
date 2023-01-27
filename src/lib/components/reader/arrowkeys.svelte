@@ -3,7 +3,6 @@
 
     const dispatch = createEventDispatcher();
 
-
     function handleKeydown({ keyCode }) {
         if (keyCode !== 39 && keyCode !== 37) return;
 

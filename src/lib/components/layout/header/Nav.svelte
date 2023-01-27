@@ -4,17 +4,14 @@
 
 
     const links = [
-        // {Name:"BARA",link:"/genre/bara/"},
-        // {Name:"MANGA",link:"/yaoi-manga/"},
-        // {Name:"VIDEO",link:"/video/"},
-        // {Name:"RANDOM",link:"search/?sort=sort_by_random"},
-        // {Name:"POPULAR",link:"/#top-posts-2"},
-        // {Name:"ASK",link:"/whats-that-book"},
-        // {Name:"UPLOAD", link:"/upload"},
-        {Name: "test", link: "/test"},
-        {Name: "404", link: "/EXAMPLE"},
-        {Name: "posts", link: "/posts"},
-        {Name: "feed", link: "/altfeed"}
+        {Name:"BARA",link:"/genre/bara/"},
+        {Name:"MANGA",link:"/yaoi-manga/"},
+        {Name:"VIDEO",link:"/video/"},
+        {Name:"RANDOM",link:"search/?sort=sort_by_random"},
+        {Name:"POPULAR",link:"/#top-posts-2"},
+        {Name:"ASK",link:"/whats-that-book"},
+        {Name:"UPLOAD", link:"/upload"},
+        // {Name: "feed", link: "/altfeed"}
     ]
 
 </script>

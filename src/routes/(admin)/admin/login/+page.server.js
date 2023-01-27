@@ -1,27 +1,26 @@
 import { fail, redirect } from '@sveltejs/kit';
-import {authenticateUser, verifyUserToken} from "$lib/api/server/controler.js";
+import {authenticateUser} from "$lib/api/server/controler.js";
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ locals }) {
-    if (locals.user.username) throw redirect(307, '/admin');
+    if (locals.user && locals.user.admin) {
+        throw redirect(307, '/admin');
+    }
 }
 
 /** @type {import('./$types').Actions} */
 export const actions = {
     default: async ({ cookies, request }) => {
-        const data = await request.formData();
+        const formData = await request.formData();
 
-        let token = await authenticateUser(data.get('email'), data.get('password'))
-
-        console.log(token)
+        let token = await authenticateUser(formData.get('email'), formData.get('password'))
 
         if(!token){
+            console.log("login failed")
             return fail(401);
         } else {
             cookies.set('jwt', token, { path: '/' });
             throw redirect(307, '/admin');
         }
-
-
     }
 };

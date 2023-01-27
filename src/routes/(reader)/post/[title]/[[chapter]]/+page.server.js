@@ -1,26 +1,44 @@
-import { error } from '@sveltejs/kit';
-import {getChapter, getPost} from "$lib/api/server/controler.js";
+import {getChapterWithPost} from "$lib/api/server/controler.js";
+import {error} from "@sveltejs/kit";
+import {View} from "$lib/api/server/db.js";
 
 /** @type {import('./$types').Load} */
 export async function load({params}) {
     const chapterIndex = params.chapter ? Number.parseInt(params.chapter) : 0
     const postId = params.title
 
-    const post = await getPost(params.title)
+    const post = await getChapterWithPost(postId, chapterIndex)
+    if(!post){
+        throw error(404, `Post ${postId} at chapter ${chapterIndex} not found`)
+    }
+    // delete chapters that are not pulbished
+    post.chapters = post.chapters.filter(chapter => chapter.published)
 
-    if (!post) {
-        throw error(404, "Could not find this post");
+
+    if(post.chapters.length === 0){
+        throw error(404, `Could not find chapter ${chapterIndex} in post ${postId}`)
     }
 
-    const { chapter } = await getChapter(postId, chapterIndex)
+    post.chapters = post.chapters.map(chapter => {
+        chapter.assets = chapter.assets.map(asset => {
+            return {
+                width: asset.versions[0].width,
+                height: asset.versions[0].height,
+                lang: asset.versions[0].lang,
+                id: asset.id,
+                indexInChapter: asset.indexInChapter,
+            }
+        })
+        return chapter
+    })
 
-    chapter.chapter_media.forEach(mediaElement => {
-        mediaElement.path = mediaElement.path.startsWith("http") ? mediaElement.path :  mediaElement.path
+    View.create({
+        postId: postId,
+        chapterId: post.chapters[0].id
     })
 
     return {
         current_chapter: chapterIndex,
-        chapter,
-        meta: post
+        post
     }
 }

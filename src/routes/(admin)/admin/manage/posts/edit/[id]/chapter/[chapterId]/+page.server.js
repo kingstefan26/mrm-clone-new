@@ -1,16 +1,18 @@
-import { error } from '@sveltejs/kit';
-import {getChapter} from "$lib/api/server/controler.js";
+import {error} from '@sveltejs/kit';
+import {getChapterWithAssets} from "$lib/api/server/controler.js";
 
 /** @type {import('./$types').Load} */
 export async function load({params}) {
-    const chapter = await getChapter(params.id, params.chapterId)
-    console.log(chapter)
-    if (!chapter || Object.keys(chapter).length === 0) {
-        throw error(404, "Invalid Chapter");
+
+    const chapter = await getChapterWithAssets(params.id, params.chapterId)
+
+    if (!chapter) {
+        return error(404, "Chapter not found")
     }
 
+    chapter.assets.sort((a, b) => a.indexInParentChapter - b.indexInParentChapter)
+
     return {
-        chapter,
-        postId: params.id
+        chapter
     }
 }

@@ -7,9 +7,9 @@
 </script>
 
 
-<main class="grid grid-rows-[auto,1fr] h-screen dark:bg-stone-600">
+<main class="grid grid-rows-[auto,1fr] h-screen max-h-screen bg-stone-600">
     <nav>
-        <AdminNav user={data.user} />
+        <AdminNav user={data.user} postCount="{data.postCount}" viewCount="{data.viewCount}" />
     </nav>
 
     <section>

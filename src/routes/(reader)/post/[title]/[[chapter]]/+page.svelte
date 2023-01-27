@@ -1,4 +1,3 @@
-<!-- http://localhost:1337/api/posts?filters[title][$eq]=City%20Boy%20to%20Seto%20no%20Shima%203&populate=chapters,localizations,chapter_media-->
 <script>
     import Dobulepage from "$lib/components/reader/dobulepage.svelte";
     import Singlepage from "$lib/components/reader/singlepageview.svelte";
@@ -7,43 +6,49 @@
     /** @type {import('./$types').Data} */
     export let data;
 
-    let { current_chapter, chapter, meta } = data;
+    let { current_chapter, post } = data;
+    let chapter
     $: (
-        { current_chapter, chapter, meta } = data
+        { current_chapter, post } = data
     )
 
-    const BASE_URL = "https://boney.kokoniara.software/";
+    $: {
+        chapter = post.chapters[0]
+    }
+
+    const BASE_URL = "https://boney.kokoniara.software/api/asset/proxy/";
 </script>
 
 
 <svelte:head>
-    {#if meta}
-        <title>{meta.title} - Mrm-clone</title>
-        {#if meta.description}
-            <meta name="description" content="{meta.description}">
-            <meta property="og:description" content="{meta.description}">
-            <meta property="twitter:description" content="{meta.description}">
-        {/if}
-        {#if meta.poster_path}
-            <meta property="twitter:image" content="{BASE_URL + meta.poster_path}">
-            <meta property="og:image" content="{BASE_URL + meta.poster_path}">
-            <meta property="twitter:card" content="{BASE_URL + meta.poster_path}">
-        {/if}
-        <meta name="title" content="{meta.title}, read now on Mrm-clone">
-        <meta property="og:type" content="website">
-        <meta property="og:title" content="{meta.title}, read now on Mrm-clone">
 
-        <meta property="twitter:title" content="{meta.title}, read now on Mrm-clone">
+    {#if post}
+        <title>{post.title} - Mrm-clone</title>
+        {#if post.description}
+            <meta name="description" content="{post.description}">
+            <meta property="og:description" content="{post.description}">
+            <meta property="twitter:description" content="{post.description}">
+        {/if}
+        {#if post.posterAssetId}
+            <meta property="twitter:image" content="{BASE_URL + post.posterAssetId}">
+            <meta property="og:image" content="{BASE_URL + post.posterAssetId}">
+            <meta property="twitter:card" content="{BASE_URL + post.posterAssetId}">
+        {/if}
+        <meta name="title" content="{post.title}, read now on Mrm-clone">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="{post.title}, read now on Mrm-clone">
+
+        <meta property="twitter:title" content="{post.title}, read now on Mrm-clone">
     {/if}
 
     <meta property="twitter:url" content="https://boney.kokoniara.software/">
 </svelte:head>
 
-{#if meta}
+{#if post}
     {#if $doublePageview}
-        <Dobulepage {doublePageview} {chapter} {meta} {current_chapter} />
+        <Dobulepage {doublePageview} {chapter} {post} {current_chapter} />
     {:else }
-        <Singlepage {doublePageview} {chapter} {meta} {current_chapter} />
+        <Singlepage {doublePageview} {chapter} {post} {current_chapter} />
     {/if}
 {/if}
 

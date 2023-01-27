@@ -1,14 +1,10 @@
 <script>
-    export let post = {
-        title: undefined,
-        coverpicurl: "",
-        id: 0,
-        author: undefined,
-        lang: undefined,
-        link: `/post/${post.title}`,
-        chapter_count: 0
-    };
-    export let link = `/post/${post.title}`
+    export let post;
+
+    export let link = `/post/${post.id}`
+
+    let posterPath = `/api/asset/proxy/${post.posterAssetId}`
+
     export let showTags = true
 </script>
 
@@ -32,7 +28,7 @@
 
     <section>
         <a data-sveltekit-preload-data class="center no-underline w-[180px] h-[260px]" href="{link}">
-            <img alt="Poster for {post.title}" src={post.poster.path} class="object-cover" style="background: rgb(96, 96, 96)" height="260" width="180">
+            <img alt="Poster for {post.title}" src={posterPath} class="object-cover" style="background: rgb(96, 96, 96)" height="260" width="180">
         </a>
         {#if post.chapter_count > 1 && showTags}
             <div class="chapter_links_container flex flex-wrap justify-center max-w-full">

@@ -11,7 +11,7 @@
 
 
 <div class="container mt-10 border-2 p-6 max-w-sm mx-auto lg space-x-3 shadow font-serif space-x-3">
-    <h1 class="bold text-black text-4xl">
+    <h1 class="bold text-white text-4xl">
         Sign In
     </h1>
 
@@ -43,16 +43,6 @@
             Need an account?
         </a>
     </p>
-
-    <!--{#if a()}-->
-    <!--    <br>-->
-    <!--    <div class="grid place-items-center mt-6">-->
-    <!--        <button class="text-white bg-amber-400 p-3 pressdown_effect shadow-xl rainbow_pulse rounded-xl font-extrabold font-mono">-->
-    <!--            Login Using PassKey-->
-    <!--        </button>-->
-    <!--    </div>-->
-    <!--{/if}-->
-
 
 
 </div>
