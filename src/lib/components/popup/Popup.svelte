@@ -43,6 +43,8 @@
 
     .overlay {
         position: absolute;
+        width: 100vw;
+        height: 100vh;
         top: 0;
         bottom: 0;
         left: 0;
@@ -52,6 +54,7 @@
     }
 
     .popup {
+        position: relative;
         margin-top: 300px;
         margin-right: auto;
         margin-left: auto;
@@ -62,7 +65,6 @@
         border: 1px solid #666;
         width: 80%;
         box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
-        position: relative;
     }
 
     .multipageContainer {

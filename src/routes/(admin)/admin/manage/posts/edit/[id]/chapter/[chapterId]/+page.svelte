@@ -105,6 +105,11 @@
         await updateChapterAssets()
     }
 
+
+    function changedPublishedStatus(){
+
+    }
+
 </script>
 
 <svelte:head>
@@ -112,10 +117,6 @@
 </svelte:head>
 
 <div class="bg-stone-600 max-w-full">
-    {#key data}
-        {JSON.stringify(data)}
-    {/key}
-
 
     <div class="w-full h-min flex ">
         <button on:click={goto('/admin/manage/posts/edit/' + data.chapter.postId)}
@@ -134,12 +135,18 @@
         <EditableAtribute on:save={pushChapterData} bind:loading={updatingServer} bind:attribute={data.chapter.name}
                           name="Chapter Name"/>
         <div>
-            <EditibleCheckMark on:save={pushChapterData} bind:loading={updatingServer} name="Published"
-                               bind:checked={data.chapter.published}/>
-            <EditibleCheckMark on:save={pushChapterData} bind:loading={updatingServer} name="Western"
-                               bind:checked={data.chapter.western}/>
-            <EditibleCheckMark on:save={pushChapterData} bind:loading={updatingServer} name="Contains Sensitive Content"
-                               bind:checked={data.chapter.sensitiveContent}/>
+            <EditibleCheckMark on:save={({detail}) => {data.chapter.published = detail.checked; pushChapterData()}}
+                               bind:loading={updatingServer}
+                               name="Published"
+                               checked={data.chapter.published}/>
+            <EditibleCheckMark on:save={({detail}) => {data.chapter.western = detail.checked; pushChapterData()}}
+                               bind:loading={updatingServer}
+                               name="Western"
+                               checked={data.chapter.western}/>
+            <EditibleCheckMark on:save={({detail}) => {data.chapter.sensitiveContent = detail.checked; pushChapterData()}}
+                               bind:loading={updatingServer}
+                               name="Contains Sensitive Content"
+                               checked={data.chapter.sensitiveContent}/>
         </div>
     </div>
 

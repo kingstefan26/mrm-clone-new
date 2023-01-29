@@ -5,8 +5,8 @@
     export let postId
 
     async function setNewAsset(event) {
-        console.log("CHANGING THE POSTER ASSETS ID TO: " + event.detail.asset.id)
-        posterAssetId = event.detail.asset.id
+        console.log("CHANGING THE POSTER ASSETS ID TO: ", event.detail)
+        posterAssetId = event.detail.newAsset.id
 
         await fetch(`/api/manage/post/poster`, {
             method: 'POST',

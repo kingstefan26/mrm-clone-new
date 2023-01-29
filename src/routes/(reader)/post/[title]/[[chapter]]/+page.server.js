@@ -8,7 +8,7 @@ export async function load({params}) {
     const postId = params.title
 
     const post = await getChapterWithPost(postId, chapterIndex)
-    if(!post){
+    if(!post || !post.published){
         throw error(404, `Post ${postId} at chapter ${chapterIndex} not found`)
     }
     // delete chapters that are not pulbished
@@ -36,6 +36,8 @@ export async function load({params}) {
         postId: postId,
         chapterId: post.chapters[0].id
     })
+
+    console.log("post", post)
 
     return {
         current_chapter: chapterIndex,

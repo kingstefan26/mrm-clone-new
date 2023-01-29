@@ -1,7 +1,4 @@
 import {TokenGenerator} from "$lib/api/server/token-util.js";
-
-const superprivatepassphrase = 'a'
-
 import * as DB from "$lib/api/server/db.js";
 import {
     Asset,
@@ -19,6 +16,8 @@ import path from "path";
 import fs from "fs";
 import sharp from "sharp";
 import {execSync} from "child_process";
+
+const superprivatepassphrase = 'a'
 
 export async function createUser(data = {email:"", passHash: "", username: "",  salt:"", admin:""}) {
     let user = await DB.User.findOne({

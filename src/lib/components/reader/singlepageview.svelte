@@ -13,7 +13,7 @@
         return `${(a.getDate())} ${months[a.getMonth()]} ${(a.getFullYear())}`;
     }
 
-    const chapterLink = (index) => `/post/${post.title}/${index}`
+    const chapterLink = (index) => `/post/${post.id}/${index}`
 
 </script>
 

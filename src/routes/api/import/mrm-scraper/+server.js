@@ -6,6 +6,7 @@ import {Asset, Chapter, Post} from "$lib/api/server/db.js";
 // unzip the buffer
 import unzip from "unzipper";
 import {createAssetVersion} from "$lib/api/server/controler.js";
+import {addChapterToPost} from "$lib/api/server/controlers/ChapterController.js";
 
 export async function POST({locals, request}) {
     if (!locals.user.admin) {
@@ -79,7 +80,7 @@ export async function POST({locals, request}) {
     })
 
     // add the chapter to the post
-    await chapter.setPost(post)
+    await addChapterToPost(post, chapter)
 
 
     // get the asset list

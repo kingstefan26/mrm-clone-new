@@ -1,14 +1,17 @@
 <script>
     export let name
-    export let checked
+    export let checked = false
     export let loading = false
 
     import {createEventDispatcher} from 'svelte';
 
     const dispatch = createEventDispatcher();
 
-    function forward() {
-        dispatch('save');
+    function forward(event) {
+        checked = event.target.checked
+        dispatch('save', {
+            checked
+        });
     }
 </script>
 

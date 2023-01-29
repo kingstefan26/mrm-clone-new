@@ -1,6 +1,6 @@
 import {createAssetVersion} from "$lib/api/server/controler.js";
-import {Asset, Chapter, Post} from "$lib/api/server/db.js";
-import {addChapterToPost} from "$lib/api/server/controlers/ChapterController.js";
+import {Asset, Post} from "$lib/api/server/db.js";
+import {createNextChapter} from "$lib/api/server/controlers/ChapterController.js";
 
 export async function POST({locals, request}) {
     if (!locals.user.admin) {
@@ -11,30 +11,16 @@ export async function POST({locals, request}) {
         })
     }
 
-
-    const title = 'pov: article'
-    // generate radom uuid as the id
-    const id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-
-    // create a Post from meta.title
-    const post = await Post.create({
-        title: title,
-        id: id,
-        published: false
-    })
-
-    // create a chapter
-    const chapter = await Chapter.create({
-        name: "number One",
-        published: true,
-        indexInParentPost: 0
-    })
-
-
-    await addChapterToPost(post, chapter)
-
     // read form data from request
     const formData = await request.formData()
+
+    const post = await Post.findOne({
+      where: {
+          id: formData.get('postId')
+      }
+    })
+
+    const chapter = await createNextChapter(post)
 
     const metaText = formData.get('meta')
     const meta = JSON.parse(metaText)
@@ -86,11 +72,6 @@ export async function POST({locals, request}) {
     for (const image of mergedImages) {
         const asset = await Asset.create({indexInChapter: i})
         await asset.setChapter(chapter)
-        if (i === 0) {
-            post.posterAssetId = asset.id
-            await post.save()
-        }
-        i++
         for (const type of imageTypes) {
             const blob = image[type]
             // Get buffer from blob
@@ -98,9 +79,10 @@ export async function POST({locals, request}) {
             const version = await createAssetVersion(new Uint8Array(assetBuffer), 'en')
             await asset.addAssetData(version)
         }
+        i++
     }
 
-    return new Response(JSON.stringify({status: "ok", data: {id: id}}), {
+    return new Response(JSON.stringify({status: "ok", data: {indexInParentPost: chapter.indexInParentPost}}), {
         headers: {
             'Content-Type': 'application/json'
         }

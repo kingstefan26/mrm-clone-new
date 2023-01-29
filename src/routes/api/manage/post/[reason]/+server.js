@@ -1,6 +1,5 @@
 import {Asset, Author, Chapter, Post} from "$lib/api/server/db.js";
-import {getMethods} from "$lib/api/server/mock.js";
-
+import {createNextChapter} from "$lib/api/server/controlers/ChapterController.js";
 
 export async function POST({locals, request, params}) {
     if(!locals.user.admin) {
@@ -89,21 +88,11 @@ export async function POST({locals, request, params}) {
     if(params.reason === 'chapter') {
         const {name, postId} = jsonres
 
-        // creating chapter for post with id postId and with name name
         const post = await Post.findOne({where: {id: postId}})
 
-        const chapterCount = await Chapter.count({where: {postId: postId}})
-
-        console.log(chapterCount)
-
-        const chapter = await Chapter.create({name, published: false, indexInParentPost: chapterCount + 1})
-
-        post.addChapter(chapter)
-
-        console.log(`created chapter ${chapter.id} for post ${postId} with name ${name}`)
+        const chapter = await createNextChapter(post, name)
 
         returnData = {status: "ok", data: {newChapterId: chapter.id, chapterIndex: chapter.indexInParentPost}}
-
     }
 
     if(params.reason === 'updatechapter') {
@@ -152,8 +141,13 @@ export async function POST({locals, request, params}) {
         // console.log(`after update`,  updatedAssets)
 
         returnData = {status: "ok", data: {chapter: upadtedChapter}}
+    }
 
+    if(params.reason === 'delete'){
+        const {postId} = jsonres
 
+        await Post.destroy({where: {id: postId}})
+        await Chapter.destroy({where: {postId}})
     }
 
 
