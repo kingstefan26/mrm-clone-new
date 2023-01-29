@@ -4,13 +4,13 @@
 
 
     const links = [
-        {Name:"BARA",link:"/genre/bara/"},
-        {Name:"MANGA",link:"/yaoi-manga/"},
-        {Name:"VIDEO",link:"/video/"},
-        {Name:"RANDOM",link:"search/?sort=sort_by_random"},
-        {Name:"POPULAR",link:"/#top-posts-2"},
-        {Name:"ASK",link:"/whats-that-book"},
-        {Name:"UPLOAD", link:"/upload"},
+        {Name:"BARA",link:"/"},
+        {Name:"MANGA",link:"/"},
+        {Name:"VIDEO",link:"/"},
+        {Name:"RANDOM",link:"/"},
+        {Name:"POPULAR",link:"/"},
+        {Name:"ASK",link:"/"},
+        {Name:"UPLOAD", link:"/"},
         // {Name: "feed", link: "/altfeed"}
     ]
 

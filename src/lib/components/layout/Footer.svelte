@@ -2,11 +2,11 @@
     const links = [
         {Name: "about", link: "/about/"},
         {Name: "privacy policy", link: "/privacy-policy/"},
-        {Name: "terms service", link: "/terms-service/"},
+        {Name: "terms service", link: "/"},
         {Name: "dmca notice", link: "/dmca-notice/"},
         {Name: "contact", link: "/contact/"},
-        {Name: "my bookmark", link: "/bookmarks"},
-        {Name: "login", link: "/login"}
+        {Name: "my bookmark", link: "/"},
+        {Name: "login", link: "/"}
     ]
 </script>
 
