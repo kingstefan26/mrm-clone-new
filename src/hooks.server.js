@@ -27,7 +27,7 @@ export async function handle({event, resolve}) {
 
         if(event.url) {
             if (event.url.pathname.startsWith("/admin/") && !event.url.pathname.startsWith('/admin/login') && !user.admin) {
-                return Response.redirect(`${event.url.origin}/admin/login`, 307)
+                return redirect(307, `${event.url.origin}/admin/login`)
             }
         }
     }
