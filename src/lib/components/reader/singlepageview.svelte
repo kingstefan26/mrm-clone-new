@@ -71,7 +71,7 @@
         <!-- lang choser that -->
         <div class="tags">
             {#if post.languages}
-                {#if post.languages.length !== 0}
+                {#if post.languages.length > 1}
                     Available in:
                     {#each post.languages as lang }
                         <!-- button that will change langOverride variable to lang -->
