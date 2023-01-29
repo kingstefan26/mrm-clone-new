@@ -14,6 +14,7 @@
     }
 
     const chapterLink = (index) => `/post/${post.id}/${index}`
+    let langOverride = '';
 
 </script>
 
@@ -67,6 +68,20 @@
             {/if}
         </div>
 
+        <!-- lang choser that -->
+        <div class="tags">
+            {#if post.languages}
+                {#if post.languages.length !== 0}
+                    Available in:
+                    {#each post.languages as lang }
+                        <!-- button that will change langOverride variable to lang -->
+                        <button class="tag" on:click={() => { langOverride = `?lang=${lang}`; }}>
+                            {lang}
+                        </button>
+                    {/each}
+                {/if}
+            {/if}
+        </div>
 
 
         {#if post.categories.length !== 0}
@@ -94,14 +109,14 @@
             <div>
                 {#if asset.indexInChapter < 2}
                     <img class="h-auto w-full"
-                         src="/api/asset/proxy/{asset.id}"
+                         src="/api/asset/proxy/{asset.id}{langOverride}"
                          alt="{asset.indexInChapter}"
                          loading="eager"
                          fetchpriority="high"
                          height="{asset.height}"
                          width="{asset.width}">
                 {:else}
-                    <img use:lazyLoad={`/api/asset/proxy/${asset.id}`}
+                    <img use:lazyLoad={`/api/asset/proxy/${asset.id}${langOverride}`}
                          class="pusle_anim h-auto w-full"
                          alt="{asset.indexInChapter}"
                          height="{asset.height}"

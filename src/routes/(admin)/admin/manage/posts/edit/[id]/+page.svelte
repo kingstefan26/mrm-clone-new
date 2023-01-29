@@ -61,18 +61,11 @@
     async function uploadDir(event) {
         const formData = new FormData();
 
-        const meta = {files: []}
-        for (let i = 0; i < event.target.files.length; i++) {
-            const file = event.target.files[i];
-            console.log(file)
-            meta.files.push({
-                name: file.name,
-                formname: `file${i}`
-            })
-            formData.append(`file${i}`, file);
+        // add each file to formData with their respective data
+        for (const file of event.target.files){
+            formData.append(file.name, file)
         }
 
-        formData.append('meta', JSON.stringify(meta))
         formData.append('postId', post.id)
 
         try {

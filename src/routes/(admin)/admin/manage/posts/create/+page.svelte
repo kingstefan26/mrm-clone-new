@@ -45,18 +45,11 @@
     async function uploadDir(event) {
         const formData = new FormData();
 
-        const meta = {files: []}
-        for (let i = 0; i < event.target.files.length; i++) {
-            const file = event.target.files[i];
-            console.log(file)
-            meta.files.push({
-                name: file.name,
-                formname: `file${i}`
-            })
-            formData.append(`file${i}`, file);
+        // add each file to formData with their respective data
+        for (const file of event.target.files){
+            formData.append(file.name, file)
         }
 
-        formData.append('meta', JSON.stringify(meta))
 
         try {
             const res = await uploadFormData('/api/import/folder', formData, (progress) => {
@@ -68,6 +61,7 @@
             }
             const json = JSON.parse(body)
             console.log(json)
+            // await goto(`/admin/manage/posts/create`)
             await goto(`/admin/manage/posts/edit/${json.data.id}`)
         } catch (e){
             alert('Something went wrong')
@@ -119,12 +113,15 @@
                         This will import all files in the folder you select.
                         The first file will be used as the cover image.
                         The rest will be used as the post content.
-                        Please note that the files should be numbered in their file names in the order you want them to appear in the post.
+                        The Filed should be numbered in the order you want them to appear. eg 1.jpg 2.jpg 3.jpg
+                        You can also use Internalisation by adding a language code to the file name. eg 1.eng.jpg 1.de.jpg
+                        <a class="underline" href="https://www.loc.gov/standards/iso639-2/php/code_list.php" target="_blank">(ISO lang codes)</a>
                     </p>
                     <label class="text-white text-xl font-bold">
                         Import folder
                     </label>
                     <input on:change={uploadDir}
+                           multiple
                            webkitdirectory
                            class="bg-stone-500 text-white p-0.5"
                            type="file">
