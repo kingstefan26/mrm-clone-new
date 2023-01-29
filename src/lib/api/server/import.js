@@ -52,13 +52,14 @@ export async function chapterAssetsFromFormData(chapter, formdata, post = undefi
                 continue
             }
             const [index, lang, type] = filename.split('.')
-            if (!mergedImages[index]) {
-                mergedImages[index] = {}
+            const numberIndex = parseInt(index)
+            if (!mergedImages[numberIndex]) {
+                mergedImages[numberIndex] = {}
             }
-            if (!mergedImages[index][lang]) {
-                mergedImages[index][lang] = {}
+            if (!mergedImages[numberIndex][lang]) {
+                mergedImages[numberIndex][lang] = {}
             }
-            mergedImages[index][lang][type] = blob
+            mergedImages[numberIndex][lang][type] = blob
         }
         // sort by index
         mergedImages.sort((a, b) => {
