@@ -5,11 +5,33 @@ import {Asset, AssetVersion} from "$lib/api/server/db.js";
 /** @type {import('./$types').RequestHandler} */
 export async function GET({params, request, url}) {
     const accepts = request.headers.get('accept')
-    const acceptsWebp = accepts.includes('webp')
-    const acceptsAvif = accepts.includes('avif')
-    const acceptsJxl = accepts.includes('jxl')
+    let acceptsWebp = accepts.includes('webp')
+    let acceptsAvif = accepts.includes('avif')
+    let acceptsJxl = accepts.includes('jxl')
 
     let internalisation = url.searchParams.get('lang')
+
+
+    if(params.formatOverride) {
+        console.log(params.formatOverride)
+        if (params.formatOverride.endsWith('webp')) {
+            acceptsWebp = true
+            acceptsAvif = false
+            acceptsJxl = false
+        } else if (params.formatOverride.endsWith('avif')) {
+            acceptsAvif = true
+            acceptsWebp = false
+            acceptsJxl = false
+        } else if (params.formatOverride.endsWith('jxl')) {
+            acceptsJxl = true
+            acceptsWebp = false
+            acceptsAvif = false
+        } else if (params.formatOverride.endsWith('jpg')) {
+            acceptsJxl = false
+            acceptsWebp = false
+            acceptsAvif = false
+        }
+    }
 
     internalisation = internalisation ? internalisation : 'eng'
 
@@ -95,7 +117,7 @@ export async function GET({params, request, url}) {
     return new Response(stream, {
         headers: {
             "Content-Type": assetVersionUsed.mimeType,
-            "Cache-Control": "max-age=31536000, public",
+            "Cache-Control": "max-age=31536000, public, immutable",
             "Access-Control-Allow-Origin": "https://*.kokoniara.software",
             "ETag": assetVersionUsed.etag
         }
