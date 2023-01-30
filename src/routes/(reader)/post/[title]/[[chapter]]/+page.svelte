@@ -30,9 +30,9 @@
             <meta property="twitter:description" content="{post.description}">
         {/if}
         {#if post.posterAssetId}
-            <meta property="twitter:image" content="{BASE_URL + post.posterAssetId}">
-            <meta property="og:image" content="{BASE_URL + post.posterAssetId}">
-            <meta property="twitter:card" content="{BASE_URL + post.posterAssetId}">
+            <meta property="twitter:image" content="{BASE_URL + post.posterAssetId}/image.jpg">
+            <meta property="og:image" content="{BASE_URL + post.posterAssetId}/image.jpg">
+            <meta property="twitter:card" content="{BASE_URL + post.posterAssetId}/image.jpg">
         {/if}
         <meta name="title" content="{post.title}, read now on Mrm-clone">
         <meta property="og:type" content="website">
