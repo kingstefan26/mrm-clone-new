@@ -18,6 +18,7 @@ import {defineStatus} from "$lib/api/server/models/extra/Status.js";
 import {defineUser} from "$lib/api/server/models/user/User.js";
 import {defineBookmark} from "$lib/api/server/models/user/Bookmark.js";
 import {defineView} from "$lib/api/server/models/analytics/View.js";
+import {defineSeries} from "$lib/api/server/models/extra/Series.js";
 
 
 export const sequelize = new Sequelize(
@@ -49,6 +50,10 @@ Asset.belongsTo(Chapter)
 export const Post = definePost(sequelize);
 Post.hasMany(Chapter)
 Chapter.belongsTo(Post)
+
+export const Series = defineSeries(sequelize);
+Post.belongsTo(Series, {through: "seriesPost"})
+Series.hasMany(Post)
 
 export const Category = defineCategory(sequelize);
 Post.belongsToMany(Category, {through: "categoryPost"})

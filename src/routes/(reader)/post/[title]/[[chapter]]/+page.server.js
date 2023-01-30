@@ -1,6 +1,6 @@
 import {getChapterWithPost} from "$lib/api/server/controler.js";
 import {error} from "@sveltejs/kit";
-import {View} from "$lib/api/server/db.js";
+import {Post, Series, View} from "$lib/api/server/db.js";
 
 /** @type {import('./$types').Load} */
 export async function load({params}) {
@@ -54,6 +54,22 @@ export async function load({params}) {
             western: chapter.western
         }
     })
+
+
+    let seriesCount = 0
+    let seriesLinks = [{}]
+    if(post.seriesId){
+        const seriesPosts = await Post.findAll({where: {seriesId: post.seriesId}})
+        seriesCount = seriesPosts.length
+        seriesLinks = seriesPosts.map(post => {
+            return {
+                id: post.id
+            }
+        })
+    }
+
+    post.seriesCount = seriesCount
+    post.seriesLinks = seriesLinks
 
 
     View.create({

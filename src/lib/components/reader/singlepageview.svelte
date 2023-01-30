@@ -20,7 +20,12 @@
 
 <div class="mx-auto max-w-[1020px]">
     <div class="mr-2 ml-2">
-        <button class="switchvieverstylebtn" on:click={() => { $doublePageview = !$doublePageview; }}>
+<!--        <button class="switchvieverstylebtn"-->
+<!--                on:click={() => { $doublePageview = !$doublePageview; }}-->
+<!--        >-->
+<!--            Reader mode-->
+<!--        </button>-->
+        <button class="switchvieverstylebtn">
             Reader mode
         </button>
 
@@ -93,6 +98,14 @@
 
         {/if}
 
+        {#if post.seriesCount}
+            <div class="tags">
+                This Post is a part of the series, links to parts:
+                {#each post.seriesLinks as link, index}
+                    <a href="/post/{link.id}" class="tag">{index + 1}</a>
+                {/each}
+            </div>
+        {/if}
 
         {#if current_chapter > 0}
             <p class="font-bold mr-2">

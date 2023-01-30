@@ -70,6 +70,6 @@
 <div class="w-full h-10 bg-stone-700 flex justify-center">
     <a class="text-white text-xl my-auto pl-2 pr-2 underline" href="/admin/manage/users">Manage Users</a>
     <a class="text-white text-xl my-auto pl-2 pr-2 underline" href="/admin/manage/posts">Manage Posts</a>
-    <a class="text-white text-xl my-auto pl-2 pr-2 underline" href="/admin/manage/posts">Blah</a>
+    <a class="text-white text-xl my-auto pl-2 pr-2 underline" href="/admin/manage/authors">Manage Authors</a>
     <a class="text-white text-xl my-auto pl-2 pr-2 underline" href="/admin/manage/posts">Blah</a>
 </div>

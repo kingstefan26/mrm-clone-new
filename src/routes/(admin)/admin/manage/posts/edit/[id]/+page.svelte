@@ -10,6 +10,7 @@
     import PublishedEdit from "$lib/components/admin/editor/post/PublishedEdit.svelte";
     import {goto} from "$app/navigation";
     import Popup from "$lib/components/popup/Popup.svelte";
+    import SeriesEdit from "$lib/components/admin/editor/post/SeriesEdit.svelte";
 
     export let data;
 
@@ -142,6 +143,7 @@
             <PublishedEdit post={data.post} postId="{data.post.id}"/>
             <TitleEdit bind:title={data.post.title} postId="{data.post.id}"/>
             <AuthorEdit bind:author={data.post.Author} postId="{data.post.id}"/>
+            <SeriesEdit postId={data.post.id} series={data.post.series} indexInSeries={data.post.indexInSeries}/>
             <DescriptionEdit bind:postId={data.post.id} bind:description={data.post.description}/>
             <TagsEdit bind:tags={data.post.tags} postId="{data.post.id}"/>
             <ExpandableList name="Genres" bind:options={data.post.geners}/>

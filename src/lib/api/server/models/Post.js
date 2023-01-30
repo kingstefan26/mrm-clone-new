@@ -9,7 +9,11 @@ const definePost = (sequelize) => {
         posterAssetId: DataTypes.STRING,
         chapterCount: DataTypes.INTEGER,
         altTitle: DataTypes.STRING,
-        description: DataTypes.STRING
+        description: DataTypes.STRING,
+        indexInSeries: {
+            type:DataTypes.INTEGER,
+            defaultValue: 0
+        }
     })
 }
 

@@ -1,5 +1,6 @@
-import {Asset, Author, Chapter, Post} from "$lib/api/server/db.js";
+import {Asset, Author, Chapter, Post, Series} from "$lib/api/server/db.js";
 import {createNextChapter} from "$lib/api/server/controlers/ChapterController.js";
+import {getMethods} from "$lib/api/server/mock.js";
 
 export async function POST({locals, request, params}) {
     if(!locals.user.admin) {
@@ -150,6 +151,72 @@ export async function POST({locals, request, params}) {
         await Chapter.destroy({where: {postId}})
     }
 
+
+    if(params.reason === 'createSeries') {
+        await Series.create({name: jsonres.name})
+    }
+
+    if(params.reason === 'addToSeries') {
+        const {postId, seriesName} = jsonres
+
+        console.log(`adding post ${postId} to series ${seriesName}`)
+
+        const series = await Series.findOne({where: {name: seriesName}})
+        const post = await Post.findOne({where: {id: postId}})
+
+        await series.addPost(post)
+
+        // change indexes of all posts in the series
+        const posts = await series.getPosts()
+        for (let i = 0; i < posts.length; i++) {
+            const post = posts[i]
+            post.indexInSeries = i
+            await post.save()
+        }
+    }
+
+    if(params.reason === 'updateIndexInSeries') {
+        const {postId, indexInSeries, seriesName} = jsonres
+
+        console.log(`updating post ${postId} index in series ${seriesName} to ${indexInSeries}`)
+
+        // reorder the posts in the series based on the new index
+        const series = await Series.findOne({where: {name: seriesName}})
+        const posts = await series.getPosts()
+
+        await series.removePosts()
+
+        for (let i = 0; i < posts.length; i++) {
+            const post = posts[i]
+            if(post.id === postId){
+                post.indexInSeries = indexInSeries
+                await post.save()
+                await series.addPost(post, {through: {indexInSeries}})
+            } else {
+                post.indexInSeries = i
+                await post.save()
+                await series.addPost(post, {through: {indexInSeries: i}})
+            }
+        }
+
+    }
+
+    if(params.reason === 'removeFromSeries') {
+        const {postId, seriesName} = jsonres
+
+        console.log(`removing post ${postId} from series ${seriesName}`)
+
+        const series = await Series.findOne({where: {name: seriesName}})
+        const post = await Post.findOne({where: {id: postId}})
+
+        await series.removePost(post)
+        // reorder the posts in the series based on the new index
+        const posts = await series.getPosts()
+        for (let i = 0; i < posts.length; i++) {
+            const post = posts[i]
+            await series.addPost(post, {through: {indexInSeries: i}})
+        }
+    }
 
 
 

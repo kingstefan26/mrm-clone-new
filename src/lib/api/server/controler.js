@@ -8,7 +8,7 @@ import {
     Genere,
     Pairing,
     Post,
-    Scanlination,
+    Scanlination, Series,
     Status,
     Tag
 } from "$lib/api/server/db.js";
