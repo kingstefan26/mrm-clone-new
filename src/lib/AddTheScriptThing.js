@@ -4,6 +4,5 @@ export default function (obj) {
         null,
         2
     )}</script>`
-    console.log(a)
     return a
 }

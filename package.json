@@ -36,6 +36,7 @@
 		"@fontsource/public-sans": "^4.5.12",
 		"@sveltejs/adapter-node": "^1.1.4",
 		"dotenv": "^16.0.3",
+		"fuzzysort": "^2.0.4",
 		"jsonwebtoken": "^9.0.0",
 		"moment": "^2.29.4",
 		"pretty-print-json": "^1.4.0",

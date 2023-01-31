@@ -1,6 +1,7 @@
 import {createUser, verifyUserToken} from "$lib/api/server/controler.js";
 import {sequelize} from "$lib/api/server/db.js";
 import {redirect} from "@sveltejs/kit";
+import SearchIndex from "$lib/api/server/search/SearchIndex.js";
 
 
 let dbInnted = false
@@ -16,6 +17,7 @@ export async function handle({event, resolve}) {
             salt: "ar@",
             admin: true
         })
+        await SearchIndex.recreateIndex()
         dbInnted = true
     }
 
