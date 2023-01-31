@@ -23,11 +23,12 @@
         }
         data.chapter.assets = newTracklist
 
-        for (let i = 0; i < data.chapter.assets.length; i++) {
-            data.chapter.assets[i].indexInParentPost = i
-        }
-
-        updateChapterAssets()
+        // for (let i = 0; i < data.chapter.assets.length; i++) {
+        //     data.chapter.assets[i].indexInParentPost = i
+        // }
+        //
+        // updateChapterAssets()
+        alert("changes in chapter order are not saved yet")
         hovering = null
     }
 
