@@ -1,6 +1,4 @@
-import {error} from "@sveltejs/kit";
-import {getFeed} from "$lib/api/server/controler.js";
-import {Author, User} from "$lib/api/server/db.js";
+import {Author} from "$lib/api/server/db.js";
 
 /** @type {import('./$types').Load} */
 export async function load() {

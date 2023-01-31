@@ -36,11 +36,9 @@
         if (data.status === 'ok') {
             author.name = localAuthor
             localAuthor = author.name
-            loading = false
         }
+        loading = false
     }
-
-    let authorsPromise = getAuthors()
 
     async function getAuthors() {
         const res = await fetch(`/api/data/authors`)
@@ -55,7 +53,7 @@
 
 
     const extract = (item) => {
-        return item
+        return item.name
     };
 
 </script>
@@ -65,19 +63,11 @@
     <p class="text-lg text-white">
         Author: {localAuthor}
     </p>
-
-    <!--    <button disabled="{(loading || localAuthor === author.name)}"-->
-    <!--            class="bg-stone-600 p-0.5 mb-0.5"-->
-    <!--            on:click={pushChange}>-->
-    <!--        Push Changes-->
-    <!--    </button>-->
-    <div class="float-right mr-2 min-w-[2rem]">
-        {#if loading}
-            <CircleSpiner color="#ffffff" size="2" unit="rem"/>
-        {/if}
-    </div>
+    {#if loading}
+        <CircleSpiner color="#000000" size="2" unit="rem"/>
+    {/if}
     <div class="text-black m-1">
-        {#await authorsPromise}
+        {#await getAuthors()}
             <p class="text-white">
                 Loading autocomplete...
             </p>
@@ -93,7 +83,8 @@
 
                 <svelte:fragment slot="no-results">
                     <p>
-                        Could not find author "{value}", <a class="underline text-blue-600" href="/admin/manage/authors">Add Them</a>
+                        Could not find author "{value}", <a class="underline text-blue-600"
+                                                            href="/admin/manage/authors">Add Them</a>
                     </p>
                 </svelte:fragment>
             </Typeahead>

@@ -1,4 +1,15 @@
-import {Asset, Author, Chapter, Post, Series} from "$lib/api/server/db.js";
+import {
+    Asset,
+    Author,
+    Category,
+    Chapter,
+    Genere,
+    Pairing,
+    Post,
+    Scanlination,
+    Series, Status,
+    Tag
+} from "$lib/api/server/db.js";
 import {createNextChapter} from "$lib/api/server/controlers/ChapterController.js";
 import {getMethods} from "$lib/api/server/mock.js";
 
@@ -31,11 +42,22 @@ export async function POST({locals, request, params}) {
 
         console.log(`updating post ${postId} author to ${author}`)
 
-        const post = await Post.findOne({where: {id: postId}})
-        // create the author if it doesn't exist
-        const [authorObj, created] = await Author.findOrCreate({where: {name: author}})
+        let post = await Post.findOne({
+            where: {
+                id: postId
+            },
+            include: [Author]
+        })
 
-        await post.setAuthor(authorObj)
+        if(post.author && post.author.name === author) {
+            console.log("author is already set")
+        } else {
+            const authorO = await Author.findOne({where: {name: author}})
+
+            await post.setAuthor(authorO)
+
+            console.log(`set author ${authorO.name} with id ${authorO.id}`)
+        }
 
     }
 
@@ -216,6 +238,27 @@ export async function POST({locals, request, params}) {
             const post = posts[i]
             await series.addPost(post, {through: {indexInSeries: i}})
         }
+    }
+
+
+    if(params.reason === 'createAuthor'){
+        const {name} = jsonres
+
+        console.log(`creating author ${name}`)
+
+        await Author.create({name})
+        returnData = {status: "ok", data: {name}}
+    }
+
+    if(params.reason === 'updateAuthor'){
+        const {longName, id, name} = jsonres
+
+        console.log(`updating author ${id} with name ${name} and longName ${longName}`)
+        const author = await Author.findOne({where: {id}})
+        author.name = name
+        author.longName = longName
+        await author.save()
+        returnData = {status: "ok", data: {name: author.name, longName: author.longName, id: author.id}}
     }
 
 
