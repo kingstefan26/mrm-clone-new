@@ -1,7 +1,6 @@
 <script>
     import Quicklinks from "$lib/components/layout/header/QuickLinks.svelte";
-    import SearchBox from "$lib/components/layout/header/SearchBox.svelte"
-    import TST from "$lib/components/layout/header/TST.svelte";
+    import TST from "$lib/components/layout/header/SearchBox.svelte";
 
 
     const links = [

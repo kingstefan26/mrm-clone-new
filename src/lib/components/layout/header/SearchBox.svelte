@@ -1,90 +1,133 @@
 <script>
-    import RichResult from "$lib/components/layout/header/RichResult.svelte";
+    import {goto} from "$app/navigation";
 
-    const prev = new Map();
+    const cacheMap = new Map();
+    let quickSearchResults = []
 
     function quickSearch(query) {
-        if (prev.has(query)) {
-            quickSearchResoults = prev.get(query);
-            return;
+        if (query.length < 2) return;
+        if (cacheMap.has(query)) {
+            quickSearchResults = cacheMap.get(query);
+        } else {
+            fetch(`/api/search/full?query=${query}&limit=5`)
+                .then(response => response.json())
+                .then(json => {
+                    const {data} = json
+                    cacheMap.set(query, data);
+                    quickSearchResults = data;
+                });
         }
-        fetch(`/api/search/full?query=${query}`)
-            .then(response => response.json())
-            .then(json => {
-                const {data} = json
-                prev.set(query, data);
-                quickSearchResoults = data;
-            });
     }
 
-    let quickSearchResoults = []
+
+    let isFocused = false;
+
+    const onFocus = () => isFocused = true;
+    const onBlur = () => {
+        return isFocused = false;
+        // return isFocused;
+    };
+
+    const newSearchInput = ({link}) => {
+        goto(link);
+    }
+
 </script>
 
-<div class="flex justify-center">
-    <input
-            on:input={e => {
-                console.log(e.target.value);
-                const query = e.target.value;
-                quickSearch(query);
-            }}
-            class=" font-light p-2 text-left rounded-none max-[500px]:w-full min-[500px]:w-1/2"
-            type="text"
-            name="query"
-            id="search-input"
-            placeholder="Search and filter"
-    />
-    <div class="flex max-w-full absolute flex-col">
-        {#each quickSearchResoults as result}
-            <div>
-                Resoult
-                <!--{@html JSON.stringify(result)}-->
-            </div>
-            <!--        <RichResult result={result}/>-->
-        {/each}
-    </div>
+<div class="flex justify-center w-full h-full">
+    <form class="max-[500px]:w-full min-[500px]:w-1/2" autocomplete="off">
+        <input on:input={e => quickSearch(e.target.value)}
+               id="searchfield"
+               class="font-light p-2 text-left rounded-none"
+               type="text"
+               name="searchfield"
+               placeholder="Search"
+               on:focus={onFocus}
+               on:blur={onBlur}
+        >
+        <div class="relative">
+            {#if isFocused === true}
+                <ul class="z-1">
+
+                    {#each quickSearchResults as oneResult}
+                        <li on:mousedown={() => newSearchInput(oneResult)}>
+                            {#if oneResult.type === "post"}
+                                <div class="resultcontainer">
+                                    {oneResult.contents.title}
+                                    <img alt="Poster for post" class="post-poster" src="/api/asset/proxy/{oneResult.contents.posterAssetId}">
+                                </div>
+                            {:else}
+                                <div class="resultcontainer">
+                                    <p>
+                                        <a alt="{oneResult.type}" href="{oneResult.link}">{oneResult.contents}</a>
+                                        <span class="text-gray-500 font-bold">{oneResult.type}</span>
+                                    </p>
+                                </div>
+                            {/if}
+                        </li>
+                    {/each}
+
+                </ul>
+            {/if}
+        </div>
+    </form>
 </div>
 
 <style>
-    form {
-        font-family: helvetica neue, Helvetica, Arial, sans-serif;
+    input {
+        text-align: center;
+        outline: none;
+        display: block;
+        transition: width 0.2s ease-in-out;
+        margin: auto;
+
+        position: relative;
+        border-radius: 0;
+        width: 65%;
+        height: 75%;
+        box-shadow: inset 0 0 10px #868686;
     }
 
-    #search-input {
-        cursor: text;
-        background-color: #fff;
-        border: 1px solid #ddd;
-        color: #333;
-        font-size: 1.2rem;
+    .post-poster {
+        width: 50px;
+        object-fit: contain;
     }
 
-    #search-input:focus-visible {
-        color: #333;
-        outline: 1px solid #333;
+    .resultcontainer {
+        max-height: 4em;
+        display: grid;
+        grid-template-columns: 1fr auto;
     }
 
+
+    input:focus {
+        width: 100%;
+    }
+
+    input:hover {
+        box-shadow: rgba(0, 0, 0, 0.16) 0 4px 8px, rgba(0, 0, 0, 0.23) 0 4px 8px;
+    }
+
+    ul {
+        width: 100%;
+        top: 100%;
+        left: 0;
+        position: absolute;
+        margin: 0;
+    }
 
     li {
-        background: white;
-        position: relative;
-        top: 100%;
-        left: 2px;
-        padding: 10px;
-    }
+        width: 100%;
 
-    li:not(:last-of-type) {
-        border-bottom: 1px solid #e0e0e0;
+        list-style: none;
+
+        padding: 10px;
+        cursor: pointer;
+        background-color: #fff;
     }
 
     li:hover {
-        background-color: #e5e5e5;
-    }
-
-    .selected {
-        background-color: #e5e5e5;
-    }
-
-    .selected:hover {
-        background-color: #cacaca;
+        background-color: lightgray;
     }
 
 </style>
