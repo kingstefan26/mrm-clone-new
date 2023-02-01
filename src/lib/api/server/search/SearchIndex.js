@@ -2,6 +2,7 @@ import {Author, Category, Genere, Pairing, Post, Series, Tag} from "$lib/api/ser
 import fuzzysort from "fuzzysort";
 
 let index = [
+    // filled with stub data to show how it looks, cuz we don't do typescript round here
     {
         type: "post",
         snowflake: "stub title",
@@ -16,10 +17,9 @@ export default class SearchIndex {
 
     static async search(query, options) {
         // mesure time
-        const start = Date.now()
+        console.time("search")
         const newVar = await this.getDataFromIndexResults(await this.fuzzySearch(query, options));
-        const end = Date.now()
-        console.log(`Search took ${end - start}ms for query ${query} found ${newVar.length} results`)
+        console.timeEnd("search")
         return newVar
     }
 
