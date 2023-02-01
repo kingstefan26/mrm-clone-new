@@ -1,5 +1,5 @@
 <script>
-    import Objects from "./Objects.svelte"
+    import {goto} from "$app/navigation";
 
     const prev = new Map();
     let quickSearchResoults = []
@@ -20,58 +20,89 @@
     }
 
 
-    let searchInput = "";
     let isFocused = false;
 
     const onFocus = () => isFocused = true;
-    // const onBlur = () => isFocused = true;
-    const onBlur = () => isFocused = false;
+    const onBlur = () => {
+        return isFocused = false;
+        // return isFocused;
+    };
 
-    const newSearchInput = (oneResult) => {
-        searchInput = oneResult
+    const newSearchInput = ({link}) => {
+        goto(link);
     }
 
 </script>
 
-<form class="w-full" autocomplete="off">
-    <div class="relative">
+<div class="flex justify-center w-full h-full">
+    <form class="max-[500px]:w-full min-[500px]:w-1/2" autocomplete="off">
         <input on:input={e => quickSearch(e.target.value)}
                id="searchfield"
-               class="font-light p-2 text-left rounded-none max-[500px]:w-full min-[500px]:w-1/2"
+               class="font-light p-2 text-left rounded-none"
                type="text"
                name="searchfield"
                placeholder="Search"
-               bind:value={searchInput}
                on:focus={onFocus}
                on:blur={onBlur}
         >
+        <div class="relative">
+            {#if isFocused === true}
+                <ul class="z-1">
 
-    </div>
-    <ul class="absolute z-50">
-        {#if isFocused === true}
-            {#each quickSearchResoults as oneResult}
-                <Objects object={oneResult} on:mousedown={() => newSearchInput(oneResult.type)}/>
-            {/each}
-        {/if}
-    </ul>
-</form>
+                    {#each quickSearchResoults as oneResult}
+                        <li on:mousedown={() => newSearchInput(oneResult)}>
+                            {#if oneResult.type === "post"}
+                                <div class="resultcontainer">
+                                    {oneResult.contents.title}
+                                    <img class="post-poster" src="/api/asset/proxy/{oneResult.contents.posterAssetId}">
+                                </div>
+                            {:else}
+                                <div class="resultcontainer">
+                                    <p>
+                                        {oneResult.contents}
+                                        <span class="text-gray-500 font-bold">{oneResult.type}</span>
+                                    </p>
+                                    <a href="{oneResult.link}"></a>
+                                </div>
+                            {/if}
+                        </li>
+                    {/each}
+
+                </ul>
+            {/if}
+        </div>
+    </form>
+</div>
 
 <style>
     input {
-        position: relative;
-        outline: none;
-        margin-bottom: 0;
-        box-shadow: rgba(0, 0, 0, 0.16) 0 3px 6px, rgba(0, 0, 0, 0.23) 0 3px 6px;
-        display: block;
         text-align: center;
+        outline: none;
+        display: block;
+        transition: width 0.2s ease-in-out;
+        margin: auto;
+
+        position: relative;
         border-radius: 0;
-        margin-left: auto;
-        margin-right: auto;
-        transition: width 0.3s ease-in-out;
+        width: 65%;
+        height: 75%;
+        box-shadow: inset 0 0 10px #868686;
     }
 
+    .post-poster {
+        width: 50px;
+        object-fit: contain;
+    }
+
+    .resultcontainer {
+        max-height: 4em;
+        display: grid;
+        grid-template-columns: 1fr auto;
+    }
+
+
     input:focus {
-        width: 65%;
+        width: 100%;
     }
 
     input:hover {
@@ -79,10 +110,26 @@
     }
 
     ul {
-        padding: 0;
-        width: 330px;
-        margin-left: auto;
-        margin-right: auto;
-        max-height: 215px;
+        width: 100%;
+        top: 100%;
+        left: 0;
+        position: absolute;
+        margin: 0;
     }
+
+    li {
+        width: 100%;
+
+        list-style: none;
+        /*max-height: 100px;*/
+
+        padding: 10px;
+        cursor: pointer;
+        background-color: #fff;
+    }
+
+    li:hover {
+        background-color: lightgray;
+    }
+
 </style>

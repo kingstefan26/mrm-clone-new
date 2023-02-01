@@ -183,18 +183,14 @@ export default class SearchIndex {
             } else if (result.type === "series") {
                 return {
                     type: "series",
-                    contents: {
-                        name: result.snowflake,
-                    },
+                    contents: result.snowflake,
                     link: `/series/${result.snowflake}`
                 }
 
             } else if (result.type === "author") {
                 return {
                     type: "author",
-                    contents: {
-                        name: result.snowflake,
-                    },
+                    contents: result.snowflake,
                     link: `/author/${result.snowflake}`
                 }
             } else if (result.type === "tag") {
@@ -227,7 +223,6 @@ export default class SearchIndex {
         });
         map = await Promise.all(map)
         return map;
-
 
     }
 }
