@@ -4,18 +4,37 @@
     const cacheMap = new Map();
     let quickSearchResults = []
 
-    function quickSearch(query) {
-        if (query.length < 2) return;
-        if (cacheMap.has(query)) {
-            quickSearchResults = cacheMap.get(query);
+    let nextRefresh = undefined;
+
+
+    function quickSearch() {
+        if (searchBoxVal.length === 0) {
+            quickSearchResults = [];
+            return;
+        }
+        if (searchBoxVal.length < 2) return;
+        if (cacheMap.has(searchBoxVal)) {
+            quickSearchResults = cacheMap.get(searchBoxVal);
         } else {
-            fetch(`/api/search/full?query=${query}&limit=5`)
-                .then(response => response.json())
-                .then(json => {
-                    const {data} = json
-                    cacheMap.set(query, data);
-                    quickSearchResults = data;
-                });
+            // throttle this so it happens at most, every 500ms
+            if (nextRefresh !== undefined) {
+                clearTimeout(nextRefresh);
+            }
+
+            nextRefresh = setTimeout(() => {
+                nextRefresh = undefined;
+                fetch(`/api/search/full?query=${searchBoxVal}&limit=5`)
+                    .then(response => response.json())
+                    .then(json => {
+                        const {data} = json
+                        cacheMap.set(searchBoxVal, data);
+                        quickSearchResults = data;
+                    }).catch(err => {
+                    alert("Error searching")
+                    console.error(err);
+                })
+            }, 300);
+
         }
     }
 
@@ -23,20 +42,22 @@
     let isFocused = false;
 
     const onFocus = () => isFocused = true;
-    const onBlur = () => {
-        return isFocused = false;
-        // return isFocused;
-    };
+    const onBlur = () => isFocused = false;
 
-    const newSearchInput = ({link}) => {
+    function newSearchInput({link}) {
+        searchBoxVal = "";
+        quickSearchResults = [];
         goto(link);
     }
+
+    let searchBoxVal = "";
 
 </script>
 
 <div class="flex justify-center w-full h-full">
     <form class="max-[500px]:w-full min-[500px]:w-1/2" autocomplete="off">
-        <input on:input={e => quickSearch(e.target.value)}
+        <input bind:value={searchBoxVal}
+               on:keydown={quickSearch}
                id="searchfield"
                class="font-light p-2 text-left rounded-none"
                type="text"
@@ -54,7 +75,8 @@
                             {#if oneResult.type === "post"}
                                 <div class="resultcontainer">
                                     {oneResult.contents.title}
-                                    <img alt="Poster for post" class="post-poster" src="/api/asset/proxy/{oneResult.contents.posterAssetId}">
+                                    <img alt="Poster for post" class="post-poster"
+                                         src="/api/asset/proxy/{oneResult.contents.posterAssetId}">
                                 </div>
                             {:else}
                                 <div class="resultcontainer">
