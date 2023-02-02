@@ -185,8 +185,8 @@
                             <button class="p-2 bg-neutral-600 border-blue-100 border-2" on:click={createNewChapter}>
                                 Create
                             </button>
-                            <Popup expanded="{importFolderAsChapter}">
-                                <button slot="alwaysVisible" on:click={()=>{importFolderAsChapter = true}}>
+                            <Popup expanded={importFolderAsChapter}>
+                                <button slot="alwaysVisible" on:click={()=>{importFolderAsChapter = !importFolderAsChapter;}}>
                                     Or Import a folder as a chapter
                                 </button>
                                 <div slot="content">
