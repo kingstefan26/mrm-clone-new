@@ -111,8 +111,20 @@ export async function GET({params, request, url}) {
         throw error(404, 'Invalid version')
     }
 
+    // check if file exisits using fs module
+    if (!fs.existsSync(assetVersionUsed.path)) {
+        console.error(`failed to load asset ${params.id} version ${assetVersionUsed.version}`)
+        throw error(404, 'Invalid version')
+    }
+
     // read from file system using fs module
     const stream = fs.createReadStream(assetVersionUsed.path)
+
+    // check if file exisits
+    if (!stream) {
+        console.error(`failed to load asset ${params.id} version ${assetVersionUsed.version}`)
+        throw error(404, 'Invalid version')
+    }
 
     return new Response(stream, {
         headers: {
