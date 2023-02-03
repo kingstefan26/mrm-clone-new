@@ -1,7 +1,6 @@
 <script>
     import PageTransision from "$lib/components/util/pageTransision.svelte";
     import {lazyLoad} from '$lib/LazyLoad.js'
-    import "@fontsource/public-sans";
     export let doublePageview;
     export let chapter;
     export let post;
@@ -30,16 +29,16 @@
         </button>
 
         {#if !post.Author}
-            <a href="/search?artist=annon" class="title_author">
+            <a href="/search?artist=annon" class="title_author font-publicsans">
                 [annon]
             </a>
         {:else}
-            <a href="/search?artist={post.Author.name}" class="title_author">
+            <a href="/search?artist={post.Author.name}" class="title_author font-publicsans">
                 [{post.Author.name}]
             </a>
         {/if}
 
-        <h1 class="title">
+        <h1 class="title font-publicsans">
             {post.title}
         </h1>
 
@@ -176,7 +175,6 @@
         margin-top: 10px;
         font-weight: 900;
         font-size: 2em;
-        font-family: 'Public Sans', sans-serif;
         color: #c5c4c4;
     }
 
@@ -213,11 +211,6 @@
         color: #808080;
     }
 
-    #chaptertitle {
-        font-family: 'Public Sans', sans-serif;
-        font-weight: 500;
-        font-size: 1.2em;
-    }
 
     #linkwrapper * {
         background-color: #333;
