@@ -62,11 +62,11 @@
         {/if}
 
         <div class="tags">
-            {#if post.geners}
-                {#if post.geners.length !== 0}
+            {#if post.generes}
+                {#if post.generes.length !== 0}
                     Genres:
-                    {#each post.geners as tag }
-                        <a class="tag" href="/search?genre={tag}">{tag} </a>
+                    {#each post.generes as tag}
+                        <a class="tag" href="/search?genre={tag.name}">{tag.name} </a>
                     {/each}
                 {/if}
             {/if}

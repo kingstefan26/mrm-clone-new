@@ -1,4 +1,4 @@
-import {Author, Series} from "$lib/api/server/db.js";
+import {Author, Genere, Series} from "$lib/api/server/db.js";
 
 export async function GET({locals, request, params, url}) {
     if (!locals.user.admin) {
@@ -48,6 +48,11 @@ export async function GET({locals, request, params, url}) {
     if (params.reason === "series") {
         const series = await Series.findAll()
         returnData.data = series.map(serie => serie.name)
+    }
+
+    if (params.reason === "generes") {
+        const generes = await Genere.findAll()
+        returnData.data = generes.map(genre => genre.name)
     }
 
 

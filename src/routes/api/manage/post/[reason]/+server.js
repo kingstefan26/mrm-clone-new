@@ -1,20 +1,9 @@
-import {
-    Asset,
-    Author,
-    Category,
-    Chapter,
-    Genere,
-    Pairing,
-    Post,
-    Scanlination,
-    Series, Status,
-    Tag
-} from "$lib/api/server/db.js";
+import {Asset, Author, Chapter, Genere, Post, Series} from "$lib/api/server/db.js";
 import {createNextChapter} from "$lib/api/server/controlers/ChapterController.js";
 import {getMethods} from "$lib/api/server/mock.js";
 
 export async function POST({locals, request, params}) {
-    if(!locals.user.admin) {
+    if (!locals.user.admin) {
         return new Response(
             JSON.stringify({status: "error", message: "You are not logged in"}),
             {
@@ -29,7 +18,7 @@ export async function POST({locals, request, params}) {
 
     const jsonres = await request.json()
 
-    if(params.reason === "title") {
+    if (params.reason === "title") {
         const {title, postId} = jsonres
 
         console.log(`updating post ${postId} title to ${title}`)
@@ -37,7 +26,7 @@ export async function POST({locals, request, params}) {
         await Post.update({title}, {where: {id: postId}})
     }
 
-    if(params.reason === "author") {
+    if (params.reason === "author") {
         const {author, postId} = jsonres
 
         console.log(`updating post ${postId} author to ${author}`)
@@ -49,7 +38,7 @@ export async function POST({locals, request, params}) {
             include: [Author]
         })
 
-        if(post.author && post.author.name === author) {
+        if (post.author && post.author.name === author) {
             console.log("author is already set")
         } else {
             const authorO = await Author.findOne({where: {name: author}})
@@ -61,7 +50,7 @@ export async function POST({locals, request, params}) {
 
     }
 
-    if(params.reason === "tags") {
+    if (params.reason === "tags") {
         const {tags, postId} = jsonres
 
 
@@ -83,7 +72,7 @@ export async function POST({locals, request, params}) {
     }
 
 
-    if(params.reason === "description"){
+    if (params.reason === "description") {
         const {description, postId} = jsonres
 
         console.log(`updating post ${postId} description to ${description}`)
@@ -91,7 +80,7 @@ export async function POST({locals, request, params}) {
         await Post.update({description}, {where: {id: postId}})
     }
 
-    if(params.reason === "poster"){
+    if (params.reason === "poster") {
         const {posterAssetId, postId} = jsonres
 
         console.log(`updating post ${postId} poster asset to ${posterAssetId}`)
@@ -99,7 +88,7 @@ export async function POST({locals, request, params}) {
         await Post.update({posterAssetId}, {where: {id: postId}})
     }
 
-    if(params.reason === "published"){
+    if (params.reason === "published") {
         console.log(jsonres)
         const {published, postId} = jsonres
 
@@ -108,7 +97,7 @@ export async function POST({locals, request, params}) {
         await Post.update({published: published}, {where: {id: postId}})
     }
 
-    if(params.reason === 'chapter') {
+    if (params.reason === 'chapter') {
         const {name, postId} = jsonres
 
         const post = await Post.findOne({where: {id: postId}})
@@ -118,7 +107,7 @@ export async function POST({locals, request, params}) {
         returnData = {status: "ok", data: {newChapterId: chapter.id, chapterIndex: chapter.indexInParentPost}}
     }
 
-    if(params.reason === 'updatechapter') {
+    if (params.reason === 'updatechapter') {
 
         const {chapterId, name, published, western, sensitiveContent} = jsonres
 
@@ -135,14 +124,14 @@ export async function POST({locals, request, params}) {
 
     }
 
-    if(params.reason === 'deletechapter') {
+    if (params.reason === 'deletechapter') {
         const {chapterId} = jsonres
 
         await Chapter.destroy({where: {id: chapterId}})
 
     }
 
-    if(params.reason === 'updateChapterAssets') {
+    if (params.reason === 'updateChapterAssets') {
         const {chapterId, assets} = jsonres
 
         const chapter = await Chapter.findOne({where: {id: chapterId}})
@@ -166,7 +155,7 @@ export async function POST({locals, request, params}) {
         returnData = {status: "ok", data: {chapter: upadtedChapter}}
     }
 
-    if(params.reason === 'delete'){
+    if (params.reason === 'delete') {
         const {postId} = jsonres
 
         await Post.destroy({where: {id: postId}})
@@ -174,11 +163,11 @@ export async function POST({locals, request, params}) {
     }
 
 
-    if(params.reason === 'createSeries') {
+    if (params.reason === 'createSeries') {
         await Series.create({name: jsonres.name})
     }
 
-    if(params.reason === 'addToSeries') {
+    if (params.reason === 'addToSeries') {
         const {postId, seriesName} = jsonres
 
         console.log(`adding post ${postId} to series ${seriesName}`)
@@ -197,7 +186,7 @@ export async function POST({locals, request, params}) {
         }
     }
 
-    if(params.reason === 'updateIndexInSeries') {
+    if (params.reason === 'updateIndexInSeries') {
         const {postId, indexInSeries, seriesName} = jsonres
 
         console.log(`updating post ${postId} index in series ${seriesName} to ${indexInSeries}`)
@@ -210,7 +199,7 @@ export async function POST({locals, request, params}) {
 
         for (let i = 0; i < posts.length; i++) {
             const post = posts[i]
-            if(post.id === postId){
+            if (post.id === postId) {
                 post.indexInSeries = indexInSeries
                 await post.save()
                 await series.addPost(post, {through: {indexInSeries}})
@@ -223,7 +212,7 @@ export async function POST({locals, request, params}) {
 
     }
 
-    if(params.reason === 'removeFromSeries') {
+    if (params.reason === 'removeFromSeries') {
         const {postId, seriesName} = jsonres
 
         console.log(`removing post ${postId} from series ${seriesName}`)
@@ -241,7 +230,7 @@ export async function POST({locals, request, params}) {
     }
 
 
-    if(params.reason === 'createAuthor'){
+    if (params.reason === 'createAuthor') {
         const {name} = jsonres
 
         console.log(`creating author ${name}`)
@@ -250,7 +239,7 @@ export async function POST({locals, request, params}) {
         returnData = {status: "ok", data: {name}}
     }
 
-    if(params.reason === 'updateAuthor'){
+    if (params.reason === 'updateAuthor') {
         const {longName, id, name} = jsonres
 
         console.log(`updating author ${id} with name ${name} and longName ${longName}`)
@@ -261,6 +250,43 @@ export async function POST({locals, request, params}) {
         returnData = {status: "ok", data: {name: author.name, longName: author.longName, id: author.id}}
     }
 
+    if (params.reason === 'updateGeneres') {
+        const {postId, genres} = jsonres
+        if (!genres) {
+            return new Response(JSON.stringify({
+                status: "error",
+                data: {message: "no generes provided"}
+            }), {headers: {'Content-Type': 'application/json'}, status: 400})
+        }
+        if (!postId) {
+            return new Response(JSON.stringify({
+                status: "error",
+                data: {message: "no postId provided"}
+            }), {headers: {'Content-Type': 'application/json'}, status: 400})
+        }
+
+
+        console.log(`updating post ${postId} generes to :`, genres)
+
+        let post = await Post.findOne({where: {id: postId}})
+        // await post.removeGeneres()
+
+        for (const genere of await post.getGeneres() ){
+            await post.removeGenere(genere)
+        }
+
+        post = await Post.findOne({where: {id: postId}})
+
+        // for each genere, find it in the db, and add it to the post
+        for (const genere of genres.filter(obj => obj)) {
+            const [genereObj] = await Genere.findOrCreate({where: {name: genere}, defaults: {name: genere}})
+            await post.addGenere(genereObj)
+        }
+
+        // return the updated generes
+        const updatedGeneres = await post.getGeneres()
+        returnData = {status: "ok", data: {generes: updatedGeneres}}
+    }
 
 
     return new Response(
