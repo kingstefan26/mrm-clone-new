@@ -28,17 +28,18 @@
             Reader mode
         </button>
 
-        {#if !post.Author}
-            <a href="/search?artist=annon" class="title_author font-publicsans">
-                [annon]
-            </a>
-        {:else}
-            <a href="/search?artist={post.Author.name}" class="title_author font-publicsans">
-                [{post.Author.name}]
-            </a>
-        {/if}
+
 
         <h1 class="title font-publicsans">
+            {#if !post.Author}
+                <a href="/search?artist=annon" class="title_author font-publicsans">
+                    [annon]
+                </a>
+            {:else}
+                <a href="/search?artist={post.Author.name}" class="title_author font-publicsans">
+                    [{post.Author.name}]
+                </a>
+            {/if}
             {post.title}
         </h1>
 

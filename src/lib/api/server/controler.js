@@ -239,7 +239,7 @@ export async function getPostPopulated(postId = "") {
         where: {
             id: postId
         },
-        include: [Author, Category, Genere, Pairing, Scanlination, Tag, Status]
+        include: [Author, Category, Genere, Pairing, Scanlination, Tag, Status, Series]
     })
 
     if (!post) {
