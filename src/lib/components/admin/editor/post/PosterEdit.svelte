@@ -1,5 +1,6 @@
 <script>
     import AssetPicker from "$lib/components/admin/editor/AssetPicker.svelte";
+    import {sendManageRequest} from "$lib/shared/util/ClientRestClient.js";
 
     export let posterAssetId;
     export let postId
@@ -8,16 +9,7 @@
         console.log("CHANGING THE POSTER ASSETS ID TO: ", event.detail)
         posterAssetId = event.detail.newAsset.id
 
-        await fetch(`/api/manage/post/poster`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                posterAssetId,
-                postId: postId
-            })
-        })
+        await sendManageRequest('/post/poster', {posterAssetId, postId: postId})
 
     }
 
@@ -25,5 +17,5 @@
 
 <div>
     Edit Poster ✏️
-    <AssetPicker assetId={posterAssetId} on:assetpicked={setNewAsset} />
+    <AssetPicker assetId={posterAssetId} on:assetpicked={setNewAsset}/>
 </div>

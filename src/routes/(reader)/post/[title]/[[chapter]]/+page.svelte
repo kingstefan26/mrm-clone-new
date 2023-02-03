@@ -2,7 +2,7 @@
     import Dobulepage from "$lib/components/reader/dobulepage.svelte";
     import Singlepage from "$lib/components/reader/singlepageview.svelte";
     import doublePageview from "$lib/shared/stores/doublepageview.js";
-    import AddTheScriptThing from "$lib/AddTheScriptThing.js";
+    import AddTheScriptThing from "$lib/shared/util/AddTheScriptThing";
 
     /** @type {import('./$types').Data} */
     export let data;

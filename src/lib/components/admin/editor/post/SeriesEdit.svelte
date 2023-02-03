@@ -1,7 +1,7 @@
 <script>
     import Popup from "$lib/components/popup/Popup.svelte";
     import Typeahead from "svelte-typeahead";
-    import {onMount} from "svelte";
+    import {sendManageRequest} from "$lib/shared/util/ClientRestClient.js";
 
     export let postId
     export let series
@@ -12,9 +12,7 @@
     let expanded = false
 
     async function getSeries() {
-        const res = await fetch('/api/data/series')
-        const data = await res.json()
-        return data
+        return await fetch('/api/data/series').then(r => r.json())
     }
 
     async function createSeries(value) {
@@ -22,26 +20,16 @@
             expanded = false
             return
         }
-        await fetch('/api/manage/post/createSeries', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                name: value
-            })
+
+        await sendManageRequest('/post/createSeries', {
+            name: value
         })
 
-        await fetch('/api/manage/post/addToSeries', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                postId: postId,
-                seriesName: value
-            })
+        await sendManageRequest('/post/addToSeries', {
+            postId: postId,
+            seriesName: value
         })
+
         expanded = false
     }
 
@@ -50,44 +38,27 @@
             expanded = false
             return
         }
-        await fetch('/api/manage/post/addToSeries', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                postId: postId,
-                seriesName: value
-            })
+        await sendManageRequest('/post/addToSeries', {
+            postId: postId,
+            indexInSeries: indexInSeries,
+            seriesName: value
         })
         expanded = false
     }
 
     function updateIndexInSeries(value) {
-        fetch('/api/manage/post/updateIndexInSeries', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                postId: postId,
-                indexInSeries: value,
-                seriesName: series.name
-            })
+        sendManageRequest('/post/updateIndexInSeries', {
+            postId: postId,
+            indexInSeries: value,
+            seriesName: series.name
         })
         expanded = false
     }
 
     function removeFromSeries() {
-        fetch('/api/manage/post/removeFromSeries', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                postId: postId,
-                seriesName: series.name
-            })
+        sendManageRequest('/post/removeFromSeries', {
+            postId: postId,
+            seriesName: series.name
         })
         expanded = false
     }

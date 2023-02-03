@@ -1,6 +1,6 @@
 <script>
     import PageTransision from "$lib/components/util/pageTransision.svelte";
-    import {lazyLoad} from '$lib/LazyLoad.js'
+    import {lazyLoad} from '$lib/shared/util/LazyLoad'
     export let doublePageview;
     export let chapter;
     export let post;

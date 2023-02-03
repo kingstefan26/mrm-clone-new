@@ -4,6 +4,7 @@
     import EditibleCheckMark from "$lib/components/admin/editor/EditibleCheckMark.svelte";
     import {goto} from "$app/navigation";
     import AssetPicker from "$lib/components/admin/editor/AssetPicker.svelte";
+    import {sendManageRequest} from "$lib/shared/util/ClientRestClient.js";
 
     export let data
 
@@ -42,52 +43,71 @@
 
     async function pushChapterData() {
         updatingServer = true
-        await fetch(`/api/manage/post/updatechapter`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                chapterId: data.chapter.id,
-                name: data.chapter.name,
-                published: data.chapter.published,
-                western: data.chapter.western,
-                sensitiveContent: data.chapter.sensitiveContent
-            })
+        // await fetch(`/api/manage/post/updatechapter`, {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json'
+        //     },
+        //     body: JSON.stringify({
+        //         chapterId: data.chapter.id,
+        //         name: data.chapter.name,
+        //         published: data.chapter.published,
+        //         western: data.chapter.western,
+        //         sensitiveContent: data.chapter.sensitiveContent
+        //     })
+        // })
+
+        await sendManageRequest('/post/updatechapter', {
+            chapterId: data.chapter.id,
+            name: data.chapter.name,
+            published: data.chapter.published,
+            western: data.chapter.western,
+            sensitiveContent: data.chapter.sensitiveContent
         })
+
         updatingServer = false
 
     }
 
     async function deleteChapter() {
-        await fetch(`/api/manage/post/deletechapter`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                chapterId: data.chapter.id
-            })
+        // await fetch(`/api/manage/post/deletechapter`, {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json'
+        //     },
+        //     body: JSON.stringify({
+        //         chapterId: data.chapter.id
+        //     })
+        // })
+
+        await sendManageRequest('/post/deletechapter', {
+            chapterId: data.chapter.id
         })
+
         goto('/admin/manage/posts/edit/' + data.chapter.postId)
     }
 
-    async function updateChapterAssets(){
+    async function updateChapterAssets() {
 
-        const res = await fetch(`/api/manage/post/updateChapterAssets`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                chapterId: data.chapter.id,
-                assets: data.chapter.assets
-            })
+        // const res = await fetch(`/api/manage/post/updateChapterAssets`, {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json'
+        //     },
+        //     body: JSON.stringify({
+        //         chapterId: data.chapter.id,
+        //         assets: data.chapter.assets
+        //     })
+        // })
+        //
+        // const json = await res.json()
+
+        const { data } = await sendManageRequest('/post/updateChapterAssets', {
+            chapterId: data.chapter.id,
+            assets: data.chapter.assets
         })
 
-        const json = await res.json()
-
-        data.chapter = json.data.chapter
+        data.chapter = data.chapter
     }
 
 
@@ -106,10 +126,6 @@
         await updateChapterAssets()
     }
 
-
-    function changedPublishedStatus(){
-
-    }
 
 </script>
 
@@ -144,10 +160,11 @@
                                bind:loading={updatingServer}
                                name="Western"
                                checked={data.chapter.western}/>
-            <EditibleCheckMark on:save={({detail}) => {data.chapter.sensitiveContent = detail.checked; pushChapterData()}}
-                               bind:loading={updatingServer}
-                               name="Contains Sensitive Content"
-                               checked={data.chapter.sensitiveContent}/>
+            <EditibleCheckMark
+                    on:save={({detail}) => {data.chapter.sensitiveContent = detail.checked; pushChapterData()}}
+                    bind:loading={updatingServer}
+                    name="Contains Sensitive Content"
+                    checked={data.chapter.sensitiveContent}/>
         </div>
     </div>
 

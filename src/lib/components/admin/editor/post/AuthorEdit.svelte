@@ -1,6 +1,7 @@
 <script>
     import Typeahead from "svelte-typeahead";
     import CircleSpiner from "$lib/components/util/CircleSpiner.svelte";
+    import {sendManageRequest} from "$lib/shared/util/ClientRestClient.js";
 
     export let author
 
@@ -20,20 +21,12 @@
     async function pushChange() {
         loading = true
 
-        const res = await fetch(`/api/manage/post/author`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                author: localAuthor,
-                postId: postId
-            })
+        const {status} = await sendManageRequest('/post/author', {
+            author: localAuthor,
+            postId: postId
         })
 
-        const data = await res.json()
-
-        if (data.status === 'ok') {
+        if (status === 'ok') {
             author.name = localAuthor
             localAuthor = author.name
         }

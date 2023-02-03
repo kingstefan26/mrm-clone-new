@@ -1,6 +1,7 @@
 <script>
 
     import EditableAtribute from '$lib/components/admin/editor/editableAtribute.svelte'
+    import {sendManageRequest} from "$lib/shared/util/ClientRestClient.js";
 
     export let title
 
@@ -10,25 +11,18 @@
 
     let loading = false
 
-    async function pushTitleChange(){
+    async function pushTitleChange() {
         loading = true
 
-        const res = await fetch(`/api/manage/post/title`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                title: localTitle,
-                postId: postId
-            })
+        const {status} = await sendManageRequest('/post/title', {
+            title: localTitle, postId: postId
         })
 
-        const data = await res.json()
-
-        if(data.status === 'ok'){
+        if (status === 'ok') {
             title = localTitle
             loading = false
+        } else {
+            alert('Something went wrong while saving the title')
         }
 
     }

@@ -77,7 +77,7 @@ export default class SearchIndex {
             Genere.findAll().then(generes => {
                 generes.forEach(genere => {
                     tempIndex.push({
-                        type: "genere",
+                        type: "genre",
                         snowflake: genere.name
                     })
                 })

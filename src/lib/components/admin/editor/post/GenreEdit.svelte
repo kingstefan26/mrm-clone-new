@@ -2,6 +2,7 @@
     import Popup from "$lib/components/popup/Popup.svelte";
     import CircleSpiner from "$lib/components/util/CircleSpiner.svelte";
     import Typeahead from "svelte-typeahead";
+    import {sendManageRequest} from "$lib/shared/util/ClientRestClient.js";
 
 
     export let postId
@@ -17,18 +18,11 @@
 
     async function pushChanges() {
         loading = true
-        const res = await fetch(`/api/manage/post/updateGeneres`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                genres: genres.map(genre => genre.name),
-                postId: postId
-            })
-        })
 
-        const {status, data} = await res.json()
+        const {status, data} = await sendManageRequest('/post/updateGeneres', {
+            genres: genres.map(genre => genre.name),
+            postId: postId
+        })
 
         if (status === 'ok') {
             console.log(`got updated generes`, data.generes)
@@ -40,9 +34,8 @@
     }
 
     async function getAllGeneres() {
-        const res = await fetch(`/api/data/generes`)
+        const {status, data} = await fetch(`/api/data/generes`).then(r => r.json())
 
-        const {status, data} = await res.json()
         if (status === 'ok') {
             console.log('all avalible generes', data.filter(a => a))
             return data.filter(a => a)

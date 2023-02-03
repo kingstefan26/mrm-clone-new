@@ -1,5 +1,6 @@
 <script>
     import CircleSpiner from "$lib/components/util/CircleSpiner.svelte";
+    import {sendManageRequest} from "$lib/shared/util/ClientRestClient.js";
 
     export let post
 
@@ -15,20 +16,13 @@
         loading = true
         cheked = !cheked
         console.log(cheked)
-        const res = await fetch(`/api/manage/post/published`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                published: cheked,
-                postId: postId
-            })
+
+        const {status} = await sendManageRequest('/post/published', {
+            published: cheked,
+            postId: postId
         })
 
-        const data = await res.json()
-
-        if(data.status === 'ok'){
+        if(status === 'ok'){
             loading = false
         }
 

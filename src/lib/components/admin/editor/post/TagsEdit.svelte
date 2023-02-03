@@ -1,5 +1,6 @@
 <script>
     import ExpandableList from '$lib/components/admin/editor/expandableList.svelte'
+    import {sendManageRequest} from "$lib/shared/util/ClientRestClient.js";
     export let tags
     export let postId
 
@@ -11,20 +12,12 @@
     async function pushChange(){
         loading = true
 
-        const res = await fetch(`/api/manage/post/tags`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                tags: tagNames,
-                postId: postId
-            })
+        const {status} = await sendManageRequest('/post/tags', {
+            postId: postId,
+            tags: tagNames
         })
 
-        const data = await res.json()
-
-        if(data.status === 'ok'){
+        if(status === 'ok'){
             loading = false
         }
 
