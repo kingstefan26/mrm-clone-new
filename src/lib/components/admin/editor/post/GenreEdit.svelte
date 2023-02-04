@@ -24,10 +24,12 @@
             postId: postId
         })
 
-        if (status === 'ok') {
+        if (status !== 'ok') {
+            alert(`Failed to update generes`)
+        } else {
             console.log(`got updated generes`, data.generes)
             genres = data.generes
-            lastSavedGeners = genres
+            lastSavedGeners = JSON.parse(JSON.stringify(genres))
         }
 
         loading = false
@@ -97,7 +99,7 @@
                 {#if loading}
                     <CircleSpiner color="#ffffff" size="1" unit="rem"/>
                 {/if}
-                <button disabled="{isUpToDate}" class="bg-stone-700 px-3 mb-0.5 float-right disabled:opacity-50"
+                <button disabled="{isUpToDate}" class="bg-stone-700 px-3 mb-0.5 float-right disabled:opacity-50 ml-2"
                         on:click={pushChanges}>
                     Push Changes
                 </button>

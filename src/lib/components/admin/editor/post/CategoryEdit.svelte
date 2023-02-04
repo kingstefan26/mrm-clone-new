@@ -27,7 +27,7 @@
         if (status === 'ok') {
             console.log(`got updated generes`, data.categories)
             categories = data.categories
-            lastSavedCategories = categories
+            lastSavedCategories = JSON.parse(JSON.stringify(categories))
         }
 
         loading = false
@@ -97,7 +97,7 @@
                 {#if loading}
                     <CircleSpiner color="#ffffff" size="1" unit="rem"/>
                 {/if}
-                <button disabled="{isUpToDate}" class="bg-stone-700 px-3 mb-0.5 float-right disabled:opacity-50"
+                <button disabled="{isUpToDate}" class="bg-stone-700 px-3 mb-0.5 float-right disabled:opacity-50 ml-2"
                         on:click={pushChanges}>
                     Push Changes
                 </button>
