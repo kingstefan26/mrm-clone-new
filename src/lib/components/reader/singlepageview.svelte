@@ -1,6 +1,7 @@
 <script>
     import PageTransision from "$lib/components/util/pageTransision.svelte";
     import {lazyLoad} from '$lib/shared/util/LazyLoad'
+
     export let doublePageview;
     export let chapter;
     export let post;
@@ -19,15 +20,14 @@
 
 <div class="mx-auto max-w-[1020px]">
     <div class="mr-2 ml-2">
-<!--        <button class="switchvieverstylebtn"-->
-<!--                on:click={() => { $doublePageview = !$doublePageview; }}-->
-<!--        >-->
-<!--            Reader mode-->
-<!--        </button>-->
+        <!--        <button class="switchvieverstylebtn"-->
+        <!--                on:click={() => { $doublePageview = !$doublePageview; }}-->
+        <!--        >-->
+        <!--            Reader mode-->
+        <!--        </button>-->
         <button class="switchvieverstylebtn">
             Reader mode
         </button>
-
 
 
         <h1 class="title font-publicsans">
@@ -55,7 +55,6 @@
                 {/each}
             {/if}
         </div>
-
 
 
         {#if post.description}
@@ -119,48 +118,45 @@
 
     <PageTransision pathname={current_chapter}>
         {#each chapter.assets as asset}
-            <div>
-                {#if asset.indexInChapter < 2}
-                    <img class="h-auto w-full"
-                         src="/api/asset/proxy/{asset.id}{langOverride}"
-                         alt="{asset.indexInChapter}"
-                         loading="eager"
-                         fetchpriority="high"
-                         height="{asset.height}"
-                         width="{asset.width}">
-                {:else}
-                    <img use:lazyLoad={`/api/asset/proxy/${asset.id}${langOverride}`}
-                         class="pusle_anim h-auto w-full"
-                         alt="{asset.indexInChapter}"
-                         height="{asset.height}"
-                         width="{asset.width}"
-                         loading="eager"
-                         fetchpriority="high">
-                {/if}
-            </div>
+            {#if asset.indexInChapter < 2}
+                <img class="h-auto w-full"
+                     src="/api/asset/proxy/{asset.id}{langOverride}"
+                     alt="{asset.indexInChapter}"
+                     loading="eager"
+                     fetchpriority="high"
+                     height="{asset.height}"
+                     width="{asset.width}">
+            {:else}
+                <img use:lazyLoad={`/api/asset/proxy/${asset.id}${langOverride}`}
+                     class="pusle_anim h-auto w-full"
+                     alt="{asset.indexInChapter}"
+                     height="{asset.height}"
+                     width="{asset.width}"
+                     loading="eager"
+                     fetchpriority="high">
+            {/if}
         {/each}
-
-        {#if post.chapterCount > 1}
-            <div id="linkwrapper">
-
-                {#if current_chapter - 1 >= 0}
-                    <a href="{chapterLink(current_chapter - 1)}">« Previous</a>
-                {/if}
-
-                {#each [...Array(post.chapterCount).keys()] as chapter, index}
-                    <a href="{chapterLink(index)}"
-                       class="{index === current_chapter ? 'iamselected' : ''}">{index}</a>
-                {/each}
-
-                {#if current_chapter + 1 < post.chapterCount}
-                    <a href="{chapterLink(current_chapter + 1)} ">Next »</a>
-                {/if}
-
-            </div>
-        {/if}
     </PageTransision>
-</div>
 
+    {#if post.chapterCount > 1}
+        <div id="linkwrapper">
+
+            {#if current_chapter - 1 >= 0}
+                <a href="{chapterLink(current_chapter - 1)}">« Previous</a>
+            {/if}
+
+            {#each [...Array(post.chapterCount).keys()] as chapter, index}
+                <a href="{chapterLink(index)}"
+                   class="{index === current_chapter ? 'iamselected' : ''}">{index}</a>
+            {/each}
+
+            {#if current_chapter + 1 < post.chapterCount}
+                <a href="{chapterLink(current_chapter + 1)} ">Next »</a>
+            {/if}
+
+        </div>
+    {/if}
+</div>
 
 
 <style>

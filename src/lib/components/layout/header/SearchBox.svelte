@@ -6,7 +6,6 @@
 
     let nextRefresh = undefined;
 
-
     function quickSearch() {
         if (searchBoxVal.length === 0) {
             quickSearchResults = [];
@@ -75,14 +74,20 @@
                             {#if oneResult.type === "post"}
                                 <div class="resultcontainer">
                                     {oneResult.contents.title}
-                                    <img alt="Poster for post" class="post-poster"
-                                         src="/api/asset/proxy/{oneResult.contents.posterAssetId}">
+                                    <img alt="Poster for post"
+                                         width="52"
+                                         height="71"
+                                         decoding="async"
+                                         loading="lazy"
+                                         class="post-poster pusle_anim"
+                                         src="/api/asset/proxy/{oneResult.contents.posterAssetId}"
+                                    >
                                 </div>
                             {:else}
                                 <div class="resultcontainer">
                                     <p>
                                         <a alt="{oneResult.type}" href="{oneResult.link}">{oneResult.contents}</a>
-                                        <span class="text-gray-500 font-bold">{oneResult.type}</span>
+                                        <span class="text-gray-500 font-bold ml-1">{oneResult.type}</span>
                                     </p>
                                 </div>
                             {/if}
@@ -110,8 +115,23 @@
         box-shadow: inset 0 0 10px #868686;
     }
 
+    .pusle_anim {
+        animation: loading-animation 2s ease-in-out infinite;
+        background-color: #343434;
+        background-repeat: no-repeat;
+        background-image: linear-gradient(90deg, #343434, #505050, #343434);
+    }
+
+    @keyframes loading-animation {
+        0% {
+            background-position: -1000px 0;
+        }
+        100% {
+            background-position: calc(1000px + 100%) 0;
+        }
+    }
+
     .post-poster {
-        width: 50px;
         object-fit: contain;
     }
 
