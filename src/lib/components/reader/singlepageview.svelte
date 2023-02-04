@@ -72,7 +72,6 @@
             {/if}
         </div>
 
-        <!-- lang choser that -->
         <div class="tags">
             {#if post.languages}
                 {#if post.languages.length > 1}
@@ -88,14 +87,16 @@
         </div>
 
 
-        {#if post.categories.length !== 0}
-
-            Categores:
-            {#each post.categories as tag }
-                <a href="/search?category={tag}">{tag}</a>
-            {/each}
-
-        {/if}
+        <div class="tags">
+            {#if post.categories}
+                {#if post.categories.length !== 0}
+                    Categories:
+                    {#each post.categories as tag}
+                        <a class="tag" href="/search?category={tag.name}">{tag.name} </a>
+                    {/each}
+                {/if}
+            {/if}
+        </div>
 
         {#if post.seriesCount}
             <div class="tags">

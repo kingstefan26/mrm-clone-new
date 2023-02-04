@@ -1,6 +1,5 @@
-import {Asset, Author, Chapter, Genere, Post, Series} from "$lib/api/server/db.js";
+import {Asset, Author, Category, Chapter, Genere, Post, Series} from "$lib/api/server/db.js";
 import {createNextChapter} from "$lib/api/server/controlers/ChapterController.js";
-import {getMethods} from "$lib/api/server/mock.js";
 
 export async function POST({locals, request, params}) {
     if (!locals.user.admin) {
@@ -16,10 +15,10 @@ export async function POST({locals, request, params}) {
 
     let returnData = {status: "ok"}
 
-    const jsonres = await request.json()
+    const req = await request.json()
 
     if (params.reason === "title") {
-        const {title, postId} = jsonres
+        const {title, postId} = req
 
         console.log(`updating post ${postId} title to ${title}`)
 
@@ -27,7 +26,7 @@ export async function POST({locals, request, params}) {
     }
 
     if (params.reason === "author") {
-        const {author, postId} = jsonres
+        const {author, postId} = req
 
         console.log(`updating post ${postId} author to ${author}`)
 
@@ -51,7 +50,7 @@ export async function POST({locals, request, params}) {
     }
 
     if (params.reason === "tags") {
-        const {tags, postId} = jsonres
+        const {tags, postId} = req
 
 
         console.log(`updating post ${postId} tags to `, tags)
@@ -73,7 +72,7 @@ export async function POST({locals, request, params}) {
 
 
     if (params.reason === "description") {
-        const {description, postId} = jsonres
+        const {description, postId} = req
 
         console.log(`updating post ${postId} description to ${description}`)
 
@@ -81,7 +80,7 @@ export async function POST({locals, request, params}) {
     }
 
     if (params.reason === "poster") {
-        const {posterAssetId, postId} = jsonres
+        const {posterAssetId, postId} = req
 
         console.log(`updating post ${postId} poster asset to ${posterAssetId}`)
 
@@ -89,8 +88,8 @@ export async function POST({locals, request, params}) {
     }
 
     if (params.reason === "published") {
-        console.log(jsonres)
-        const {published, postId} = jsonres
+        console.log(req)
+        const {published, postId} = req
 
         console.log(`updating post ${postId} published to ${published}`)
 
@@ -98,7 +97,7 @@ export async function POST({locals, request, params}) {
     }
 
     if (params.reason === 'chapter') {
-        const {name, postId} = jsonres
+        const {name, postId} = req
 
         const post = await Post.findOne({where: {id: postId}})
 
@@ -109,7 +108,7 @@ export async function POST({locals, request, params}) {
 
     if (params.reason === 'updatechapter') {
 
-        const {chapterId, name, published, western, sensitiveContent} = jsonres
+        const {chapterId, name, published, western, sensitiveContent} = req
 
         const chapter = await Chapter.findOne({where: {id: chapterId}})
 
@@ -125,14 +124,14 @@ export async function POST({locals, request, params}) {
     }
 
     if (params.reason === 'deletechapter') {
-        const {chapterId} = jsonres
+        const {chapterId} = req
 
         await Chapter.destroy({where: {id: chapterId}})
 
     }
 
     if (params.reason === 'updateChapterAssets') {
-        const {chapterId, assets} = jsonres
+        const {chapterId, assets} = req
 
         const chapter = await Chapter.findOne({where: {id: chapterId}})
         // console.log(`updating chapter ${chapterId} assets to `, assets)
@@ -156,7 +155,7 @@ export async function POST({locals, request, params}) {
     }
 
     if (params.reason === 'delete') {
-        const {postId} = jsonres
+        const {postId} = req
 
         await Post.destroy({where: {id: postId}})
         await Chapter.destroy({where: {postId}})
@@ -164,11 +163,11 @@ export async function POST({locals, request, params}) {
 
 
     if (params.reason === 'createSeries') {
-        await Series.create({name: jsonres.name})
+        await Series.create({name: req.name})
     }
 
     if (params.reason === 'addToSeries') {
-        const {postId, seriesName} = jsonres
+        const {postId, seriesName} = req
 
         console.log(`adding post ${postId} to series ${seriesName}`)
 
@@ -187,7 +186,7 @@ export async function POST({locals, request, params}) {
     }
 
     if (params.reason === 'updateIndexInSeries') {
-        const {postId, indexInSeries, seriesName} = jsonres
+        const {postId, indexInSeries, seriesName} = req
 
         console.log(`updating post ${postId} index in series ${seriesName} to ${indexInSeries}`)
 
@@ -213,7 +212,7 @@ export async function POST({locals, request, params}) {
     }
 
     if (params.reason === 'removeFromSeries') {
-        const {postId, seriesName} = jsonres
+        const {postId, seriesName} = req
 
         console.log(`removing post ${postId} from series ${seriesName}`)
 
@@ -231,7 +230,7 @@ export async function POST({locals, request, params}) {
 
 
     if (params.reason === 'createAuthor') {
-        const {name} = jsonres
+        const {name} = req
 
         console.log(`creating author ${name}`)
 
@@ -240,7 +239,7 @@ export async function POST({locals, request, params}) {
     }
 
     if (params.reason === 'updateAuthor') {
-        const {longName, id, name} = jsonres
+        const {longName, id, name} = req
 
         console.log(`updating author ${id} with name ${name} and longName ${longName}`)
         const author = await Author.findOne({where: {id}})
@@ -251,7 +250,7 @@ export async function POST({locals, request, params}) {
     }
 
     if (params.reason === 'updateGeneres') {
-        const {postId, genres} = jsonres
+        const {postId, genres} = req
         if (!genres) {
             return new Response(JSON.stringify({
                 status: "error",
@@ -269,7 +268,6 @@ export async function POST({locals, request, params}) {
         console.log(`updating post ${postId} generes to :`, genres)
 
         let post = await Post.findOne({where: {id: postId}})
-        // await post.removeGeneres()
 
         for (const genere of await post.getGeneres() ){
             await post.removeGenere(genere)
@@ -286,6 +284,43 @@ export async function POST({locals, request, params}) {
         // return the updated generes
         const updatedGeneres = await post.getGeneres()
         returnData = {status: "ok", data: {generes: updatedGeneres}}
+    }
+
+
+    if(params.reason === 'updateCategories'){
+        const {postId, categories} = req
+        if (!categories) {
+            return new Response(JSON.stringify({
+                status: "error",
+                data: {message: "no categories provided"}
+            }), {headers: {'Content-Type': 'application/json'}, status: 400})
+        }
+        if (!postId) {
+            return new Response(JSON.stringify({
+                status: "error",
+                data: {message: "no postId provided"}
+            }), {headers: {'Content-Type': 'application/json'}, status: 400})
+        }
+
+        console.log(`updating post ${postId} categories to :`, categories)
+
+        let post = await Post.findOne({where: {id: postId}})
+
+        // remove all categories from the post
+        for (const category of await post.getCategories() ){
+            await post.removeCategory(category)
+        }
+
+        // for each category, find it in the db, and add it to the post
+        for (const category of categories.filter(obj => obj)) {
+            const [categoryObj] = await Category.findOrCreate({where: {name: category}, defaults: {name: category}})
+            await post.addCategory(categoryObj)
+        }
+
+        // return the updated categories
+        const updatedCategories = await post.getCategories()
+        returnData = {status: "ok", data: {categories: updatedCategories}}
+
     }
 
 

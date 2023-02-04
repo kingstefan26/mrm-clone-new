@@ -1,6 +1,6 @@
-import {Author, Genere, Series} from "$lib/api/server/db.js";
+import {Author, Category, Genere, Series} from "$lib/api/server/db.js";
 
-export async function GET({locals, request, params, url}) {
+export async function GET({locals, params, url}) {
     if (!locals.user.admin) {
         return new Response(
             JSON.stringify({status: "error", message: "You are not logged in"}),
@@ -53,6 +53,11 @@ export async function GET({locals, request, params, url}) {
     if (params.reason === "generes") {
         const generes = await Genere.findAll()
         returnData.data = generes.map(genre => genre.name)
+    }
+
+    if (params.reason === "categories") {
+        const categories = await Category.findAll()
+        returnData.data = categories.map(category => category.name)
     }
 
 
