@@ -1,7 +1,4 @@
-import * as path from "path";
-import * as fs from "fs";
-import {Asset, AssetVersion} from "$lib/api/server/db.js";
-import sharp from "sharp";
+import {Asset} from "$lib/api/server/db.js";
 import {createAssetVersion} from "$lib/api/server/controler.js";
 
 export async function POST({locals, request}) {
@@ -27,7 +24,7 @@ export async function POST({locals, request}) {
 
     let lang = formData.get('lang');
 
-    const version = await createAssetVersion(buffer, lang ? lang : 'en')
+    const version = await createAssetVersion(new Uint8Array(buffer), lang ? lang : 'en')
 
     const asset = await Asset.create({indexInChapter: 0})
     asset.addAssetData(version)

@@ -1,6 +1,7 @@
 <script>
     import {createEventDispatcher} from 'svelte';
     import {fade, fly} from 'svelte/transition';
+    import Popup from "$lib/components/popup/Popup.svelte";
 
     export let assetId
 
@@ -110,18 +111,14 @@
     <div class="w-[150px] h-[260px]" on:click={() => {expanded = !expanded;}}/>
 {/if}
 
-{#if expanded}
-    <div class="overlay multipageContainer z-10">
+<Popup expanded={expanded}>
+    <svelte:fragment slot="content">
         {#if step === 0}
-            <div class="popup multipagePage" in:fly="{{ y: 10, duration: 100 }}" out:fade="{{ duration: 200 }}">
-
-                <button class="button" on:click={() => {closePopup()}}>
-                    🚫
-                </button>
+            <div class="multipagePage">
 
                 Editing Asset
                 {#if assetId}
-                    <img class="w-[150px] h-[200px]" src="/api/asset/proxy/{assetId}" alt="">
+                    <img class="object-contain w-[150px] h-[200px]" src="/api/asset/proxy/{assetId}" alt="">
                 {/if}
 
                 <h1>Recently added Assets</h1>
@@ -145,10 +142,7 @@
         {/if}
 
         {#if step === 1}
-            <div class="popup multipagePage" in:fly="{{ x: 10, duration: 200 }}">
-                <button class="button" on:click={() => {closePopup()}}>
-                    🚫
-                </button>
+            <div class="multipagePage">
                 <button class="button" on:click={() => {step = 0}}>
                     ⬅
                 </button>
@@ -176,10 +170,7 @@
         {/if}
 
         {#if step === 2 }
-            <div class="multipagePage popup" in:fly="{{ x: 10, duration: 200 }}">
-                <button class="button" on:click={() => {closePopup()}}>
-                    🚫
-                </button>
+            <div class="multipagePage">
                 <button class="button" on:click={() => {step = 0}}>
                     ⬅
                 </button>
@@ -194,10 +185,7 @@
 
 
         {#if step === 3}
-            <div class="multipagePage popup" in:fly="{{ x: 10, duration: 200 }}">
-                <button class="button" on:click={() => {closePopup()}}>
-                    🚫
-                </button>
+            <div class="multipagePage">
                 <button class="button" on:click={() => {step = 0}}>
                     ⬅
                 </button>
@@ -206,14 +194,12 @@
                 <button class="button float-right" on:click={() => {confirmNewAsset()}}>
                     ✅
                 </button>
-                <img class="w-[150px] h-[200px]" src="/api/asset/proxy/{newAssset.id}" alt="">
+                <img class="object-contain max-w-[300px] max-h-[400px]" src="/api/asset/proxy/{newAssset.id}" alt="">
                 <a href="/api/asset/proxy/{newAssset.id}" target="_blank" class="underline">FULL PREVIEW</a>
             </div>
         {/if}
-    </div>
-
-
-{/if}
+    </svelte:fragment>
+</Popup>
 
 
 <style>
@@ -245,35 +231,6 @@
         text-shadow: 0 1px 0 #fff;
         cursor: pointer;
         transition: all 0.2s ease-out;
-    }
-
-    .overlay {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: rgba(0, 0, 0, 0.40);
-        transition: opacity 200ms;
-    }
-
-    .popup {
-        margin-top: 300px;
-        margin-right: auto;
-        margin-left: auto;
-        margin-bottom: auto;
-        padding: 20px;
-        color: white;
-        background: #57534e;
-        border: 1px solid #666;
-        width: 80%;
-        box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
-        position: relative;
-    }
-
-    .multipageContainer {
-        display: grid;
-        align-items: start;
     }
 
     .multipagePage {
