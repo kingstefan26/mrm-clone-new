@@ -13,6 +13,7 @@
     import SeriesEdit from "$lib/components/admin/editor/post/SeriesEdit.svelte";
     import GenreEdit from "$lib/components/admin/editor/post/GenreEdit.svelte";
     import CategoryEdit from "$lib/components/admin/editor/post/CategoryEdit.svelte";
+    import StatusEdit from "$lib/components/admin/editor/post/StatusEdit.svelte";
 
     export let data;
 
@@ -149,9 +150,9 @@
             <DescriptionEdit bind:postId={data.post.id} bind:description={data.post.description}/>
             <TagsEdit bind:tags={data.post.tags} postId="{data.post.id}"/>
             <GenreEdit bind:genres={data.post.generes} postId="{data.post.id}"/>
-
-
             <CategoryEdit bind:categories={data.post.categories} postId="{data.post.id}"/>
+
+            <StatusEdit bind:status={data.post.status} postId={data.post.id} />
 
             <PosterEdit postId={data.post.id} posterAssetId={post.posterAssetId}/>
         </div>

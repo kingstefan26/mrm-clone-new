@@ -1,4 +1,4 @@
-import {Asset, Author, Category, Chapter, Genere, Post, Series} from "$lib/api/server/db.js";
+import {Asset, Author, Category, Chapter, Genere, Post, Series, Status} from "$lib/api/server/db.js";
 import {createNextChapter} from "$lib/api/server/controlers/ChapterController.js";
 
 export async function POST({locals, request, params}) {
@@ -321,6 +321,30 @@ export async function POST({locals, request, params}) {
         const updatedCategories = await post.getCategories()
         returnData = {status: "ok", data: {categories: updatedCategories}}
 
+    }
+
+    if(params.reason === 'updateStatus'){
+        const {postId, status} = req
+        if (!status) {
+            return new Response(JSON.stringify({
+                status: "error",
+                data: {message: "no status provided"}
+            }), {headers: {'Content-Type': 'application/json'}, status: 400})
+        }
+        if (!postId) {
+            return new Response(JSON.stringify({
+                status: "error",
+                data: {message: "no postId provided"}
+            }), {headers: {'Content-Type': 'application/json'}, status: 400})
+        }
+        console.log(`updating post ${postId} status to `, status)
+
+        let [statusObj] = await Status.findOrCreate({where: {name: status}, defaults: {name: status}})
+
+        const post = await Post.findOne({where: {id: postId}})
+        post.setStatus(statusObj)
+
+        returnData = {status: "ok", data: {status: statusObj.name}}
     }
 
 
