@@ -181,41 +181,47 @@ export default class SearchIndex {
                     link: `/post/${post.id}`
                 }
             } else if (result.type === "series") {
+                const genre = await Series.findOne({
+                    where: {
+                        name: result.snowflake
+                    }
+                })
+
                 return {
                     type: "series",
                     contents: result.snowflake,
-                    link: `/series/${result.snowflake}`
+                    link: `/post/${(await genre.getPosts())[0].id}`
                 }
 
             } else if (result.type === "author") {
                 return {
                     type: "author",
                     contents: result.snowflake,
-                    link: `/author/${result.snowflake}`
+                    link: `/search?author=${result.snowflake}`
                 }
             } else if (result.type === "tag") {
                 return {
                     type: "tag",
                     contents: result.snowflake,
-                    link: `/tag/${result.snowflake}`
+                    link: `/search?tag=${result.snowflake}`
                 }
             } else if (result.type === "category") {
                 return {
                     type: "category",
                     contents: result.snowflake,
-                    link: `/category/${result.snowflake}`
+                    link: `/search?category=${result.snowflake}`
                 }
             } else if (result.type === "genre") {
                 return {
                     type: "genre",
                     contents: result.snowflake,
-                    link: `/genre/${result.snowflake}`
+                    link: `/search?genre=${result.snowflake}`
                 }
             } else if (result.type === "pairing") {
                 return {
                     type: "pairing",
                     contents: result.snowflake,
-                    link: `/pairing/${result.snowflake}`
+                    link: `/search?pairing=${result.snowflake}`
                 }
             } else {
                 console.error(`Unknown type ${result.type} in result ${result}`)

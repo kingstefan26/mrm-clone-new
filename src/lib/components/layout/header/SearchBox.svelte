@@ -33,7 +33,7 @@
                     alert("Error searching")
                     console.error(err);
                 })
-            }, 300);
+            }, 100);
 
         }
     }
