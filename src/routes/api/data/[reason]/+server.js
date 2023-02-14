@@ -1,4 +1,5 @@
-import {Author, Category, Genere, Series} from "$lib/api/server/db.js";
+import {Author, Genere, Series} from "$lib/api/server/db.js";
+import {Category} from "$lib/api/server/models/extra/Category.js";
 
 export async function GET({locals, params, url}) {
     if (!locals.user.admin) {

@@ -4,7 +4,6 @@ import {
     Asset,
     AssetVersion,
     Author,
-    Category,
     Genere,
     Pairing,
     Post,
@@ -16,6 +15,7 @@ import path from "path";
 import fs from "fs";
 import sharp from "sharp";
 import {execSync} from "child_process";
+import {Category} from "$lib/api/server/models/extra/Category.js";
 
 const superprivatepassphrase = 'a'
 
