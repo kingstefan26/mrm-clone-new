@@ -1,15 +1,9 @@
-import {DataTypes, Model} from "sequelize";
+import {DataTypes} from "sequelize";
 
-export const createCategory = (sequelize) => {
-    Category.init({
-        name: {
-            type: DataTypes.STRING,
-            allowNull: false
-        }
-    }, {
-        sequelize,
-        modelName: 'category'
-    });
+const defineCategory = (sequelize) => {
+    return sequelize.define('category', {
+        name: DataTypes.STRING
+    })
 }
 
-export class Category extends Model {}
+export { defineCategory }

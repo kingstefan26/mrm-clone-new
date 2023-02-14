@@ -8,7 +8,7 @@ import {defineChapterData} from '$lib/api/server/models/Chapter.js';
 import {definePost} from "$lib/api/server/models/Post.js";
 
 import {defineAuthor} from "$lib/api/server/models/extra/Author.js";
-import {createCategory} from "$lib/api/server/models/extra/Category.js";
+import {defineCategory} from "$lib/api/server/models/extra/Category.js";
 import {defineGenere} from "$lib/api/server/models/extra/Genere.js";
 import {defineTag} from "$lib/api/server/models/extra/Tag.js";
 import {definePairing} from "$lib/api/server/models/extra/Pairing.js";
@@ -55,12 +55,11 @@ export const Series = defineSeries(sequelize);
 Post.belongsTo(Series, {through: "seriesPost"})
 Series.hasMany(Post)
 
-import { Category } from "$lib/api/server/models/extra/Category.js";
-createCategory(sequelize);
+export const Category = defineCategory(sequelize);
 Post.belongsToMany(Category, {through: "categoryPost"})
+
+
 Category.hasMany(Post)
-
-
 export const Author = defineAuthor(sequelize);
 Post.belongsTo(Author, {through: "authorPost"})
 

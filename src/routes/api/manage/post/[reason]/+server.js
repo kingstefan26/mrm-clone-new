@@ -1,6 +1,5 @@
-import {Asset, Author, Chapter, Genere, Post, Series, Status} from "$lib/api/server/db.js";
+import {Asset, Author, Category, Chapter, Genere, Post, Series, Status} from "$lib/api/server/db.js";
 import {createNextChapter} from "$lib/api/server/controlers/ChapterController.js";
-import {Category} from "$lib/api/server/models/extra/Category.js";
 
 export async function POST({locals, request, params}) {
     if (!locals.user.admin) {

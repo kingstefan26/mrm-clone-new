@@ -1,6 +1,5 @@
-import {Author, Genere, Pairing, Post, Series, Tag} from "$lib/api/server/db.js";
+import {Author, Category, Genere, Pairing, Post, Series, Tag} from "$lib/api/server/db.js";
 import fuzzysort from "fuzzysort";
-import {Category} from "$lib/api/server/models/extra/Category.js";
 
 let index = [
     // filled with stub data to show how it looks, cuz we don't do typescript round here
