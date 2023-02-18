@@ -1,0 +1,11 @@
+# http2, http3://boney.kokoniara.software {
+#    reverse_proxy {
+#        to localhost:3000
+#    }
+#}
+
+localhost:80 {
+    reverse_proxy {
+        to localhost:3000
+    }
+}

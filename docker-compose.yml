@@ -1,0 +1,25 @@
+version: "3.7"
+
+services:
+  caddy:
+    image: caddy:alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - $PWD/Caddyfile:/etc/caddy/Caddyfile
+    networks:
+      - caddy
+  sveltekit:
+    build: .
+    restart: unless-stopped
+    environment:
+      - BODY_SIZE_LIMIT=50000000
+    volumes:
+      - ./mrmNode:/app/mrmNode
+    networks:
+        - caddy
+networks:
+    caddy: {}
