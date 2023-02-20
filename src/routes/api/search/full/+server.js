@@ -1,34 +1,55 @@
-import SearchIndex from "$lib/api/server/search/SearchIndex.js";
+import { types } from '$lib/api/server/search/SearchIndex.js';
+import * as SearchIndex from '$lib/api/server/search/SearchIndex.js';
 
-export async function GET({locals, request, params, url}) {
-    // if (!locals.user.admin) {
-    //     return new Response(
-    //         JSON.stringify({status: "error", message: "You are not logged in"}),
-    //         {
-    //             headers: {
-    //                 'Content-Type': 'application/json'
-    //             }
-    //         }
-    //     )
-    // }
+export async function GET({ url }) {
+	const limit = url.searchParams.get('limit') || 10;
 
+	let returnData = {
+		status: 'ok',
+		data: []
+	};
 
-    const limit = url.searchParams.get("limit")
+	const options = {
+		limit,
+		filter: {}
+	};
 
-    const query = url.searchParams.get("query")
+	let query = url.searchParams.get('query') || '';
 
-    let returnData = {
-        status: "ok",
-        data: await SearchIndex.search(query, {limit: limit ? limit : 10})
-    }
+	// ?tag=foo,bar&pairing=aliceAndBob
+	for (const type of types) {
+		const searchQry = url.searchParams.get(type);
+		// we check if 'type' param exists
+		if (searchQry) {
+			// if it does, get the values by splitting it by comma, and add it to the options object
+			options.filter[type] = searchQry.split(',');
+		}
+	}
 
+	// ?!tag=foo,bar&!pairing=aliceAndBob
+	for (const type of types) {
+		const searchQry = url.searchParams.get('!' + type);
+		// we check if 'type' param exists
+		if (searchQry) {
+			// if it does, get the values by splitting it by comma, and add it to the options object
+			options.negfilter[type] = searchQry.split(',');
+		}
+	}
 
-    return new Response(
-        JSON.stringify(returnData),
-        {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }
-    )
+	console.log(query, options);
+
+	try {
+		returnData.data = await SearchIndex.search(query, options);
+	} catch (error) {
+		returnData = {
+			status: 'error',
+			error: error.message
+		};
+	}
+
+	return new Response(JSON.stringify(returnData), {
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	});
 }

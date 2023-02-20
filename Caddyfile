@@ -4,8 +4,12 @@
 #    }
 #}
 
-localhost:80 {
+http://{env.HOST:localhost}:80 {
+    encode gzip
     reverse_proxy {
-        to localhost:3000
+        to http://sveltekit:3000
+        header_up Host {http.reverse_proxy.upstream.host}
+        header_up X-Forwarded-Proto {http.reverse_proxy.upstream.proto}
+        header_up X-Forwarded-For {http.reverse_proxy.upstream.host}
     }
 }
