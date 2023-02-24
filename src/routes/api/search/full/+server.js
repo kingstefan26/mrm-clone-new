@@ -1,5 +1,5 @@
-import { types } from '$lib/api/server/search/SearchIndex.js';
 import * as SearchIndex from '$lib/api/server/search/SearchIndex.js';
+import { types } from '$lib/api/server/search/SearchIndex.js';
 
 export async function GET({ url }) {
 	const limit = url.searchParams.get('limit') || 10;
@@ -9,12 +9,29 @@ export async function GET({ url }) {
 		data: []
 	};
 
+	console.log('sort param: ', url.searchParams);
+
 	const options = {
 		limit,
-		filter: {}
+		filter: {},
+		sort: url.searchParams.get('sort') || 'newest'
 	};
 
 	let query = url.searchParams.get('query') || '';
+
+	console.log(options.sort);
+
+	if (!['newest', 'oldest', 'relevant', 'random'].includes(options.sort)) {
+		returnData = {
+			status: 'error',
+			error: 'invalid sort mode'
+		};
+		return new Response(JSON.stringify(returnData), {
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+	}
 
 	// ?tag=foo,bar&pairing=aliceAndBob
 	for (const type of types) {
@@ -36,14 +53,13 @@ export async function GET({ url }) {
 		}
 	}
 
-	console.log(query, options);
-
 	try {
-		returnData.data = await SearchIndex.search(query, options);
+		returnData.data = await SearchIndex.fuzzyPostSearch(query, options);
 	} catch (error) {
+		console.error(error);
 		returnData = {
 			status: 'error',
-			error: error.message
+			error: 'failed searching'
 		};
 	}
 

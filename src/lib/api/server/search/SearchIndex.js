@@ -13,51 +13,154 @@ let index = [
 	}
 ];
 
-export let types = ['post', 'tag'];
+let postOnlyIndex = [];
 
-export async function fuzzySearch(
+let postIndex = new Map();
+postIndex.set('Stub Title', { tags: ['MyTag1', 'MyTag2'], author: 'Nobody' });
+
+export let types = ['post', 'category', 'genre', 'pairing', 'tag', 'series', 'author'];
+
+export function getPostlessIndex() {
+	const retrn = {};
+	for (const type of types) {
+		if (type === 'post') continue;
+		retrn[type] = [];
+		for (const entry of index) {
+			if (entry.type === type) {
+				retrn[type].push(entry.snowflake);
+			}
+		}
+	}
+	return retrn;
+}
+
+export async function fuzzyPostSearch(
 	query = '',
-	options = { limit: 10, filter: { tag: [], post: [] }, negfilter: { tag: [], post: [] } }
+	options = {
+		limit: 10,
+		sort: 'newest',
+		filter: { tag: [], post: [] },
+		negfilter: { tag: [], post: [] }
+	}
 ) {
+	console.time('PostSearch');
+
+	// do a fuzzy search on the index, if the query is empty, return the whole index
+	let hits =
+		query !== ''
+			? fuzzysort
+					.go(query, postOnlyIndex, { key: 'snowflake', limit: options.limit })
+					.map((res) => res.obj)
+			: postOnlyIndex;
+
+	// filter the results based on the options object
+	for (const type of ['tag', 'category', 'genre', 'pairing', 'series']) {
+		if (options.filter) {
+			if (`${type}` in options.filter) {
+				hits = hits.filter((entry) => {
+					let post = postIndex.get(entry.snowflake);
+					return post[type].some((item) => options.filter[type].includes(item));
+				});
+			}
+		}
+		if (options.negfilter) {
+			if (`${type}` in options.negfilter) {
+				hits = hits.filter((entry) => {
+					let post = postIndex.get(entry.snowflake);
+					return !post[type].some((item) => options.negfilter[type].includes(item));
+				});
+			}
+		}
+	}
+
+	if (options.filter) {
+		if (options.filter.author) {
+			hits = hits.filter((entry) => {
+				let post = postIndex.get(entry.snowflake);
+				return post.author ? options.filter.author.includes(post.author) : true;
+			});
+		}
+	}
+
+	if (options.negfilter) {
+		if (options.negfilter.author) {
+			hits = hits.filter((entry) => {
+				let post = postIndex.get(entry.snowflake);
+				console.log(post);
+				return post.author ? !options.negfilter.author.includes(post.author) : true;
+			});
+		}
+	}
+
+	const hitsWithData = await getDataFromIndexResults(hits || []);
+
+	// sort the results based on the options object
+	if (options.sort === 'newest') {
+		hitsWithData.sort((a, b) => {
+			return b.createdAt - a.createdAt;
+		});
+	} else if (options.sort === 'oldest') {
+		hitsWithData.sort((a, b) => {
+			return a.createdAt - b.createdAt;
+		});
+	} else if (options.sort === 'random') {
+		hitsWithData.sort(() => {
+			return Math.random() - 0.5;
+		});
+	} else if (options.sort === 'relevant') {
+		// TODO: properly sort by relevance
+		// for now just sort by newest
+		hitsWithData.sort((a, b) => {
+			return b.createdAt - a.createdAt;
+		});
+	}
+
+	console.timeEnd('PostSearch');
+	return hitsWithData;
+}
+
+export async function fuzzyQuickSearch(query = '', options = { limit: 10 }) {
+	console.time('QuickSearch');
+
 	// do a fuzzy search on the index, if the query is empty, return the whole index
 	let hits =
 		query !== ''
 			? fuzzysort.go(query, index, { key: 'snowflake', limit: options.limit }).map((res) => res.obj)
 			: index;
 
-	// filter the results based on the options object
-	for (const type of types) {
-		if (options.filter[type]) {
-			hits = hits.filter((entry) => {
-				return options.filter[type].includes(entry.snowflake);
-			});
-		}
-		if (options.negfilter[type]) {
-			hits = hits.filter((entry) => {
-				return !options.negfilter[type].includes(entry.snowflake);
-			});
-		}
-	}
-
-	return hits || [];
-}
-
-export async function search(query, options) {
-	// measure time
-	console.time('search');
-	const newVar = await this.getDataFromIndexResults(await this.fuzzySearch(query, options));
-	console.timeEnd('search');
-	return newVar;
+	const hitsWithData = getDataFromIndexResults(hits || []);
+	console.timeEnd('QuickSearch');
+	return hitsWithData;
 }
 
 export async function recreateIndex() {
+	console.log("Recreating index, this'll take a while...");
+	console.time('RecreateIndex');
 	const tempIndex = [];
 	const tempTypes = [];
+	const temppostOnlyIndex = [];
+	const tempPostindex = new Map();
+
 	await Promise.all([
-		Post.findAll().then((posts) => {
+		Post.findAll({ include: [Tag, Category, Author, Genere, Pairing, Series] }).then((posts) => {
 			tempTypes.push('post');
+
 			posts.forEach((post) => {
+				if (post.published === false) return;
+				tempPostindex.set(post.title, {
+					author: post.Author.name,
+					tag: post.tags ? post.tags.map((tag) => tag.name) : [],
+					category: post.categories ? post.categories.map((category) => category.name) : [],
+					genre: post.generes ? post.generes.map((genere) => genere.name) : [],
+					pairing: post.pairing ? post.pairing.map((pairing) => pairing.name) : [],
+					series: post.series ? post.series.map((series) => series.name) : []
+				});
+
 				tempIndex.push({
+					type: 'post',
+					snowflake: post.title
+				});
+				temppostOnlyIndex.push({
 					type: 'post',
 					snowflake: post.title
 				});
@@ -121,16 +224,23 @@ export async function recreateIndex() {
 
 	// save the index
 	index = tempIndex;
+	postOnlyIndex = temppostOnlyIndex;
+	postIndex.clear();
+	postIndex = tempPostindex;
 	types = tempTypes;
+
+	console.timeEnd('RecreateIndex');
 }
 
 export async function getDataFromIndexResults(decodedResults = [{ type: '', snowflake: '' }]) {
+	if (decodedResults.length === 0) return [];
 	let map = decodedResults.map(async (result) => {
 		if (result.type === 'post') {
 			const post = await Post.findOne({
 				where: {
 					title: result.snowflake
-				}
+				},
+				include: [Author]
 			});
 
 			return {
@@ -138,7 +248,11 @@ export async function getDataFromIndexResults(decodedResults = [{ type: '', snow
 				contents: {
 					id: post.id,
 					title: post.title,
-					posterAssetId: post.posterAssetId
+					posterAssetId: post.posterAssetId,
+					Author: {
+						name: post.Author.name
+					},
+					createdAt: post.createdAt
 				},
 				link: `/post/${post.id}`
 			};

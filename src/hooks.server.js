@@ -1,7 +1,7 @@
 import { sequelize } from '$lib/api/server/db.js';
 import { redirect } from '@sveltejs/kit';
-import SearchIndex from '$lib/api/server/search/SearchIndex.js';
 import { createUser, verifyUserToken } from '$lib/api/server/controlers/AuthController.js';
+import { recreateIndex } from '$lib/api/server/search/SearchIndex.js';
 
 let dbInnted = false;
 
@@ -16,14 +16,7 @@ export async function handle({ event, resolve }) {
 			salt: 'ar@',
 			admin: true
 		});
-		await SearchIndex.recreateIndex();
-
-		// AssetBucket.findOne({ where: { snowflake: 'default' } }).then(async (bucket) => {
-		// 	bucket = bucket || (await AssetBucket.create({ snowflake: 'default' }));
-		// 	console.log('hello???', bucket);
-		// 	console.log(getMethods(bucket));
-		// 	getMethods(bucket);
-		// });
+		await recreateIndex();
 
 		dbInnted = true;
 	}

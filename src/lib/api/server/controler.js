@@ -105,7 +105,8 @@ export async function getFeed(pageIndex = 0, pageSize = 10, showUnpublishedPosts
 	let { count, rows } = await DB.Post.findAndCountAll({
 		offset: pageIndex * pageSize,
 		limit: pageSize,
-		where: where
+		where: where,
+		include: [Author]
 	});
 
 	if (typeof rows !== 'undefined' && rows.length === 0) {
@@ -115,7 +116,16 @@ export async function getFeed(pageIndex = 0, pageSize = 10, showUnpublishedPosts
 		};
 	}
 
-	rows = rows.map((s) => JSON.parse(JSON.stringify(s)));
+	rows = rows.map((s) => {
+		return {
+			title: s.title,
+			id: s.id,
+			posterAssetId: s.posterAssetId,
+			Author: {
+				name: s.Author.name
+			}
+		};
+	});
 
 	return {
 		posts: rows,

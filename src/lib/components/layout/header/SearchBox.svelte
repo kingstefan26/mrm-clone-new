@@ -22,9 +22,10 @@
 
             nextRefresh = setTimeout(() => {
                 nextRefresh = undefined;
-                fetch(`/api/search/full?query=${searchBoxVal}&limit=5`)
+                fetch(`/api/search/quick?query=${searchBoxVal}&limit=5`)
                     .then(response => response.json())
                     .then(json => {
+                        console.log(json)
                         const {data} = json
                         cacheMap.set(searchBoxVal, data);
                         quickSearchResults = data;
@@ -51,10 +52,16 @@
 
     let searchBoxVal = "";
 
+    function searchGo() {
+        const qury = new URLSearchParams()
+        qury.set('query', searchBoxVal)
+        goto(`/search?${qury.toString()}`)
+    }
+
 </script>
 
 <div class="flex justify-center w-full h-full">
-    <form class="max-[500px]:w-full min-[500px]:w-1/2" autocomplete="off">
+    <form class="max-[500px]:w-full min-[500px]:w-1/2" on:submit|preventDefault={searchGo} autocomplete="off">
         <input bind:value={searchBoxVal}
                on:keydown={quickSearch}
                id="searchfield"

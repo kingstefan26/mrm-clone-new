@@ -2,11 +2,22 @@ import path from 'path';
 import fs from 'fs';
 import sharp from 'sharp';
 import { execSync } from 'child_process';
+import mime from 'mime-kind';
 
-function getMimeFromPath(filePath) {
+async function getMimeFromPath(filePath) {
+	// let lookup = '';
+	// let lookup = mime.lookup(path.extname(filePath));
+	// if (!lookup) {
+	// 	throw new Error('Failed getting mime type from ' + filePath);
+	// }
+	// return lookup;
 	const mimeType = execSync(`file --mime-type -b "${filePath}"`).toString();
-
 	return mimeType.trim();
+}
+
+async function getMimeFromStream(stream) {
+	const a = await mime(stream);
+	return a.mime;
 }
 
 export const definition = {
@@ -43,7 +54,7 @@ export const definition = {
 		// get metadata
 		const metadata = await sharp(filePath).metadata();
 
-		const mimeType = getMimeFromPath(filePath);
+		const mimeType = await getMimeFromStream(arrayBuffer);
 
 		const uri = 'localFs://' + filePath;
 
