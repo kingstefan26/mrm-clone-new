@@ -1,4 +1,4 @@
-import { Chapter, Post } from '$lib/api/server/db.js';
+import { Chapter, Post } from '$lib/api/server/db.ts';
 import { addChapterToPost } from '$lib/api/server/controlers/ChapterController.js';
 import { chapterAssetsFromFormData } from '$lib/api/server/import.js';
 import { getStubAutor } from '$lib/api/server/controler.js';

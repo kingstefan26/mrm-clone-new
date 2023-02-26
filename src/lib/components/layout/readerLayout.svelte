@@ -50,7 +50,7 @@
 					<div class="pt-2 pl-3 pr-3 pb-5">
 						<a
 							data-sveltekit-preload-data
-							class="font-publicsans text-lg font-medium macolour font-extrabold hover:text-white no-underline"
+							class="font-publicsans text-lg font-bold macolour font-extrabold hover:text-white no-underline"
 							href={link.link}
 						>
 							{link.Name.toUpperCase()}

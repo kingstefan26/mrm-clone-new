@@ -1,29 +1,14 @@
-import path from 'path';
-import fs from 'fs';
+import * as path from 'path';
+import * as fs from 'fs';
 import sharp from 'sharp';
-import { execSync } from 'child_process';
 import mime from 'mime-kind';
+import type { StorageProvider } from '$lib/api/server/assets/AssetVersionManager';
+import { Readable } from 'stream';
 
-async function getMimeFromPath(filePath) {
-	// let lookup = '';
-	// let lookup = mime.lookup(path.extname(filePath));
-	// if (!lookup) {
-	// 	throw new Error('Failed getting mime type from ' + filePath);
-	// }
-	// return lookup;
-	const mimeType = execSync(`file --mime-type -b "${filePath}"`).toString();
-	return mimeType.trim();
-}
-
-async function getMimeFromStream(stream) {
-	const a = await mime(stream);
-	return a.mime;
-}
-
-export const definition = {
+const newVar: StorageProvider = {
 	name: 'localFs',
 	uriPrefix: 'localFs://',
-	create: async (arrayBuffer) => {
+	create: async (arrayBuffer: ArrayBuffer) => {
 		// create 'upload' dir if it doesn't exist
 		const uploadDir = path.join(process.cwd(), './mrmNode/upload');
 
@@ -32,9 +17,8 @@ export const definition = {
 			fs.mkdirSync(uploadDir);
 		}
 
-		// generate a random uuid
-		const uuid =
-			Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+		const uuid = crypto.randomUUID();
+
 		let filePath = path.join(uploadDir, uuid);
 
 		// create a new file in the upload dir
@@ -54,7 +38,7 @@ export const definition = {
 		// get metadata
 		const metadata = await sharp(filePath).metadata();
 
-		const mimeType = await getMimeFromStream(arrayBuffer);
+		const mimeType = (await mime(arrayBuffer)).mime;
 
 		const uri = 'localFs://' + filePath;
 
@@ -67,7 +51,8 @@ export const definition = {
 			mimeType
 		};
 	},
-	get: async (uri) => {
+	// @ts-ignore
+	get: (uri) => {
 		const acuallocalPath = uri.substring('localFs://'.length);
 
 		// check if file exists using fs module
@@ -75,12 +60,12 @@ export const definition = {
 			return undefined;
 		}
 
-		// read from file system using fs module
-		return fs.createReadStream(acuallocalPath);
+		return Readable.from(fs.createReadStream(acuallocalPath));
 	},
-	destroy: async (path) => {
+	destroy: async (path: String) => {
 		const realPath = path.substring('localFs://'.length);
 
 		fs.rmSync(realPath);
 	}
 };
+export default newVar;

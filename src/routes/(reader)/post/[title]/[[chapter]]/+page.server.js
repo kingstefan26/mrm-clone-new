@@ -1,19 +1,11 @@
 import { getPostDataForReader } from '$lib/api/server/controler.js';
-import { error } from '@sveltejs/kit';
 
 /** @type {import("./$types").Load} */
-export async function load({ params }) {
-	const chapterIndex = params.chapter ? Number.parseInt(params.chapter) : 0;
-	const postId = params.title;
-
-	try {
-		const post = await getPostDataForReader(postId, chapterIndex);
-
-		return {
-			current_chapter: chapterIndex,
-			post
-		};
-	} catch (err) {
-		throw error(404, err.message);
-	}
+export async function load({ params, locals }) {
+	const chapterIndex = Number.parseInt(params.chapter || '0');
+	return {
+		current_chapter: chapterIndex,
+		post: await getPostDataForReader(params.title, chapterIndex),
+		admin: !!(locals.user && locals.user.admin)
+	};
 }

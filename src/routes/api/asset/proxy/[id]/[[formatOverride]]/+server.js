@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
-import { Asset, AssetVersion } from '$lib/api/server/db.js';
-import { getStreamFromAssetVersion } from '$lib/api/server/assets/AssetVersionManager.js';
+import { Asset, AssetVersion } from '$lib/api/server/db.ts';
+import { getStreamFromAssetVersion } from '$lib/api/server/assets/AssetVersionManager.ts';
 
 /** @type {import("./$types").RequestHandler} */
 export async function GET({ params, request, url }) {
@@ -9,7 +9,7 @@ export async function GET({ params, request, url }) {
 	let acceptsAvif = accepts.includes('avif');
 	let acceptsJxl = accepts.includes('jxl');
 
-	let internalisation = url.searchParams.get('lang');
+	let internalisation = url.searchParams.get('lang') || 'eng';
 
 	if (params.formatOverride) {
 		console.log(params.formatOverride);
@@ -31,8 +31,6 @@ export async function GET({ params, request, url }) {
 			acceptsAvif = false;
 		}
 	}
-
-	internalisation = internalisation ? internalisation : 'eng';
 
 	const asset = await Asset.findOne({
 		where: {
@@ -109,7 +107,7 @@ export async function GET({ params, request, url }) {
 		throw error(404, 'Invalid version');
 	}
 
-	const stream = await getStreamFromAssetVersion(assetVersionUsed);
+	const stream = getStreamFromAssetVersion(assetVersionUsed);
 
 	if (!stream) {
 		console.error(`failed to load asset ${params.id} version ${assetVersionUsed.version}`);

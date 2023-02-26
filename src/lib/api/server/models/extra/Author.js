@@ -1,10 +1,8 @@
-import {DataTypes} from "sequelize";
+import { DataTypes } from 'sequelize';
 
-const defineAuthor = (sequelize) => {
-    return sequelize.define('Author', {
-        name: DataTypes.STRING,
-        longName: DataTypes.STRING
-    })
-}
-
-export { defineAuthor }
+export const defineAuthor = (sequelize) => {
+	return sequelize.define('Author', {
+		name: DataTypes.STRING,
+		longName: DataTypes.STRING
+	});
+};

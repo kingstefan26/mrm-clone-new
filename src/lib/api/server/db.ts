@@ -1,4 +1,4 @@
-// /src/lib/server/db.js
+// /src/lib/server/db.ts
 
 import { DataTypes, Model, Sequelize } from 'sequelize';
 import { defineAsset } from '$lib/api/server/models/asset/Asset';
@@ -19,7 +19,6 @@ import { defineUser } from '$lib/api/server/models/user/User.js';
 import { defineBookmark } from '$lib/api/server/models/user/Bookmark.js';
 import { defineView } from '$lib/api/server/models/analytics/View.js';
 import { defineSeries } from '$lib/api/server/models/extra/Series.js';
-import { getMethods } from '$lib/api/server/mock.js';
 
 export const sequelize = new Sequelize('db', 'user', 'pass', {
 	host: 'localhost',
@@ -31,7 +30,8 @@ export const sequelize = new Sequelize('db', 'user', 'pass', {
 	},
 	storage: './mrmNode/database.sqlite',
 	logging: false
-}); // setup mock data // createMockData()
+});
+
 export const Asset = defineAsset(sequelize);
 
 export const AssetVersion = defineAssetData(sequelize);

@@ -1,11 +1,13 @@
 <script>
 	import PageTransision from '$lib/components/util/pageTransision.svelte';
 	import { lazyLoad } from '$lib/shared/util/LazyLoad';
+	import { goto } from '$app/navigation';
 
 	export let doublePageview;
 	export let chapter;
 	export let post;
 	export let current_chapter;
+	export let admin;
 
 	function formatTime(unixTimeStamp) {
 		const a = new Date(unixTimeStamp);
@@ -38,6 +40,16 @@
 		<!--            Reader mode-->
 		<!--        </button>-->
 		<button class="switchvieverstylebtn"> Reader mode </button>
+		{#if admin}
+			<button
+				class="switchvieverstylebtn"
+				on:click={() => {
+					goto(`/admin/manage/posts/edit/${post.id}`);
+				}}
+			>
+				Edit this post
+			</button>
+		{/if}
 
 		<h1 class="title font-publicsans">
 			{#if !post.Author}
@@ -114,7 +126,7 @@
 		{/if}
 
 		{#if current_chapter > 0}
-			<p class="font-bold mr-2">
+			<p class="font-bold mr-2" style="color: #a2a2a2;">
 				Chapter: #{current_chapter}
 			</p>
 		{/if}
@@ -217,7 +229,7 @@
 
 	.creation {
 		font-family: 'Public Sans', sans-serif;
-		color: #808080;
+		color: #ababab;
 	}
 
 	#linkwrapper * {

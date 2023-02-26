@@ -1,30 +1,34 @@
-import * as DB from "$lib/api/server/db.js";
-import {Chapter} from "$lib/api/server/db.js";
+import * as DB from '$lib/api/server/db.ts';
+import { Chapter } from '$lib/api/server/db.ts';
 
 export async function addChapterToPost(post, chapter) {
-    await chapter.setPost(post)
+	await chapter.setPost(post);
 
-    post.chapterCount = await DB.Chapter.count({
-        where: {
-            postId: post.id
-        }
-    })
+	post.chapterCount = await DB.Chapter.count({
+		where: {
+			postId: post.id
+		}
+	});
 
-    await post.save()
+	await post.save();
 }
 
 export async function createNextChapter(post, name = undefined) {
-    const chapterCount = await Chapter.count({where: {postId: post.id}})
+	const chapterCount = await Chapter.count({ where: { postId: post.id } });
 
-    let nextChapterIndex = chapterCount
+	let nextChapterIndex = chapterCount;
 
-    if(name === undefined) {
-        name = `${nextChapterIndex}`
-    }
-    const chapter = await Chapter.create({name: name, published: false, indexInParentPost: nextChapterIndex})
+	if (name === undefined) {
+		name = `${nextChapterIndex}`;
+	}
+	const chapter = await Chapter.create({
+		name: name,
+		published: false,
+		indexInParentPost: nextChapterIndex
+	});
 
-    await addChapterToPost(post, chapter)
+	await addChapterToPost(post, chapter);
 
-    console.log(`created chapter ${chapter.id} for post ${post.id} with name ${chapter.name}`)
-    return chapter
+	console.log(`created chapter ${chapter.id} for post ${post.id} with name ${chapter.name}`);
+	return chapter;
 }

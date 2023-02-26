@@ -1,5 +1,5 @@
 import { fail, redirect } from '@sveltejs/kit';
-import { authenticateUser } from '$lib/api/server/controlers/AuthController.js';
+import { authenticateUser } from '$lib/api/server/controlers/AuthController.ts';
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ locals }) {

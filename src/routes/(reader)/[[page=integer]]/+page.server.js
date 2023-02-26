@@ -1,19 +1,17 @@
-import {error} from "@sveltejs/kit";
-import {getFeed} from "$lib/api/server/controler.js";
+import { error } from '@sveltejs/kit';
+import { getFeed } from '$lib/api/server/controler.js';
 
-/** @type {import('./$types').Load} */
-export async function load({params}) {
+/** @type {import("./$types").Load} */
+export async function load({ params }) {
+	let feed = await getFeed(params.page, 10, false);
 
-    let feed = await getFeed(params.page, 10, false)
+	if (feed.posts.length === 0) {
+		throw error(404, {
+			message: 'No posts found'
+		});
+	}
 
-    if(feed.posts.length === 0){
-        throw error(404, {
-            message: "No posts found"
-        })
-    }
-
-    return {
-        feed
-    }
-
+	return {
+		feed
+	};
 }

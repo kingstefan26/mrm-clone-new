@@ -1,4 +1,4 @@
-import { Author, Category, Genere, Pairing, Post, Series, Tag } from '$lib/api/server/db.js';
+import { Author, Category, Genere, Pairing, Post, Series, Tag } from '$lib/api/server/db.ts';
 import fuzzysort from 'fuzzysort';
 
 let index = [

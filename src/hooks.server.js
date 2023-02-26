@@ -1,6 +1,6 @@
-import { sequelize } from '$lib/api/server/db.js';
+import { sequelize } from '$lib/api/server/db.ts';
 import { redirect } from '@sveltejs/kit';
-import { createUser, verifyUserToken } from '$lib/api/server/controlers/AuthController.js';
+import { createUser, verifyUserToken } from '$lib/api/server/controlers/AuthController.ts';
 import { recreateIndex } from '$lib/api/server/search/SearchIndex.js';
 
 let dbInnted = false;

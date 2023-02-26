@@ -1,7 +1,7 @@
-import {DataTypes} from "sequelize";
+import { DataTypes } from 'sequelize';
 
 export const defineSeries = (sequelize) => {
-    return sequelize.define('series', {
-        name: DataTypes.STRING
-    })
-}
+	return sequelize.define('series', {
+		name: DataTypes.STRING
+	});
+};

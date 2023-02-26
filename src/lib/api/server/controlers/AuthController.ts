@@ -1,17 +1,17 @@
 const superprivatepassphrase = 'a';
 
 // gg from https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest
-import { TokenGenerator } from '$lib/api/server/token-util.js';
-import * as DB from '$lib/api/server/db.js';
+import { TokenGenerator } from '$lib/api/server/controlers/TokenUtil.js';
+import * as DB from '$lib/api/server/db';
 
-const getSHA256 = async (text = '') => {
+const getSHA256 = async (text: string) => {
 	const msgUint8 = new TextEncoder().encode(text); // encode as (utf-8) Uint8Array
 	const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8); // hash the message
 	const hashArray = Array.from(new Uint8Array(hashBuffer)); // convert buffer to byte array
 	return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
 };
 
-export function verifyUserToken(token) {
+export function verifyUserToken(token: string) {
 	try {
 		return new TokenGenerator().decode(token, superprivatepassphrase);
 	} catch (_) {
@@ -19,7 +19,7 @@ export function verifyUserToken(token) {
 	}
 }
 
-export async function authenticateUser(email, passwrd) {
+export async function authenticateUser(email: string, passwrd: string) {
 	const user = await DB.User.findOne({
 		where: {
 			email: email
@@ -57,9 +57,13 @@ export async function authenticateUser(email, passwrd) {
 	return undefined;
 }
 
-export async function createUser(
-	data = { email: '', passHash: '', username: '', salt: '', admin: false }
-) {
+export async function createUser(data: {
+	email: string;
+	passHash: string;
+	username: string;
+	salt: string;
+	admin: boolean;
+}) {
 	let user = await DB.User.findOne({
 		where: {
 			email: data.email

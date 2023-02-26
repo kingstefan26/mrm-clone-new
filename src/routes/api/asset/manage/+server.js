@@ -1,4 +1,4 @@
-import { Asset, Author, Chapter, Post } from '$lib/api/server/db.js';
+import { Asset, Author, Chapter, Post } from '$lib/api/server/db.ts';
 
 export async function POST({ locals, request }) {
 	if (!locals.user.admin) {

@@ -1,8 +1,8 @@
-import {Author} from "$lib/api/server/db.js";
+import { Author } from '$lib/api/server/db.ts';
 
 /** @type {import('./$types').Load} */
 export async function load() {
-    const auths = await Author.findAll()
+	const auths = await Author.findAll();
 
-    return {authors: JSON.parse(JSON.stringify(auths))}
+	return { authors: JSON.parse(JSON.stringify(auths)) };
 }

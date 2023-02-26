@@ -1,9 +1,7 @@
-import {DataTypes} from "sequelize";
+import { DataTypes } from 'sequelize';
 
-const defineScanlination = (sequelize) => {
-    return sequelize.define('scanlination', {
-        groupName: DataTypes.STRING
-    })
-}
-
-export { defineScanlination }
+export const defineScanlination = (sequelize) => {
+	return sequelize.define('scanlination', {
+		groupName: DataTypes.STRING
+	});
+};

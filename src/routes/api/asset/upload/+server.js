@@ -1,5 +1,5 @@
-import { Asset } from '$lib/api/server/db.js';
-import { createAssetVersion } from '$lib/api/server/assets/AssetVersionManager.js';
+import { Asset } from '$lib/api/server/db.ts';
+import { createAssetVersion } from '$lib/api/server/assets/AssetVersionManager.ts';
 
 export async function POST({ locals, request }) {
 	if (!locals.user.admin) {
@@ -21,14 +21,12 @@ export async function POST({ locals, request }) {
 
 	let lang = formData.get('lang');
 
-	const version = await createAssetVersion(new Uint8Array(buffer), lang ? lang : 'en');
+	const version = await createAssetVersion(new Uint8Array(buffer), lang ? lang : 'en', true);
 
 	const asset = await Asset.create({ indexInChapter: 0 });
 	asset.addAssetData(version);
 
 	const returnAsset = JSON.parse(JSON.stringify(asset));
-
-	await new Promise((resolve) => setTimeout(resolve, 1000));
 
 	return new Response(JSON.stringify({ status: 'ok', asset: returnAsset }), {
 		headers: {

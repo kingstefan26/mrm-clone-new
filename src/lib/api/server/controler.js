@@ -1,5 +1,4 @@
-import { TokenGenerator } from '$lib/api/server/token-util.js';
-import * as DB from '$lib/api/server/db.js';
+import * as DB from '$lib/api/server/db.ts';
 import {
 	Asset,
 	AssetBucket,
@@ -13,7 +12,7 @@ import {
 	Series,
 	Status,
 	Tag
-} from '$lib/api/server/db.js';
+} from '$lib/api/server/db.ts';
 
 export async function getPostDataForReader(postId = '', chapter = 0) {
 	if (!postId) return {};

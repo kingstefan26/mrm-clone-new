@@ -1,4 +1,4 @@
-import { View } from '$lib/api/server/db.js';
+import { View } from '$lib/api/server/db.ts';
 
 export async function logView(postId, chapterId) {
 	if (postId === undefined || chapterId === undefined) {

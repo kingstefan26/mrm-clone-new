@@ -1,9 +1,7 @@
-import {DataTypes} from "sequelize";
+import { DataTypes } from 'sequelize';
 
-const defineBookmark = (sequelize) => {
-    return sequelize.define('bookmark', {
-        note: DataTypes.STRING
-    })
-}
-
-export { defineBookmark }
+export const defineBookmark = (sequelize) => {
+	return sequelize.define('bookmark', {
+		note: DataTypes.STRING
+	});
+};

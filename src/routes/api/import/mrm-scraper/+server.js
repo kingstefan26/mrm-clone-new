@@ -1,11 +1,11 @@
 import * as path from 'path';
 import * as fs from 'fs';
-import { Asset, AssetBucket, Chapter, Post } from '$lib/api/server/db.js';
+import { Asset, AssetBucket, Chapter, Post } from '$lib/api/server/db.ts';
 
 // unzip the buffer
 import unzip from 'unzipper';
 import { addChapterToPost } from '$lib/api/server/controlers/ChapterController.js';
-import { createAssetVersion } from '$lib/api/server/assets/AssetVersionManager.js';
+import { createAssetVersion } from '$lib/api/server/assets/AssetVersionManager.ts';
 
 export async function POST({ locals, request }) {
 	if (!locals.user.admin) {
@@ -95,7 +95,7 @@ export async function POST({ locals, request }) {
 		// get the buffer from the file
 		const assetBuffer = await assetFile.buffer();
 
-		const version = await createAssetVersion(assetBuffer, 'en');
+		const version = await createAssetVersion(assetBuffer, 'en', true);
 
 		const asset = await Asset.create({ indexInChapter: i });
 		await asset.addAssetData(version);
