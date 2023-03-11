@@ -126,6 +126,10 @@ export async function getFeed(pageIndex = 0, pageSize = 10, showUnpublishedPosts
 		};
 	});
 
+	if (rows.length === 0) {
+		throw new Error('No posts found');
+	}
+
 	return {
 		posts: rows,
 		pagesAvalible: Math.ceil(count / pageSize)
@@ -134,8 +138,9 @@ export async function getFeed(pageIndex = 0, pageSize = 10, showUnpublishedPosts
 
 // chapterIndex -1 means we get all the chapters
 export async function getChapterWithPost(postId = '', chapterIndex = 0) {
-	let { post, posterAsset } = await getPostPopulated(postId);
-	if (!post) return undefined;
+	const postz = await getPostPopulated(postId);
+	if (!postz) return undefined;
+	let { post, posterAsset } = postz;
 
 	let postData = post.get({ plain: true });
 
@@ -192,22 +197,6 @@ export async function getChapterWithPost(postId = '', chapterIndex = 0) {
 	}
 
 	return postData;
-}
-
-export async function getTag(name = '') {
-	let tag = await Tag.findOne({
-		where: {
-			name: name
-		}
-	});
-
-	if (!tag) {
-		tag = await Tag.create({
-			name: name
-		});
-	}
-
-	return tag;
 }
 
 export async function getChapterWithAssets(postId = '', chapterIndex = 0) {

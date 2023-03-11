@@ -22,7 +22,7 @@ export const AvifOptimiser: Optimiser = {
 					advanced: {
 						tune: 'ssim',
 						sharpness: 2,
-						'cq-level': 30,
+						'cq-level': 35,
 						'color:sharpness': 1
 					}
 				})
@@ -38,7 +38,7 @@ export const JpegOptimiser: Optimiser = {
 			plugins: [
 				imageminMozjpeg({
 					tune: 'ssim',
-					quality: 80
+					quality: 70
 				})
 			]
 		});

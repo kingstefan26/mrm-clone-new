@@ -1,4 +1,4 @@
-import { AssetVersion } from '$lib/api/server/db.ts';
+import { AssetVersion } from '$lib/api/server/db';
 import LocalFilesystem from '$lib/api/server/assets/providers/LocalFilesystem';
 import * as Stream from 'stream';
 

@@ -9,8 +9,6 @@ export async function GET({ url }) {
 		data: []
 	};
 
-	console.log('sort param: ', url.searchParams);
-
 	const options = {
 		limit,
 		filter: {},

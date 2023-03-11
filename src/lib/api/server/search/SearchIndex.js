@@ -1,5 +1,9 @@
 import { Author, Category, Genere, Pairing, Post, Series, Tag } from '$lib/api/server/db.ts';
 import fuzzysort from 'fuzzysort';
+import { SitemapStream, streamToPromise } from 'sitemap';
+import { Readable } from 'stream';
+
+export let sitemapCache;
 
 let index = [
 	// filled with stub data to show how it looks, cuz we don't do typescript round here
@@ -131,6 +135,55 @@ export async function fuzzyQuickSearch(query = '', options = { limit: 10 }) {
 	const hitsWithData = getDataFromIndexResults(hits || []);
 	console.timeEnd('QuickSearch');
 	return hitsWithData;
+}
+
+export async function recreateSiteMap() {
+	const tempSitemapCache = {};
+	const indexLookupData = await getDataFromIndexResults(index);
+
+	const rootObj = types.map((type) => {
+		const a = [];
+		for (const data of indexLookupData) {
+			if (data.type === type) {
+				a.push({ url: data.link, changefreq: 'monthly', priority: 0.4 });
+			}
+		}
+		return { links: a, type };
+	});
+
+	// $ console.log(rootObj);
+	// rootObj = [
+	// 	{
+	// 		type: 'post',
+	// 		links: [
+	//      { url: '/post/1', changefreq: 'monthly', priority: 0.4 },
+	//      { url: '/post/2', changefreq: 'monthly', priority: 0.4 },
+	// 		}
+	//  }
+	// ...
+	// ]
+
+	const rootLinksXml = types.map(async (type) => {
+		return { url: `/sitemap/${type}.xml`, changefreq: 'monthly', priority: 0.4 };
+	});
+
+	const stream = new SitemapStream({ hostname: 'https://boney.kokoniara.software' });
+	tempSitemapCache.root = await streamToPromise(Readable.from(rootLinksXml).pipe(stream)).then(
+		(data) => data.toString()
+	);
+
+	for (const arr of rootObj) {
+		const stream = new SitemapStream({ hostname: 'https://boney.kokoniara.software' });
+		if (arr.links.length !== 0) {
+			tempSitemapCache[arr.type] = await streamToPromise(
+				Readable.from(arr.links).pipe(stream)
+			).then((data) => data.toString());
+		}
+	}
+
+	console.log(tempSitemapCache.root);
+
+	sitemapCache = tempSitemapCache;
 }
 
 export async function recreateIndex() {
