@@ -1,17 +1,10 @@
-import { recreateIndex } from '$lib/api/server/search/SearchIndex.js';
+import { recreateIndex } from '$lib/api/server/SearchIndex.js';
+import { json } from '@sveltejs/kit';
 
-export async function POST({ locals, request, params }) {
+export async function POST({ locals, params }) {
 	if (!locals.user.admin) {
-		return new Response(JSON.stringify({ status: 'error', message: 'You are not logged in' }), {
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		});
+		return json({ status: 'error', message: 'You are not logged in' });
 	}
-
-	let returnData = { status: 'ok' };
-
-	const jsonres = await request.json();
 
 	if (params.reason === 'updateSeachIndex') {
 		recreateIndex().then(() => {
@@ -19,9 +12,5 @@ export async function POST({ locals, request, params }) {
 		});
 	}
 
-	return new Response(JSON.stringify(returnData), {
-		headers: {
-			'Content-Type': 'application/json'
-		}
-	});
+	return json({ status: 'ok' });
 }

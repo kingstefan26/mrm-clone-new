@@ -2,7 +2,9 @@
 	import { onDestroy, onMount } from 'svelte';
 
 	import logo from '$lib/img/logo-128.png';
-
+	import '@material/web/tabs/tabs.js';
+	import '@material/web/tabs/primary-tab.js';
+	import { goto } from '$app/navigation';
 	export let viewCount;
 	export let postCount;
 
@@ -50,7 +52,7 @@
 			{/if}
 		</h4>
 	</div>
-	<p class="font-extralight text-slate-900 text-stone-400 m-auto">
+	<p class="font-extralight text-stone-400 m-auto">
 		{#key toLaunch}
 			Rocket launch in: {toLaunch}
 		{/key}

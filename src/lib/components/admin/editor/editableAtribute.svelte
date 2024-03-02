@@ -1,56 +1,89 @@
 <script>
-    export let name
-    export let attribute
+	import '@material/web/textfield/outlined-text-field.js';
+	import '@material/web/textfield/filled-text-field.js';
+	import '@material/web/icon/icon.js';
+	import '@material/web/progress/circular-progress.js';
+	import { createEventDispatcher } from 'svelte';
 
-    export let multiline = false
+	export let name;
+	export let attribute;
 
-    export let loading = false
+	$: {
+		if (!attribute) {
+			attribute = '';
+		}
+	}
 
-    let lastSavedAttribute = attribute
+	export let multiline = false;
 
-    import CircleSpiner from "$lib/components/util/CircleSpiner.svelte";
+	export let loading = false;
 
-    import {createEventDispatcher} from 'svelte';
-    const dispatch = createEventDispatcher();
+	const dispatch = createEventDispatcher();
 
-    function forward() {
-        dispatch('save', {
-            attribute
-        });
-        lastSavedAttribute = attribute
-    }
+	function forward() {
+		dispatch('save', {
+			attribute
+		});
+		sync_status = 2;
+	}
 
+	let element;
 
+	let sync_status = 2;
+
+	let timer;
+	let timeoutVal = 1000;
+
+	function handleKeyPress() {
+		window.clearTimeout(timer);
+		sync_status = 0;
+	}
+
+	function handleKeyUp() {
+		window.clearTimeout(timer);
+		timer = window.setTimeout(() => {
+			console.log('Pushing Changes');
+			sync_status = 1;
+			attribute = element.value;
+			forward();
+		}, timeoutVal);
+	}
 </script>
 
-<div class="max-w-[22rem] m-1 text-white min-h-min bg-stone-500">
-    <h1 class="mt-2 ml-2 text-lg">{name}:</h1>
+<div>
+	{#if multiline}
+		<md-outlined-text-field
+			type="textarea"
+			disabled={loading}
+			value={attribute}
+			on:keypress={handleKeyPress}
+			on:keyup={handleKeyUp}
+			bind:this={element}
+			rows="3"
+			label={name}
+		/>
+	{:else}
+		<md-outlined-text-field
+			disabled={loading}
+			value={attribute}
+			on:keypress={handleKeyPress}
+			on:keyup={handleKeyUp}
+			bind:this={element}
+			label={name}
+		/>
+	{/if}
 
-
-    {#if multiline}
-        <textarea class:text-gray-200={lastSavedAttribute === attribute}
-                  disabled='{loading}'  bind:value={attribute}
-                  class:italic={lastSavedAttribute === attribute}
-                  class="ml-1 max-h-max p-1 bg-stone-700 text-white border-[1px]" type="text" placeholder="{attribute}"
-                  rows="3" cols="20"
-        ></textarea>
-        {:else}
-        <input disabled='{loading}' class:italic={lastSavedAttribute === attribute}
-               class:text-gray-200={lastSavedAttribute === attribute}
-               class="ml-1 max-h-max p-1 bg-stone-700 text-white border-[1px]" type="text" placeholder="{attribute}"
-               bind:value={attribute}>
-    {/if}
-
-
-    <button disabled='{(loading || lastSavedAttribute == attribute)}' class="bg-stone-600 p-0.5 mb-0.5"
-            on:click={forward}>
-        Push Changes
-    </button>
-    <div class="float-right mr-2 min-w-[2rem]">
-        {#if loading}
-
-            <CircleSpiner color="#ffffff" size="2" unit="rem"/>
-
-        {/if}
-    </div>
+	{#if sync_status === 0}
+		<span class="material-symbols-outlined select-none">sync</span>
+	{:else if sync_status === 1}
+		<md-circular-progress indeterminate />
+	{:else if sync_status === 2}
+		<span class="material-symbols-outlined select-none">cloud_done</span>
+	{/if}
 </div>
+
+<style>
+	md-outlined-text-field {
+		resize: vertical;
+	}
+</style>

@@ -1,6 +1,9 @@
 import { error } from '@sveltejs/kit';
-import { Asset, AssetVersion } from '$lib/api/server/db.ts';
-import { getStreamFromAssetVersion } from '$lib/api/server/assets/AssetVersionManager.ts';
+import { Asset, AssetVersion } from '$lib/api/server/db.js';
+import {
+	getStreamFromAssetVersion,
+	getUrlFromAssetVersion
+} from '$lib/api/server/assets/AssetVersionManager.js';
 
 /** @type {import("./$types").RequestHandler} */
 export async function GET({ params, request, url }) {
@@ -12,7 +15,6 @@ export async function GET({ params, request, url }) {
 	let internalisation = url.searchParams.get('lang') || 'eng';
 
 	if (params.formatOverride) {
-		console.log(params.formatOverride);
 		if (params.formatOverride.endsWith('webp')) {
 			acceptsWebp = true;
 			acceptsAvif = false;
@@ -105,6 +107,17 @@ export async function GET({ params, request, url }) {
 
 	if (!assetVersionUsed) {
 		throw error(404, 'Invalid version');
+	}
+
+	const img_url = getUrlFromAssetVersion(assetVersionUsed);
+
+	if (img_url) {
+		return new Response('', {
+			status: 307,
+			headers: {
+				Location: img_url
+			}
+		});
 	}
 
 	const stream = getStreamFromAssetVersion(assetVersionUsed);

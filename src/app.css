@@ -5,7 +5,33 @@
 @layer base {
     @font-face {
         font-family: 'Public Sans';
-        src: local('Public Sans'), local('Public-Sans'), local('public sans'), local('public-sans'), url('/fonts/public-sans/PublicSans-VariableFont_wght.ttf');
+        src: local('Public Sans'), local('Public-Sans'), local('public sans'), local('public-sans'), url('/fonts/public-sans/PublicSans-VariableFont_wght.woff2');
         font-display: swap;
     }
+    @font-face {
+        font-family: 'Material Symbols Outlined';
+        font-style: normal;
+        font-weight: 400;
+        src: url(/fonts/MaterialSymbolsOutlined.woff2);
+        font-display: block;
+    }
+
+    .material-symbols-outlined {
+        font-family: 'Material Symbols Outlined';
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-block;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+    }
+
+}
+
+:root {
+    --md-ref-typeface-plain: system-ui;
 }

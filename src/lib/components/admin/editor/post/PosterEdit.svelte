@@ -7,8 +7,6 @@
 
 	export let assetBuckets = [];
 
-	const thabucketId = assetBuckets[0] ? assetBuckets[0].id : null;
-
 	async function setNewAsset(event) {
 		console.log('CHANGING THE POSTER ASSETS ID TO: ', event.detail);
 		posterAssetId = event.detail.newAsset.id;
@@ -19,5 +17,5 @@
 
 <div>
 	Edit Poster ✏️
-	<AssetPicker assetBucket={thabucketId} assetId={posterAssetId} on:assetpicked={setNewAsset} />
+	<AssetPicker {assetBuckets} assetId={posterAssetId} on:assetpicked={setNewAsset} />
 </div>

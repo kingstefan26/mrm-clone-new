@@ -1,27 +1,16 @@
-import * as path from 'path';
-import * as fs from 'fs';
-import { Asset, AssetBucket, Chapter, Post } from '$lib/api/server/db.ts';
+import { Chapter, Post } from '$lib/api/server/db.js';
 
 // unzip the buffer
 import unzip from 'unzipper';
-import { addChapterToPost } from '$lib/api/server/controlers/ChapterController.js';
-import { createAssetVersion } from '$lib/api/server/assets/AssetVersionManager.ts';
+import { getStubAutor } from '$lib/api/server/controler.js';
+import { chapterAssetsFromFormData } from '$lib/api/server/import.js';
+import mime from 'mime-kind';
+import { json } from '@sveltejs/kit';
+import * as DB from '$lib/api/server/db.js';
 
 export async function POST({ locals, request }) {
 	if (!locals.user.admin) {
-		return new Response(JSON.stringify({ status: 'error', message: 'You are not logged in' }), {
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		});
-	}
-
-	// create 'upload' dir if it doesn't exist
-	const uploadDir = path.join(process.cwd(), 'upload');
-
-	// make sure dir exists
-	if (!fs.existsSync(uploadDir)) {
-		fs.mkdirSync(uploadDir);
+		return json({ status: 'error', message: 'You are not logged in' });
 	}
 
 	// read form data from request
@@ -46,19 +35,8 @@ export async function POST({ locals, request }) {
 
 	const title = meta.title;
 
-	// id is the title with only lowercase letters and numbers
-	let id = title.toLowerCase().replace(/[^a-z0-9]/g, '');
-
-	// check if with the given id already exists
-	let exisitngPost = await Post.findOne({
-		where: {
-			id: id
-		}
-	});
-	// if it does, add a random number to the end
-	if (exisitngPost) {
-		id += Math.floor(Math.random() * 1000);
-	}
+	const id =
+		Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
 	// create a Post from meta.title
 	const post = await Post.create({
@@ -67,23 +45,28 @@ export async function POST({ locals, request }) {
 		published: false
 	});
 
+	await post.setAuthor(await getStubAutor());
+
 	// create a chapter
 	const chapter = await Chapter.create({
 		name: 'number One',
-		published: false,
+		published: true,
 		indexInParentPost: 0
 	});
 
 	// add the chapter to the post
-	await addChapterToPost(post, chapter);
+	await chapter.setPost(post);
 
-	const assetbucket = await AssetBucket.create({
-		snowflake: `${id}-${chapter.indexInParentPost}-assets`
+	post.chapterCount = await DB.Chapter.count({
+		where: {
+			postId: post.id
+		}
 	});
 
-	// get the assets list
+	await post.save();
+
+	const newFormData = new FormData();
 	const assetList = meta.images;
-	// iterate, and create AssetVersion for each with the assets from the zip
 	for (let i = 0; i < assetList.length; i++) {
 		// in the zip files get the one that file name matches i, eg if i=12 then we look for files that filename is 12 without the file extension
 		const assetFile = files.find((file) => {
@@ -92,26 +75,14 @@ export async function POST({ locals, request }) {
 			// return true if the file name matches the index
 			return fileName === i.toString();
 		});
+		const arrayBuffer = await assetFile.buffer();
+		const blob = new Blob([arrayBuffer], { type: (await mime(arrayBuffer)).mime });
+		console.log(i.toString(), blob, assetFile.path);
 		// get the buffer from the file
-		const assetBuffer = await assetFile.buffer();
-
-		const version = await createAssetVersion(assetBuffer, 'en', true);
-
-		const asset = await Asset.create({ indexInChapter: i });
-		await asset.addAssetData(version);
-		await asset.setAssetBucket(assetbucket);
-
-		if (i === 0) {
-			post.posterAssetId = asset.id;
-			await post.save();
-		}
-
-		await asset.setChapter(chapter);
+		newFormData.append(i.toString(), blob, assetFile.path);
 	}
 
-	return new Response(JSON.stringify({ status: 'ok', data: { id: post.id } }), {
-		headers: {
-			'Content-Type': 'application/json'
-		}
-	});
+	await chapterAssetsFromFormData(chapter, newFormData, post);
+
+	return json({ status: 'ok', data: { id: post.id } });
 }

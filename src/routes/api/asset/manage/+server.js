@@ -1,12 +1,9 @@
-import { Asset, Author, Chapter, Post } from '$lib/api/server/db.ts';
+import { Asset } from '$lib/api/server/db.js';
+import { json } from '@sveltejs/kit';
 
 export async function POST({ locals, request }) {
 	if (!locals.user.admin) {
-		return new Response(JSON.stringify({ status: 'error', message: 'You are not logged in' }), {
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		});
+		return json({ status: 'error', message: 'You are not logged in' });
 	}
 
 	let returnData = { status: 'ok' };
@@ -16,12 +13,7 @@ export async function POST({ locals, request }) {
 	const { reason } = jsonres;
 
 	if (!reason) {
-		return new Response(JSON.stringify({ status: 'Bad Request' }), {
-			status: 404,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		});
+		return json({ status: 'Bad Request' }, { status: 404 });
 	}
 
 	if (reason === 'getRecent') {
@@ -47,9 +39,5 @@ export async function POST({ locals, request }) {
 		returnData = { status: 'ok', recentAssets };
 	}
 
-	return new Response(JSON.stringify(returnData), {
-		headers: {
-			'Content-Type': 'application/json'
-		}
-	});
+	return json(returnData);
 }

@@ -1,15 +1,12 @@
-import { Chapter, Post } from '$lib/api/server/db.ts';
-import { addChapterToPost } from '$lib/api/server/controlers/ChapterController.js';
+import { Chapter, Post } from '$lib/api/server/db.js';
 import { chapterAssetsFromFormData } from '$lib/api/server/import.js';
 import { getStubAutor } from '$lib/api/server/controler.js';
+import { json } from '@sveltejs/kit';
+import * as DB from '$lib/api/server/db.js';
 
 export async function POST({ locals, request }) {
 	if (!locals.user.admin) {
-		return new Response(JSON.stringify({ status: 'error', message: 'You are not logged in' }), {
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		});
+		return json({ status: 'error', message: 'You are not logged in' });
 	}
 
 	// create stub title
@@ -34,16 +31,20 @@ export async function POST({ locals, request }) {
 		indexInParentPost: 0
 	});
 
-	await addChapterToPost(post, chapter);
+	await chapter.setPost(post);
+
+	post.chapterCount = await DB.Chapter.count({
+		where: {
+			postId: post.id
+		}
+	});
+
+	await post.save();
 
 	// read form data from request
 	const formData = await request.formData();
 
 	await chapterAssetsFromFormData(chapter, formData, post);
 
-	return new Response(JSON.stringify({ status: 'ok', data: { id: id } }), {
-		headers: {
-			'Content-Type': 'application/json'
-		}
-	});
+	return json({ status: 'ok', data: { id: id } });
 }

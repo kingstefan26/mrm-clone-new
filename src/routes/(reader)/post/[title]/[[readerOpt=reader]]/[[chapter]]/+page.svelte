@@ -1,26 +1,25 @@
 <script lang="ts">
-	import doublePageview from '$lib/shared/stores/doublepageview.js';
 	import AddTheScriptThing from '$lib/shared/util/AddTheScriptThing';
 	import { onMount } from 'svelte';
 	import Dobulepage from './Dobulepage.svelte';
 	import Singlepage from './Singlepage.svelte';
-
 	/** @type {import('./$types').Data} */
 	export let data;
 
 	const BASE_URL = 'https://boney.kokoniara.software/api/asset/proxy/';
 
 	onMount(() => {
-		setTimeout(() => {
-			navigator.sendBeacon(
-				'/api/urmomtrics',
-				JSON.stringify({
-					postId: data.post.id,
-					chapterIndex: data.current_chapter,
-					type: 'view'
-				})
-			);
-		}, 500 + Math.random() * 1000);
+		fetch('/api/urmomtrics', {
+			method: 'POST',
+			body: JSON.stringify({
+				postId: data.post.id,
+				chapterIndex: data.current_chapter,
+				type: 'view'
+			}),
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
 	});
 </script>
 
@@ -71,16 +70,14 @@
 </svelte:head>
 
 {#key data.post}
-	{#if $doublePageview}
+	{#if data.reader}
 		<Dobulepage
-			{doublePageview}
 			chapter={data.post.chapters[0]}
 			post={data.post}
 			current_chapter={data.current_chapter}
 		/>
 	{:else}
 		<Singlepage
-			{doublePageview}
 			chapter={data.post.chapters[0]}
 			post={data.post}
 			current_chapter={data.current_chapter}

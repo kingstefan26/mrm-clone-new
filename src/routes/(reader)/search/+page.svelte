@@ -1,8 +1,9 @@
 <script>
 	import PostWiget from '../[[page=integer]]/PostWiget.svelte';
-	import { invalidate } from '$app/navigation';
+	import { goto, invalidate } from '$app/navigation';
 	import PostWigetSkeleton from '../[[page=integer]]/PostWigetSkeleton.svelte';
 	import { page } from '$app/stores';
+	import { go } from 'fuzzysort';
 
 	export let data;
 
@@ -42,9 +43,10 @@
 	// }
 
 	let sortMode = 'newest';
-	function refresh() {
-		$page.url.searchParams.set('sort', sortMode);
-		invalidate('/api/search/full');
+	async function refresh() {
+		const newUrl = new URL($page.url);
+		newUrl?.searchParams?.set('sort', sortMode);
+		await goto(newUrl);
 	}
 </script>
 

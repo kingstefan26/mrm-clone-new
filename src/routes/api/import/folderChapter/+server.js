@@ -1,14 +1,11 @@
-import { Post } from '$lib/api/server/db.ts';
-import { createNextChapter } from '$lib/api/server/controlers/ChapterController.js';
+import { Chapter, Post } from '$lib/api/server/db.js';
 import { chapterAssetsFromFormData } from '$lib/api/server/import.js';
+import { json } from '@sveltejs/kit';
+import * as DB from '$lib/api/server/db.js';
 
 export async function POST({ locals, request }) {
 	if (!locals.user.admin) {
-		return new Response(JSON.stringify({ status: 'error', message: 'You are not logged in' }), {
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		});
+		return json({ status: 'error', message: 'You are not logged in' });
 	}
 
 	// read form data from request
@@ -20,16 +17,29 @@ export async function POST({ locals, request }) {
 		}
 	});
 
-	const chapter = await createNextChapter(post);
+	const chapterCount = await Chapter.count({ where: { postId: post.id } });
+
+	let nextChapterIndex = chapterCount;
+
+	const chapter = await Chapter.create({
+		name: `${nextChapterIndex}`,
+		published: false,
+		indexInParentPost: nextChapterIndex
+	});
+
+	await chapter.setPost(post);
+
+	post.chapterCount = await DB.Chapter.count({
+		where: {
+			postId: post.id
+		}
+	});
+
+	await post.save();
+
+	console.log(`created chapter ${chapter.id} for post ${post.id} with name ${chapter.name}`);
 
 	await chapterAssetsFromFormData(chapter, formData, post);
 
-	return new Response(
-		JSON.stringify({ status: 'ok', data: { indexInParentPost: chapter.indexInParentPost } }),
-		{
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		}
-	);
+	return json({ status: 'ok', data: { indexInParentPost: chapter.indexInParentPost } });
 }

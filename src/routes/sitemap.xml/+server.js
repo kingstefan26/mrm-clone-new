@@ -1,4 +1,4 @@
-import { recreateSiteMap, sitemapCache } from '$lib/api/server/search/SearchIndex.js';
+import { recreateSiteMap, sitemapCache } from '$lib/api/server/SearchIndex.js';
 
 export async function GET({ locals, params, url }) {
 	if (!sitemapCache) {

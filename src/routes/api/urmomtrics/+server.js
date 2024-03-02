@@ -1,27 +1,22 @@
-import { logView } from '$lib/api/server/analytics/PageViews.js';
+import { View } from '$lib/api/server/db.js';
+import { json } from '@sveltejs/kit';
 
 export async function POST({ request }) {
-	// get the postid and chapter index from the request
 	const { postId, chapterIndex, type } = await request.json();
-	// validate that they exist
 	if (!postId || !type) {
-		return new Response(
-			JSON.stringify({ status: 'error', message: 'missing postid or chapterIndex' }),
-			{
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			}
-		);
+		return json({ status: 'error', message: 'missing postid or chapterIndex' });
 	}
 	if (type === 'view') {
 		// log the view
-		await logView(postId, chapterIndex);
+		if (chapterIndex === undefined) {
+			console.error('logView: postId and chapterId must be defined');
+		} else {
+			await View.create({
+				postId,
+				chapterIndex
+			});
+		}
 	}
 
-	return new Response(JSON.stringify({ status: 'ok' }), {
-		headers: {
-			'Content-Type': 'application/json'
-		}
-	});
+	return json({ status: 'ok' });
 }

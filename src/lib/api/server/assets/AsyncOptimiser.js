@@ -1,10 +1,19 @@
-import { createAssetVersion, getStreamFromAssetVersion } from './AssetVersionManager';
+import { createAssetVersion, getBufferFromAssetVersion } from './AssetVersionManager.js';
 import { Asset } from '$lib/api/server/db.js';
-import { AvifOptimiser, JpegOptimiser, WebpOptimiser } from '$lib/api/server/assets/Optimiser';
+import { AvifOptimiser, JpegOptimiser, WebpOptimiser } from '$lib/api/server/assets/Optimiser.js';
 
+/**
+ * @type {Map<string, () => Promise<void>>}
+ */
 const queue = new Map();
+/**
+ * @type {boolean}
+ */
 let queueLock = false;
 
+/**
+ * @returns {Promise<void>}
+ */
 export const runQueue = async () => {
 	if (queueLock) {
 		return;
@@ -25,13 +34,11 @@ export const runQueue = async () => {
 	queueLock = false;
 };
 
-const stream2buffer = async (stream) => {
-	const chunks = [];
-	for await (const chunk of stream) chunks.push(chunk);
-	return Buffer.concat(chunks);
-};
-
-export const queueAssetOptimisation = async (assetId: string) => {
+/**
+ * @param {string} assetId
+ * @returns {Promise<void>}
+ */
+export const queueAssetOptimisation = async (assetId) => {
 	queue.set(assetId, async () => {
 		// get the asset from the db
 		const asset = await Asset.findOne({ where: { id: assetId } });
@@ -58,28 +65,28 @@ export const queueAssetOptimisation = async (assetId: string) => {
 
 		for (const [lang, missingObj] of Object.entries(missingFormats)) {
 			// get the asset version that matches the lang and is a master
-			const master = assetVersions.find((assetVersion: { lang: any; format: string }) => {
+			const master = assetVersions.find((assetVersion) => {
 				return assetVersion.lang === lang && assetVersion.format === 'master';
 			});
 
 			if (!master)
 				throw new Error(`Asset ${assetId} is missing a master version for language ${lang}`);
 
-			const buffer = await stream2buffer(getStreamFromAssetVersion(master));
+			const buffer = await getBufferFromAssetVersion(master);
 
-			if (!missingObj['webp']) {
+			if (!missingObj.webp) {
 				console.log(`optimising webp: ${assetId}`);
 				const optimisedBuffer = await WebpOptimiser.optimise(buffer);
 				await asset.addAssetData(await createAssetVersion(optimisedBuffer, lang, false));
 			}
 
-			if (!missingObj['jpg']) {
+			if (!missingObj.jpg) {
 				console.log(`optimising jpg: ${assetId}`);
 				const optimisedBuffer = await JpegOptimiser.optimise(buffer);
 				await asset.addAssetData(await createAssetVersion(optimisedBuffer, lang, false));
 			}
 
-			if (!missingObj['avif']) {
+			if (!missingObj.avif) {
 				console.log(`optimising avif: ${assetId}`);
 				const optimisedBuffer = await AvifOptimiser.optimise(buffer);
 				await asset.addAssetData(await createAssetVersion(optimisedBuffer, lang, false));

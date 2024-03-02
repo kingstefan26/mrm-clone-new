@@ -1,4 +1,4 @@
-import * as DB from '$lib/api/server/db.ts';
+import * as DB from '$lib/api/server/db.js';
 import {
 	Asset,
 	AssetBucket,
@@ -12,86 +12,20 @@ import {
 	Series,
 	Status,
 	Tag
-} from '$lib/api/server/db.ts';
-
-export async function getPostDataForReader(postId = '', chapter = 0) {
-	if (!postId) return {};
-
-	const post = await getChapterWithPost(postId, chapter);
-	if (!post || !post.published) {
-		throw new Error(`Post ${postId} at chapter ${chapter} not found`);
-	}
-	// delete chapters that are not pulbished
-	post.chapters = post.chapters.filter((chapter) => chapter.published);
-
-	if (post.chapters.length === 0) {
-		throw new Error(`Could not find chapter ${chapter} in post ${postId}`);
-	}
-
-	// find unique languages
-	const languages = new Set();
-	post.chapters.forEach((chapter) => {
-		chapter.assets.forEach((asset) => {
-			asset.versions.forEach((version) => {
-				languages.add(version.lang);
-			});
-		});
-	});
-
-	// create a available languages array
-	post.languages = [];
-	languages.forEach((lang) => {
-		post.languages.push(lang);
-	});
-
-	post.chapters = post.chapters.map((chapter) => {
-		chapter.assets = chapter.assets.map((asset) => {
-			return {
-				id: asset.id,
-				indexInChapter: asset.indexInChapter,
-				width: asset.versions[0].width,
-				height: asset.versions[0].height
-			};
-		});
-		return {
-			indexInParentPost: chapter.indexInParentPost,
-			name: chapter.name,
-			assets: chapter.assets,
-			sensitiveContent: chapter.sensitiveContent,
-			western: chapter.western
-		};
-	});
-
-	let seriesCount = 0;
-	let seriesLinks = [{}];
-	if (post.seriesId) {
-		const seriesPosts = await Post.findAll({ where: { seriesId: post.seriesId } });
-		seriesCount = seriesPosts.length;
-		seriesLinks = seriesPosts.map((post) => {
-			return {
-				id: post.id
-			};
-		});
-	}
-
-	post.seriesCount = seriesCount;
-	post.seriesLinks = seriesLinks;
-
-	return post;
-}
+} from '$lib/api/server/db.js';
 
 export async function getStubAutor() {
-	let autor = await Author.findOne({
+	let author = await Author.findOne({
 		where: {
 			name: 'Nobody'
 		}
 	});
-	if (!autor) {
-		autor = await Author.create({
+	if (!author) {
+		author = await Author.create({
 			name: 'Nobody'
 		});
 	}
-	return autor;
+	return author;
 }
 
 export async function getFeed(pageIndex = 0, pageSize = 10, showUnpublishedPosts = false) {
@@ -138,13 +72,29 @@ export async function getFeed(pageIndex = 0, pageSize = 10, showUnpublishedPosts
 
 // chapterIndex -1 means we get all the chapters
 export async function getChapterWithPost(postId = '', chapterIndex = 0) {
-	const postz = await getPostPopulated(postId);
-	if (!postz) return undefined;
-	let { post, posterAsset } = postz;
+	let post = await Post.findOne({
+		where: {
+			id: postId
+		},
+		include: [Author, Category, Genere, Pairing, Scanlination, Tag, Status, Series]
+	});
 
-	let postData = post.get({ plain: true });
+	if (!post) {
+		throw new Error(`Post ${postId} not found`);
+	}
 
-	postData.posterAsset = posterAsset.get({ plain: true });
+	// get poster assets and attach it
+	let posterAsset = await Asset.findOne({
+		where: {
+			id: post.posterAssetId
+		},
+		include: [AssetVersion]
+	});
+
+	let postData = {
+		...post.get({ plain: true }),
+		posterAsset: posterAsset.get({ plain: true })
+	};
 
 	let postChapters;
 
@@ -162,34 +112,46 @@ export async function getChapterWithPost(postId = '', chapterIndex = 0) {
 
 	postData.assetBuckets = [];
 
+	// usually this only goes through once,
+	// since the reader only requests one chapter at a time
 	for (const chapterElement of postChapters) {
 		let chapter = chapterElement;
-		let assets = await chapter.getAssets();
+		// console.time('getChapterAssets');
+		let assets = await chapter.getAssets({
+			include: [AssetVersion]
+		});
 
-		assets = await Promise.all(
-			assets.map(async (asset) => {
-				const assetData = asset.get({ plain: true });
-				const versions = await asset.getAssetData();
+		for (let i = 0; i < assets.length; i++) {
+			const asset = assets[i];
 
-				assetData.versions = versions.map((version) => version.get({ plain: true }));
+			const versions = [];
+			for (let j = 0; j < asset.assetData.length; j++) {
+				const version = asset.assetData[j];
+				versions.push(version.get({ plain: true }));
+			}
 
-				return assetData;
-			})
-		);
+			assets[i] = {
+				...asset.get({ plain: true }),
+				versions
+			};
+		}
 
-		const chapterData = chapter.get({ plain: true });
-		chapterData.assets = assets;
-		postData.chapters.push(chapterData);
+		postData.chapters.push({
+			...chapter.get({ plain: true }),
+			assets
+		});
 
-		let snowflake = `${postId}-${chapter.indexInParentPost}-assets`;
 		const bucket = await AssetBucket.findOne({
 			where: {
-				snowflake: snowflake
+				snowflake: `${postId}-${chapter.indexInParentPost}-assets`
 			}
 		});
-		if (bucket) {
-			postData.assetBuckets.push(bucket.get({ plain: true }));
+
+		if (!bucket) {
+			throw new Error(`Bucket "${postId}-${chapter.indexInParentPost}-assets" not found`);
 		}
+
+		postData.assetBuckets.push(bucket.get({ plain: true }));
 	}
 
 	if (postData.chapters.length === 0) {
@@ -197,39 +159,4 @@ export async function getChapterWithPost(postId = '', chapterIndex = 0) {
 	}
 
 	return postData;
-}
-
-export async function getChapterWithAssets(postId = '', chapterIndex = 0) {
-	const chapter = await DB.Chapter.findOne({
-		where: {
-			postId: postId,
-			indexInParentPost: chapterIndex
-		},
-		include: [Asset]
-	});
-
-	return chapter ? JSON.parse(JSON.stringify(chapter)) : undefined;
-}
-
-export async function getPostPopulated(postId = '') {
-	let post = await Post.findOne({
-		where: {
-			id: postId
-		},
-		include: [Author, Category, Genere, Pairing, Scanlination, Tag, Status, Series]
-	});
-
-	if (!post) {
-		return undefined;
-	}
-
-	// get poster assets and attach it
-	let posterAsset = await Asset.findOne({
-		where: {
-			id: post.posterAssetId
-		},
-		include: [AssetVersion]
-	});
-
-	return { post, posterAsset };
 }

@@ -1,12 +1,9 @@
-import { Author, Category, Genere, Series } from '$lib/api/server/db.ts';
+import { Author, Category, Genere, Series } from '$lib/api/server/db.js';
+import { json } from '@sveltejs/kit';
 
 export async function GET({ locals, params, url }) {
 	if (!locals.user.admin) {
-		return new Response(JSON.stringify({ status: 'error', message: 'You are not logged in' }), {
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		});
+		return json({ status: 'error', message: 'You are not logged in' });
 	}
 
 	let returnData = { status: 'ok' };
@@ -57,9 +54,5 @@ export async function GET({ locals, params, url }) {
 		returnData.data = categories.map((category) => category.name);
 	}
 
-	return new Response(JSON.stringify(returnData), {
-		headers: {
-			'Content-Type': 'application/json'
-		}
-	});
+	return json(returnData);
 }

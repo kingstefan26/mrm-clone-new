@@ -5,6 +5,7 @@ module.exports = {
     extend: {
       fontFamily: {
         publicsans: ['Public Sans'],
+        noto: ['Noto Sans'],
       }
     },
   },

@@ -5,8 +5,8 @@ const cspDirectives = {
   'child-src': ["'self'"],
   'connect-src': ["'self'", 'ws://localhost:*'],
   // 'connect-src': ["'self'", 'ws://localhost:*', 'https://hcaptcha.com', 'https://*.hcaptcha.com'],
-  'img-src': ["'self'", 'data:'],
-  'font-src': ["'self'", 'data:'],
+  'img-src': ["'self'", 'data:', 'blob:', 'https://*.kokoniara.software'],
+  'font-src': ["'self'", 'data:', 'https://*.googleapis.com', 'https://fonts.gstatic.com'],
   'form-action': ["'self'"],
   'frame-ancestors': ["'self'"],
   'frame-src': [
@@ -20,7 +20,7 @@ const cspDirectives = {
   'manifest-src': ["'self'"],
   'media-src': ["'self'", 'data:'],
   'object-src': ["'none'"],
-  'style-src': ["'self'", "'unsafe-inline'"],
+  'style-src': ["'self'", "'unsafe-inline'", 'fonts.googleapis.com'],
   // 'style-src': ["'self'", "'unsafe-inline'", 'https://hcaptcha.com', 'https://*.hcaptcha.com'],
   'default-src': [
     'self'

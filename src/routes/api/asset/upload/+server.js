@@ -1,13 +1,10 @@
-import { Asset } from '$lib/api/server/db.ts';
-import { createAssetVersion } from '$lib/api/server/assets/AssetVersionManager.ts';
+import { Asset } from '$lib/api/server/db.js';
+import { createAssetVersion } from '$lib/api/server/assets/AssetVersionManager.js';
+import { json } from '@sveltejs/kit';
 
 export async function POST({ locals, request }) {
 	if (!locals.user.admin) {
-		return new Response(JSON.stringify({ status: 'error', message: 'You are not logged in' }), {
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		});
+		return json({ status: 'error', message: 'You are not logged in' });
 	}
 
 	// read form data from request
@@ -28,9 +25,5 @@ export async function POST({ locals, request }) {
 
 	const returnAsset = JSON.parse(JSON.stringify(asset));
 
-	return new Response(JSON.stringify({ status: 'ok', asset: returnAsset }), {
-		headers: {
-			'Content-Type': 'application/json'
-		}
-	});
+	return json({ status: 'ok', asset: returnAsset });
 }

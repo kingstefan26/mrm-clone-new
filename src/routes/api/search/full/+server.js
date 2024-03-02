@@ -1,5 +1,6 @@
-import * as SearchIndex from '$lib/api/server/search/SearchIndex.js';
-import { types } from '$lib/api/server/search/SearchIndex.js';
+import * as SearchIndex from '$lib/api/server/SearchIndex.js';
+import { types } from '$lib/api/server/SearchIndex.js';
+import { json } from '@sveltejs/kit';
 
 export async function GET({ url }) {
 	const limit = url.searchParams.get('limit') || 10;
@@ -24,11 +25,7 @@ export async function GET({ url }) {
 			status: 'error',
 			error: 'invalid sort mode'
 		};
-		return new Response(JSON.stringify(returnData), {
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		});
+		return json(returnData);
 	}
 
 	// ?tag=foo,bar&pairing=aliceAndBob
@@ -61,9 +58,5 @@ export async function GET({ url }) {
 		};
 	}
 
-	return new Response(JSON.stringify(returnData), {
-		headers: {
-			'Content-Type': 'application/json'
-		}
-	});
+	return json(returnData);
 }

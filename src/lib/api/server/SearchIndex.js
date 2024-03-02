@@ -1,4 +1,4 @@
-import { Author, Category, Genere, Pairing, Post, Series, Tag } from '$lib/api/server/db.ts';
+import { Author, Category, Genere, Pairing, Post, Series, Tag } from '$lib/api/server/db.js';
 import fuzzysort from 'fuzzysort';
 import { SitemapStream, streamToPromise } from 'sitemap';
 import { Readable } from 'stream';
@@ -47,7 +47,7 @@ export async function fuzzyPostSearch(
 		negfilter: { tag: [], post: [] }
 	}
 ) {
-	console.time('PostSearch');
+	// console.time('PostSearch');
 
 	// do a fuzzy search on the index, if the query is empty, return the whole index
 	let hits =
@@ -119,12 +119,12 @@ export async function fuzzyPostSearch(
 		});
 	}
 
-	console.timeEnd('PostSearch');
+	// console.timeEnd('PostSearch');
 	return hitsWithData;
 }
 
 export async function fuzzyQuickSearch(query = '', options = { limit: 10 }) {
-	console.time('QuickSearch');
+	// console.time('QuickSearch');
 
 	// do a fuzzy search on the index, if the query is empty, return the whole index
 	let hits =
@@ -133,7 +133,7 @@ export async function fuzzyQuickSearch(query = '', options = { limit: 10 }) {
 			: index;
 
 	const hitsWithData = getDataFromIndexResults(hits || []);
-	console.timeEnd('QuickSearch');
+	// console.timeEnd('QuickSearch');
 	return hitsWithData;
 }
 
@@ -188,7 +188,7 @@ export async function recreateSiteMap() {
 
 export async function recreateIndex() {
 	console.log("Recreating index, this'll take a while...");
-	console.time('RecreateIndex');
+	// console.time('RecreateIndex');
 	const tempIndex = [];
 	const tempTypes = [];
 	const temppostOnlyIndex = [];
@@ -282,7 +282,7 @@ export async function recreateIndex() {
 	postIndex = tempPostindex;
 	types = tempTypes;
 
-	console.timeEnd('RecreateIndex');
+	// console.timeEnd('RecreateIndex');
 }
 
 export async function getDataFromIndexResults(decodedResults = [{ type: '', snowflake: '' }]) {

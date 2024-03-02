@@ -1,5 +1,5 @@
 import { fail, redirect } from '@sveltejs/kit';
-import { Author, Post } from '$lib/api/server/db.ts';
+import { Author, Post } from '$lib/api/server/db.js';
 
 /** @type {import('./$types').Actions} */
 export const actions = {

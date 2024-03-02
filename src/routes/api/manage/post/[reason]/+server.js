@@ -7,16 +7,13 @@ import {
 	Post,
 	Series,
 	Status
-} from '$lib/api/server/db.ts';
-import { createNextChapter } from '$lib/api/server/controlers/ChapterController.js';
+} from '$lib/api/server/db.js';
+import { json } from '@sveltejs/kit';
+import * as DB from '$lib/api/server/db.js';
 
 export async function POST({ locals, request, params }) {
 	if (!locals.user.admin) {
-		return new Response(JSON.stringify({ status: 'error', message: 'You are not logged in' }), {
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		});
+		return json({ status: 'error', message: 'You are not logged in' });
 	}
 
 	let returnData = { status: 'ok' };
@@ -103,7 +100,27 @@ export async function POST({ locals, request, params }) {
 
 		const post = await Post.findOne({ where: { id: postId } });
 
-		const chapter = await createNextChapter(post, name);
+		const chapterCount = await Chapter.count({ where: { postId: post.id } });
+
+		let nextChapterIndex = chapterCount;
+
+		const chapter = await Chapter.create({
+			name: name,
+			published: false,
+			indexInParentPost: nextChapterIndex
+		});
+
+		await chapter.setPost(post);
+
+		post.chapterCount = await DB.Chapter.count({
+			where: {
+				postId: post.id
+			}
+		});
+
+		await post.save();
+
+		console.log(`created chapter ${chapter.id} for post ${post.id} with name ${chapter.name}`);
 
 		returnData = {
 			status: 'ok',
@@ -258,22 +275,10 @@ export async function POST({ locals, request, params }) {
 	if (params.reason === 'updateGeneres') {
 		const { postId, genres } = req;
 		if (!genres) {
-			return new Response(
-				JSON.stringify({
-					status: 'error',
-					data: { message: 'no generes provided' }
-				}),
-				{ headers: { 'Content-Type': 'application/json' }, status: 400 }
-			);
+			return json({ status: 'error', data: { message: 'no generes provided' } });
 		}
 		if (!postId) {
-			return new Response(
-				JSON.stringify({
-					status: 'error',
-					data: { message: 'no postId provided' }
-				}),
-				{ headers: { 'Content-Type': 'application/json' }, status: 400 }
-			);
+			return json({ status: 'error', data: { message: 'no postId provided' } });
 		}
 
 		console.log(`updating post ${postId} generes to :`, genres);
@@ -303,22 +308,10 @@ export async function POST({ locals, request, params }) {
 	if (params.reason === 'updateCategories') {
 		const { postId, categories } = req;
 		if (!categories) {
-			return new Response(
-				JSON.stringify({
-					status: 'error',
-					data: { message: 'no categories provided' }
-				}),
-				{ headers: { 'Content-Type': 'application/json' }, status: 400 }
-			);
+			return json({ status: 'error', data: { message: 'no categories provided' } });
 		}
 		if (!postId) {
-			return new Response(
-				JSON.stringify({
-					status: 'error',
-					data: { message: 'no postId provided' }
-				}),
-				{ headers: { 'Content-Type': 'application/json' }, status: 400 }
-			);
+			return json({ status: 'error', data: { message: 'no postId provided' } });
 		}
 
 		console.log(`updating post ${postId} categories to :`, categories);
@@ -347,22 +340,10 @@ export async function POST({ locals, request, params }) {
 	if (params.reason === 'updateStatus') {
 		const { postId, status } = req;
 		if (!status) {
-			return new Response(
-				JSON.stringify({
-					status: 'error',
-					data: { message: 'no status provided' }
-				}),
-				{ headers: { 'Content-Type': 'application/json' }, status: 400 }
-			);
+			return json({ status: 'error', data: { message: 'no status provided' } });
 		}
 		if (!postId) {
-			return new Response(
-				JSON.stringify({
-					status: 'error',
-					data: { message: 'no postId provided' }
-				}),
-				{ headers: { 'Content-Type': 'application/json' }, status: 400 }
-			);
+			return json({ status: 'error', data: { message: 'no postId provided' } });
 		}
 		console.log(`updating post ${postId} status to `, status);
 
@@ -377,9 +358,5 @@ export async function POST({ locals, request, params }) {
 		returnData = { status: 'ok', data: { status: statusObj.name } };
 	}
 
-	return new Response(JSON.stringify(returnData), {
-		headers: {
-			'Content-Type': 'application/json'
-		}
-	});
+	return json(returnData);
 }

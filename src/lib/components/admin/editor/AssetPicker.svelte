@@ -1,27 +1,26 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
-	import { fade, fly } from 'svelte/transition';
 	import Popup from '$lib/components/popup/Popup.svelte';
 
 	export let assetId;
 
-	export let assetBucket = undefined;
-
+	export let assetBuckets = [];
+	const currentlySelectedBucket = 0;
 	const dispatch = createEventDispatcher();
 
 	async function recentlyUploadedAssets() {
-		let options = {
-			reason: 'getRecent'
-		};
-
-		if (assetBucket) options.bucketId = assetBucket;
+		const assetBucket = assetBuckets[currentlySelectedBucket];
+		if (!assetBucket) console.log(`Asset bucket ${currentlySelectedBucket} not found`);
 
 		const res = await fetch('/api/asset/manage', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify(options)
+			body: JSON.stringify({
+				reason: 'getRecent',
+				bucketId: assetBucket.id
+			})
 		});
 
 		return (await res.json()).recentAssets;
@@ -30,11 +29,12 @@
 	let fileInput;
 
 	function handleFilesChosen() {
-		previewImages = [];
-
-		for (const file of fileInput.files) {
-			previewImages.push(URL.createObjectURL(file));
-		}
+		console.log('picked files:', fileInput.files);
+		previewImages = new Array(...fileInput.files).map((file) => {
+			const s = URL.createObjectURL(file);
+			console.log('created preview url: ', s);
+			return s;
+		});
 	}
 
 	let previewImages;
@@ -125,10 +125,24 @@
 {/if}
 
 <Popup {expanded}>
+	<svelte:fragment slot="header">
+		{#if step === 0}
+			<h1>Choose an asset</h1>
+		{/if}
+		{#if step === 1}
+			<h1>Upload a new asset</h1>
+		{/if}
+		{#if step === 2}
+			<h1>Uploading</h1>
+		{/if}
+		{#if step === 3}
+			<h1>Confirm</h1>
+		{/if}
+	</svelte:fragment>
+
 	<svelte:fragment slot="content">
 		{#if step === 0}
 			<div class="multipagePage">
-				Editing Asset
 				{#if assetId}
 					<img class="object-contain w-[150px] h-[200px]" src="/api/asset/proxy/{assetId}" alt="" />
 				{/if}
@@ -175,7 +189,7 @@
 				</button>
 				<input
 					on:change={handleFilesChosen}
-					accept=".jpg, .jpeg, .png .avif .jxl"
+					accept=".jpg, .jpeg, .png, .pnj, .avif, .jxl"
 					style="display: none"
 					type="file"
 					bind:this={fileInput}
@@ -185,13 +199,14 @@
 					on:click={() => {
 						fileInput.click();
 					}}
+					class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center"
 				>
-					<h1>Pick files</h1>
+					<p>Pick files</p>
 				</button>
 
 				{#if previewImages}
 					{#each previewImages as previewImage}
-						<img src={previewImage} class="w-[150px] h-[200px]" alt="" />
+						<img src={previewImage} class="w-[150px]" alt="" />
 					{/each}
 					<button
 						class="button"
@@ -234,8 +249,6 @@
 				>
 					⬅
 				</button>
-				CONFIRM ASSET
-
 				<button
 					class="button float-right"
 					on:click={() => {

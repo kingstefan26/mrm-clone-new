@@ -1,4 +1,6 @@
 <script>
+	import { fly } from 'svelte/transition';
+	import { hashCode, transision_hashcode } from '$lib/api/string-hashcode.js';
 	export let post = {
 		id: '',
 		title: '',
@@ -14,14 +16,20 @@
 
 	let posterPath = `/api/asset/proxy/${post.posterAssetId}`;
 
+	let page_transisiton_id = transision_hashcode(hashCode(post.title));
+
 	export let showTags = true;
 </script>
 
-<article class="wrapper text-center">
-	<header class="thehead grid h-20">
+<article in:fly={{ y: 10, duration: 200, delay: 50 }} class="wrapper text-center">
+	<div class="thehead grid h-24">
 		<div>
-			<a class="title_link " data-sveltekit-preload-data href={link}>
-				<h2 class="text-xl font-medium">{post.title}</h2>
+			<a class="title_link w-full h-full" data-sveltekit-preload-data="hover" href={link}>
+				<h2
+					class="font-bold max-h-full overflow-ellipsis overflow-hidden whitespace-break-spaces max-w-full"
+				>
+					{post.title}
+				</h2>
 			</a>
 		</div>
 		<p class="about_text m-auto font-light">
@@ -34,15 +42,15 @@
 				>
 			{/if}
 		</p>
-	</header>
+	</div>
 
-	<section>
+	<div>
 		<a data-sveltekit-preload-data class="center no-underline w-[180px] h-[260px]" href={link}>
 			<img
 				alt="Poster for {post.title}"
 				src={posterPath}
 				class="object-cover"
-				style="background: rgb(96, 96, 96)"
+				style="background: rgb(96, 96, 96); view-transition-name: poster-{page_transisiton_id}"
 				height="260"
 				width="180"
 			/>
@@ -59,7 +67,7 @@
 		{:else}
 			<br />
 		{/if}
-	</section>
+	</div>
 </article>
 
 <style>
@@ -93,8 +101,8 @@
 	}
 
 	.wrapper {
-		width: max-content;
-		height: max-content;
+		/*width: max-content;*/
+		/*height: max-content;*/
 
 		max-width: 180px;
 		max-height: 400px;
@@ -115,5 +123,34 @@
 
 	a {
 		text-decoration: none;
+	}
+
+	::view-transition-old(poster),
+	::view-transition-new(poster) {
+		/* Prevent the default animation,
+    so both views remain opacity:1 throughout the transition */
+		animation: none;
+		/* Use normal blending,
+    so the new view sits on top and obscures the old view */
+		mix-blend-mode: normal;
+		/* Make the height the same as the group,
+    meaning the view size might not match its aspect-ratio. */
+		height: 100%;
+		/* Clip any overflow of the view */
+		overflow: clip;
+	}
+
+	/* The old view is the thumbnail */
+	::view-transition-old(poster) {
+		/* Maintain the aspect ratio of the view,
+    by shrinking it to fit within the bounds of the element */
+		object-fit: contain;
+	}
+
+	/* The new view is the full image */
+	::view-transition-new(poster) {
+		/* Maintain the aspect ratio of the view,
+    by growing it to cover the bounds of the element */
+		object-fit: cover;
 	}
 </style>

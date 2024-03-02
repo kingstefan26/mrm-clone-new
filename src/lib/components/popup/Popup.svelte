@@ -1,96 +1,69 @@
 <script>
-    import {fade, fly} from 'svelte/transition';
+	import { fade, fly } from 'svelte/transition';
+	import '@material/web/dialog/dialog.js';
 
-    export let expanded = false
+	export let expanded = false;
 
-    function closePopup() {
-        expanded = false
-    }
+	function closePopup() {
+		expanded = false;
+	}
 
-    let dialog;
-    $: if (dialog) {
-        if (expanded) {
-            expanded = true
-            dialog.showModal()
-        }
+	let dialog;
+	$: if (dialog) {
+		if (expanded) {
+			expanded = true;
+			dialog.show();
+		}
 
-        if (!expanded) {
-            expanded = false
-            dialog.close()
-        }
-    }
+		if (!expanded) {
+			expanded = false;
+			dialog.close();
+		}
+	}
 
-    function closedDialog() {
-        expanded = false
-    }
-
-    // https://stackoverflow.com/a/57463812/19259941
-    function dialogClickHandler(e) {
-        const rect = e.target.getBoundingClientRect();
-
-        const clickedInDialog = (
-            rect.top <= e.clientY &&
-            e.clientY <= rect.top + rect.height &&
-            rect.left <= e.clientX &&
-            e.clientX <= rect.left + rect.width
-        );
-
-        if (clickedInDialog === false)
-            e.target.close();
-    }
-
+	function closedDialog() {
+		expanded = false;
+	}
 </script>
 
-<slot name="alwaysVisible"/>
+<slot name="alwaysVisible" />
 
-<dialog on:click={dialogClickHandler} bind:this={dialog} on:close={closedDialog}>
-    <div class="popup multipageContainer" in:fly="{{ y: 10, duration: 100 }}" out:fade="{{ duration: 200 }}">
-        <button class="button rounded-none bg-stone-500 px-2 py-0 hover:bg-stone-600 hover:transition-colors" on:click={closePopup}>
-            Close
-        </button>
-        <div class="adasdwad">
-            <slot name="content"/>
-        </div>
-    </div>
-</dialog>
+<md-dialog bind:this={dialog} on:close={closedDialog}>
+	<div name="headline">
+		<slot name="headline" />
+	</div>
+	<div
+		class="multipageContainer"
+		slot="content"
+		in:fly={{ y: 10, duration: 100 }}
+		out:fade={{ duration: 200 }}
+	>
+		<div class="flex mb-1">
+			<button
+				class="button rounded-none bg-stone-500 px-2 py-0 hover:bg-stone-600 hover:transition-colors"
+				on:click={closePopup}
+			>
+				Close
+			</button>
+			<div class="text-xl ml-2 min-w-fit">
+				<slot name="header" />
+			</div>
+		</div>
+
+		<div class="adasdwad">
+			<slot name="content" />
+		</div>
+	</div>
+</md-dialog>
 
 <style>
-    .adasdwad {
-        grid-column: span 2;
-    }
-    .button {
-        width: 100%;
-        height: 100%;
-        border: 1px solid #aaa;
-    }
-
-    dialog::backdrop {
-        background: rgba(0, 0, 0, 0.40);
-    }
-
-    dialog {
-        min-height: 40%;
-        min-width: 60%;
-        padding: 0;
-        transition: opacity 200ms;
-        background: #57534e;
-        box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
-        border: 1px solid #666;
-    }
-
-    .popup {
-        width: 100%;
-        height: 100%;
-        position: relative;
-        padding: 1em;
-        color: white;
-    }
-
-    .multipageContainer {
-        display: grid;
-        grid-template-columns: auto 1fr;
-        grid-template-rows: 30px auto;
-        align-items: start;
-    }
-
+	.adasdwad {
+		grid-column: span 2;
+	}
+	.multipageContainer {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		grid-template-rows: auto auto;
+		align-items: start;
+	}
 </style>
