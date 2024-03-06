@@ -35,8 +35,8 @@
 	<div
 		class="multipageContainer"
 		slot="content"
-		in:fly={{ y: 10, duration: 100 }}
-		out:fade={{ duration: 200 }}
+		in:fly|global={{ y: 10, duration: 100 }}
+		out:fade|global={{ duration: 200 }}
 	>
 		<div class="flex mb-1">
 			<button

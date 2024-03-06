@@ -21,7 +21,7 @@
 	export let showTags = true;
 </script>
 
-<article in:fly={{ y: 10, duration: 200, delay: 50 }} class="wrapper text-center">
+<article in:fly|global={{ y: 10, duration: 200, delay: 50 }} class="wrapper text-center">
 	<div class="thehead grid h-24">
 		<div>
 			<a class="title_link w-full h-full" data-sveltekit-preload-data="hover" href={link}>

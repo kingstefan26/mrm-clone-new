@@ -87,7 +87,7 @@
 										alt="Poster for post"
 										width="52"
 										height="71"
-										decoding="async"
+										decoding="auto"
 										loading="lazy"
 										class="post-poster pusle_anim"
 										src="/api/asset/proxy/{oneResult.contents.posterAssetId}"

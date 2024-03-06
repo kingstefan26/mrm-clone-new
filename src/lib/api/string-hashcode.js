@@ -12,19 +12,19 @@
  * @param {string} s a string
  * @return {number} a hash code value for the given string.
  */
-const hashCode = function (s) {
+export function hashCode(s) {
 	let h = 0,
 		l = s.length,
 		i = 0;
 	if (l > 0) while (i < l) h = ((h << 5) - h + s.charCodeAt(i++)) | 0;
 	return h;
-};
+}
 
 /**
  * @param {number} h a hashcode
  * @return {string} a translated string
  */
-const transision_hashcode = (h) => {
+export function transision_hashcode(h) {
 	return h
 		.toString()
 		.replaceAll('-', '')
@@ -38,6 +38,4 @@ const transision_hashcode = (h) => {
 		.replaceAll('7', 'h')
 		.replaceAll('8', 'i')
 		.replaceAll('9', 'j');
-};
-
-export { hashCode, transision_hashcode };
+}

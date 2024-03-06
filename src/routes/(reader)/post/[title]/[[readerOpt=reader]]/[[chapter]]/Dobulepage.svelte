@@ -276,13 +276,13 @@
 						/>
 					{:else if !currentimage}
 						<img
-							in:fly={{ x: 10, duration: 300, delay: 50 }}
+							in:fly|global={{ x: 10, duration: 300, delay: 50 }}
 							src="/api/asset/proxy/{chapter.assets[0].id}"
 							alt={0}
 						/>
 					{:else}
 						<img
-							in:fly={{ x: 10, duration: 300, delay: 50 }}
+							in:fly|global={{ x: 10, duration: 300, delay: 50 }}
 							src="/api/asset/proxy/{chapter.assets[currentimage].id}"
 							alt={currentimage}
 						/>

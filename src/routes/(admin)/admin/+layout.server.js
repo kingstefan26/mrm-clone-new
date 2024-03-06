@@ -5,7 +5,7 @@ import { Op } from 'sequelize';
 /** @type {import('./$types').LayoutServerLoad} */
 export async function load({ locals, url }) {
 	if ((!locals.user || !locals.user.username) && url.pathname !== '/admin/login') {
-		throw redirect(307, '/admin/login');
+		redirect(307, '/admin/login');
 	}
 
 	if (!locals.user) {

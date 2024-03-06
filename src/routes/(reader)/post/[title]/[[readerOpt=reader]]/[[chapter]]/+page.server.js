@@ -74,7 +74,7 @@ export async function load({ params, locals }) {
 
 		postDataForReader = post;
 	} catch (exeption) {
-		throw error(404, 'cant find post');
+		error(404, 'cant find post');
 	}
 
 	return {

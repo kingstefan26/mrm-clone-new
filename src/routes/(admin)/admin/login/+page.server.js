@@ -6,7 +6,7 @@ import { TokenGenerator } from '$lib/api/server/controlers/TokenUtil.js';
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ locals }) {
 	if (locals.user && locals.user.admin) {
-		throw redirect(307, '/admin');
+		redirect(307, '/admin');
 	}
 }
 
@@ -60,7 +60,7 @@ export const actions = {
 			return fail(401);
 		} else {
 			cookies.set('jwt', token, { path: '/' });
-			throw redirect(307, '/admin');
+			redirect(307, '/admin');
 		}
 	}
 };

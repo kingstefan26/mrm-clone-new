@@ -9,7 +9,7 @@ export async function load({ params }) {
 		};
 	} catch (error) {
 		console.log(error);
-		throw error(404, {
+		error(404, {
 			message: 'Post not found'
 		});
 	}

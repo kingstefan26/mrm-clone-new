@@ -42,7 +42,7 @@ export async function GET({ params, request, url }) {
 	});
 
 	if (!asset) {
-		throw error(404, 'Invalid Id');
+		error(404, 'Invalid Id');
 	}
 
 	// find version that match the internalisation and format,
@@ -106,7 +106,7 @@ export async function GET({ params, request, url }) {
 	}
 
 	if (!assetVersionUsed) {
-		throw error(404, 'Invalid version');
+		error(404, 'Invalid version');
 	}
 
 	const img_url = getUrlFromAssetVersion(assetVersionUsed);
@@ -124,7 +124,7 @@ export async function GET({ params, request, url }) {
 
 	if (!stream) {
 		console.error(`failed to load asset ${params.id} version ${assetVersionUsed.version}`);
-		throw error(404, 'Invalid version');
+		error(404, 'Invalid version');
 	}
 
 	return new Response(stream, {

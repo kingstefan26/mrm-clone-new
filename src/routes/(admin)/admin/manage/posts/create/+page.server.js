@@ -38,6 +38,6 @@ export const actions = {
 			published: false
 		});
 
-		throw redirect(307, '/admin/manage/posts/edit/' + newPost.id);
+		redirect(307, '/admin/manage/posts/edit/' + newPost.id);
 	}
 };

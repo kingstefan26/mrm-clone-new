@@ -2,7 +2,7 @@ import { fail, redirect } from '@sveltejs/kit';
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ locals }) {
-    if (locals.user) throw redirect(307, '/admin');
+    if (locals.user) redirect(307, '/admin');
 }
 
 /** @type {import('./$types').Actions} */
