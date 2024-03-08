@@ -3,6 +3,7 @@ import { redirect } from '@sveltejs/kit';
 import { recreateIndex } from '$lib/api/server/SearchIndex.js';
 import { TokenGenerator } from '$lib/api/server/controlers/TokenUtil.js';
 import * as DB from '$lib/api/server/db.js';
+import { getHash } from '$lib/sha.js';
 
 let dbInnted = false;
 
@@ -32,21 +33,28 @@ export async function handle({ event, resolve }) {
 	}
 
 	const jwt = event.cookies.get('jwt');
-
 	if (jwt) {
-		let user = new TokenGenerator().decode(jwt, 'a');
-
-		event.locals.user = user ? user : null;
-
-		if (event.url) {
-			if (
-				event.url.pathname.startsWith('/admin/') &&
-				!event.url.pathname.startsWith('/admin/login') &&
-				!user.admin
-			) {
-				return redirect(307, `${event.url.origin}/admin/login`);
-			}
+		let user = null;
+		try {
+			user = new TokenGenerator().decode(jwt, 'a');
+		} catch (e) {
+			console.log('Failed decoding jwt');
+			event.cookies.delete('jwt', { path: '/' });
 		}
+		event.locals.user = user;
+	}
+
+	// login guards
+	let shouldRedirect = false;
+	shouldRedirect = !event.locals.user || !event.locals.user.admin;
+	shouldRedirect =
+		shouldRedirect &&
+		!event.url.pathname.startsWith('/admin/login') &&
+		!event.url.pathname.startsWith('/admin/register');
+
+	if (shouldRedirect) {
+		console.log('redirecting to login in hooks');
+		redirect(307, '/admin/login');
 	}
 
 	const response = await resolve(event);

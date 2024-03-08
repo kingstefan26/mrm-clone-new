@@ -1,13 +1,19 @@
-import { redirect } from '@sveltejs/kit';
 import { Post, View } from '$lib/api/server/db.js';
 import { Op } from 'sequelize';
+import { redirect } from '@sveltejs/kit';
 
-/** @type {import('./$types').LayoutServerLoad} */
-export async function load({ locals, url }) {
-	if ((!locals.user || !locals.user.username) && url.pathname !== '/admin/login') {
-		redirect(307, '/admin/login');
-	}
-
+/** @type {import('./$types').LayoutServerLoad}
+ * @return {Promise<{
+ *   user: ({
+ *   username: string;
+ *   email: string;
+ *   image: string;
+ *   }|undefined);
+ *   postCount: number;
+ *   viewCount: number;
+ * }>}
+ * */
+export async function load({ locals }) {
 	if (!locals.user) {
 		return {
 			user: undefined,

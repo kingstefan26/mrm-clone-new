@@ -1,6 +1,8 @@
 <script>
 	import { fade, fly } from 'svelte/transition';
 	import '@material/web/dialog/dialog.js';
+	import '@material/web/button/text-button'
+	import '@material/web/iconbutton/icon-button'
 
 	export let expanded = false;
 
@@ -39,12 +41,9 @@
 		out:fade|global={{ duration: 200 }}
 	>
 		<div class="flex mb-1">
-			<button
-				class="button rounded-none bg-stone-500 px-2 py-0 hover:bg-stone-600 hover:transition-colors"
-				on:click={closePopup}
-			>
-				Close
-			</button>
+			<md-icon-button on:click={closePopup}>
+				<span class="material-symbols-outlined"> close </span>
+			</md-icon-button>
 			<div class="text-xl ml-2 min-w-fit">
 				<slot name="header" />
 			</div>

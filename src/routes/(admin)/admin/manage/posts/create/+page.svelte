@@ -2,6 +2,7 @@
     import {enhance} from '$app/forms';
     import {goto} from "$app/navigation";
     import Popup from "$lib/components/popup/Popup.svelte";
+    import '@material/web/button/filled-button'
 
     function uploadMrmZip(){
         const file = this.files[0];
@@ -26,6 +27,7 @@
 
     const uploadFormData = (url, formData, onProgress) =>
         new Promise((resolve, reject) => {
+            // need to use xml http request cuz upload progress
             const xhr = new XMLHttpRequest();
             xhr.upload.addEventListener('progress', e => onProgress(e.loaded / e.total));
             xhr.addEventListener('load', () => resolve({status: xhr.status, body: xhr.responseText}));
@@ -73,68 +75,66 @@
     let mrmExpanded = false
 </script>
 
-<h1 class="text-center text-2xl text-white">
-    Post Creator Wizzard
-</h1>
-
-<div class="flex justify-center h-1/2">
-    <div>
-        <form use:enhance method="POST" class="h-full flex flex-col gap-2">
-            <label class="text-white text-xl font-bold" >Name Your Post</label>
-            <input required class="p-1" type="text" name="title" placeholder="Title">
-            <input class="bg-stone-500 text-white p-0.5" type="submit" value="Create Skeleton">
-        </form>
-        <div>
-            <Popup expanded="{mrmExpanded}">
-                <button slot="alwaysVisible"
-                        class="bg-stone-500 text-white p-0.5"
-                        on:click={() => {mrmExpanded = !mrmExpanded}}>
-                    Import MRM-scraper-story
-                </button>
-                <div slot="content">
-                    <label class="text-white text-xl font-bold" >Import MRM-scraper-story</label>
-                    <input on:change={uploadMrmZip} class="bg-stone-500 text-white p-0.5" accept="application/zip" type="file">
-                </div>
-
-            </Popup>
-
-        </div>
-        <div>
-
-            <Popup expanded="{folderExpanded}">
-                <button slot="alwaysVisible"
-                        class="bg-stone-500 text-white p-0.5"
-                        on:click={() => {folderExpanded = !folderExpanded}}>
-                    Import Folder
-                </button>
-
-                <div slot="content">
-                    <p>
-                        This will import all files in the folder you select.
-                        The first file will be used as the cover image.
-                        The rest will be used as the post content.
-                        The Filed should be numbered in the order you want them to appear. eg 1.jpg 2.jpg 3.jpg
-                        You can also use Internalisation by adding a language code to the file name. eg 1.eng.jpg 1.de.jpg
-                        <a class="underline" href="https://www.loc.gov/standards/iso639-2/php/code_list.php" target="_blank">(ISO lang codes)</a>
-                    </p>
-                    <label class="text-white text-xl font-bold">
-                        Import folder
-                    </label>
-                    <input on:change={uploadDir}
-                           multiple
-                           webkitdirectory
-                           class="bg-stone-500 text-white p-0.5"
-                           type="file">
-                    {#if uploadFolderProgress > -1}
-                        <div class="progress-bar">
-                            <div class="progress-bar__fill" style="width: {uploadFolderProgress * 100}%"/>
-                        </div>
-                    {/if}
-                </div>
-            </Popup>
+<div>
+    <h1 class=" text-2xl text-white">
+        Create a Post
+    </h1>
+    
+    <div class="flex justify-center h-1/2">
+        <div class="flex flex-col items-center gap-2">
+            <form use:enhance method="POST" class="h-full flex flex-col gap-2">
+                <h1 class="text-white text-xl font-bold" >Name Your Post</h1>
+                <input required class="p-1" type="text" name="title" placeholder="Title">
+                <input class="bg-stone-500 text-white p-0.5" type="submit" value="Create Skeleton">
+            </form>
+            <div>
+                <Popup expanded="{mrmExpanded}">
+                    <md-filled-button slot="alwaysVisible" class="font-bold"
+                            on:click={() => {mrmExpanded = !mrmExpanded}}>
+                        Import MRM-scraper-story
+                    </md-filled-button>
+                    <div slot="content">
+                        <h1 class="text-white text-xl font-bold" >Import MRM-scraper-story</h1>
+                        <input on:change={uploadMrmZip} class="bg-stone-500 text-white p-0.5" accept="application/zip" type="file">
+                    </div>
+                </Popup>
+            </div>
+            <div>
+                <Popup expanded="{folderExpanded}">
+                    <md-filled-button slot="alwaysVisible" class="font-bold"
+                            on:click={() => {folderExpanded = !folderExpanded}}>
+                        Import Folder
+                    </md-filled-button>
+    
+                    <div slot="content">
+                        <p>
+                            This will import all files in the folder you select.
+                            The first file will be used as the cover image.
+                            The rest will be used as the post content.
+                            The Filed should be numbered in the order you want them to appear. eg 1.jpg 2.jpg 3.jpg
+                            You can also use Internalisation by adding a language code to the file name. eg 1.eng.jpg 1.de.jpg
+                            <a class="underline" href="https://www.loc.gov/standards/iso639-2/php/code_list.php" target="_blank">(ISO lang codes)</a>
+                        </p>
+                        <label class="text-white text-xl font-bold">
+                            Import folder
+                        </label>
+                        <input on:change={uploadDir}
+                               multiple
+                               webkitdirectory
+                               class="bg-stone-500 text-white p-0.5"
+                               type="file">
+                        {#if uploadFolderProgress > -1}
+                            <div class="progress-bar">
+                                <div class="progress-bar__fill" style="width: {uploadFolderProgress * 100}%"/>
+                            </div>
+                        {/if}
+                    </div>
+                </Popup>
+            </div>
         </div>
     </div>
 </div>
+
 
 
 <style>
