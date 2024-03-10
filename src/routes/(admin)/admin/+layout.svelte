@@ -13,10 +13,8 @@
 	import { onMount } from 'svelte';
 	import logo from '$lib/img/logo-128.png';
 
-	// Get the theme from a hex color
-	const theme = themeFromSourceColor(argbFromHex('#248025'));
-
 	onMount(() => {
+		const theme = themeFromSourceColor(argbFromHex('#114086'));
 		applyTheme(theme, { target: document.body, dark: true });
 	});
 
@@ -32,6 +30,7 @@
 			viewCountFormated = (data.viewCount / 1000000).toFixed(1) + 'M';
 		}
 	}
+	let liveUpdating = false;
 </script>
 
 <main class="grid grid-rows-[auto,1fr] h-screen max-h-screen bg-[var(--md-sys-color-background)]">
@@ -55,20 +54,28 @@
 			<div class="text-[var(--md-sys-color-on-secondary-container)] my-auto">
 				<div class="grid">
 					Live Posts
-					<div>
-						<div class="font-[var(--md-sys-color-on-tertiary-container)] text-center">
-							{postCount}
-							<span class="flex text-lg flex items-center text-red-700 font-bold uppercase">
-								<span class="w-3 h-3 mr-3 relative live_icon" /> ORNOT
-							</span>
+					{#if liveUpdating}
+						<div>
+							<div class="font-[var(--md-sys-color-on-tertiary-container)] text-center">
+								{postCount}
+								<span class="flex text-lg flex items-center text-red-700 font-bold uppercase">
+									<span class="w-3 h-3 mr-3 relative live_icon" /> ORNOT
+								</span>
+							</div>
 						</div>
-					</div>
+					{:else}
+						0
+					{/if}
 				</div>
 				<div class="flex">
 					24h Views
-					<div>
-						{viewCountFormated}
-					</div>
+					{#if liveUpdating}
+						<div>
+							{viewCountFormated}
+						</div>
+					{:else}
+						0
+					{/if}
 				</div>
 			</div>
 			<a href="/admin" class="">

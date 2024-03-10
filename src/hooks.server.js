@@ -3,7 +3,6 @@ import { redirect } from '@sveltejs/kit';
 import { recreateIndex } from '$lib/api/server/SearchIndex.js';
 import { TokenGenerator } from '$lib/api/server/controlers/TokenUtil.js';
 import * as DB from '$lib/api/server/db.js';
-import { getHash } from '$lib/sha.js';
 
 let dbInnted = false;
 
@@ -45,16 +44,17 @@ export async function handle({ event, resolve }) {
 	}
 
 	// login guards
-	let shouldRedirect = false;
+	let shouldRedirect;
 	shouldRedirect = !event.locals.user || !event.locals.user.admin;
 	shouldRedirect =
 		shouldRedirect &&
 		!event.url.pathname.startsWith('/admin/login') &&
-		!event.url.pathname.startsWith('/admin/register');
+		!event.url.pathname.startsWith('/admin/register') &&
+		!event.url.pathname.startsWith('/admin/passkeys');
 
 	if (shouldRedirect) {
-		console.log('redirecting to login in hooks');
 		redirect(307, '/admin/login');
+		return;
 	}
 
 	const response = await resolve(event);
@@ -62,7 +62,7 @@ export async function handle({ event, resolve }) {
 	response.headers.set('Referrer-Policy', 'no-referrer');
 	response.headers.set(
 		'Permissions-Policy',
-		'accelerometer=(), autoplay=(), camera=(), document-domain=(), encrypted-media=(), fullscreen=(), gyroscope=(), interest-cohort=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), sync-xhr=(), usb=(), xr-spatial-tracking=(), geolocation=()'
+		'accelerometer=(), autoplay=(), camera=(), encrypted-media=(), fullscreen=(), gyroscope=(), interest-cohort=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=self, sync-xhr=(), usb=(), xr-spatial-tracking=(), geolocation=()'
 	);
 	response.headers.set('X-Content-Type-Options', 'nosniff');
 

@@ -1,70 +1,102 @@
 <script>
-	import { enhance } from '$app/forms';
+	import '@material/web/textfield/outlined-text-field';
+	import '@material/web/button/filled-button';
+	import '@material/web/button/text-button';
+	import '@material/web/progress/linear-progress';
+	import { browserSupportsWebAuthn, startRegistration } from '@simplewebauthn/browser';
+	import { goto } from '$app/navigation';
+	import postJson from '$lib/util.js';
+	import { onMount } from 'svelte';
 
-	/** @type {import('./$types').ActionData} */
-	export let form;
+	let usernameField;
+
+	let loading;
+	let response;
+	let passkeyDisabled = true;
+
+	onMount(() => {
+		passkeyDisabled = !browserSupportsWebAuthn();
+	});
+
+	async function handleForm() {
+		loading = true;
+
+		const res = await postJson('/admin/passkeys/registration/start', {
+			username: usernameField.value
+		});
+
+		if (!res.ok) {
+			response = 'User already exists or failed to get registration options from server';
+		}
+
+		const opt = await res.json();
+
+		console.log(opt);
+
+		const attestationResponse = await startRegistration(opt);
+		if (!attestationResponse) {
+			loading = false;
+			response = 'Failed to create a passkey';
+		}
+		const verificationResponse = await postJson(
+			'/admin/passkeys/registration/finish',
+			attestationResponse
+		);
+
+		loading = false;
+
+		console.log(verificationResponse);
+
+		if (verificationResponse.ok) {
+			response = 'Success, redirecting to home page...';
+			setTimeout(() => {
+				goto('/admin');
+			}, 2000);
+		} else {
+			response = 'Registration failed';
+		}
+	}
 </script>
 
 <svelte:head>
-	<title>Register • MyWebsite</title>
+	<title>Register</title>
 </svelte:head>
 
-<div class="container mt-10 border-2 p-6 max-w-sm mx-auto lg space-x-3 shadow font-serif space-x-3">
-	<h1 class="bold text-black text-4xl">Register</h1>
+<div class="flex justify-center items-center">
+	<div class="m-10">
+		<div
+			class="text-[var(--md-sys-color-on-secondary-container)] bg-[var(--md-sys-color-secondary-container)] w-[40vw] min-w-fit rounded-md p-4 py-10 max-h-[26em]"
+		>
+			<form on:submit|preventDefault={handleForm} class="grid gap-1 h-full" autocomplete="on">
+				<h1 class="text-4xl font-bold text-center mb-6">Register</h1>
+				<div class="flex justify-center items-center flex-wrap gap-2 my-4 flex-col">
+					<md-outlined-text-field
+						bind:this={usernameField}
+						required
+						type="username"
+						name="username"
+						label="Username"
+					/>
+				</div>
 
-	<form use:enhance method="POST" class="mt-2">
-		<fieldset>
-			<input
-				class="border border-gray-300 m-1"
-				name="email"
-				type="email"
-				required
-				placeholder="Email"
-			/>
-			<input
-				class="border border-gray-300 m-1"
-				name="password"
-				type="password"
-				required
-				placeholder="Password"
-			/>
-		</fieldset>
-		<button class="text-black mr-7 border-gray-400 border text-black-200 p-1 mx-0.5" type="submit">
-			Register
-		</button>
-	</form>
-	<p>
-		<a href="/admin/login" class="underline text-black"> Already have a account? </a>
-	</p>
-	<!--    <br>-->
-	<!--    <div class="grid place-items-center mt-6">-->
-	<!--        <button class="text-white bg-amber-400 p-3 pressdown_effect shadow-xl rainbow_pulse rounded-xl font-extrabold font-mono">-->
-	<!--            Register Using PassKey-->
-	<!--        </button>-->
-	<!--    </div>-->
+				<div class="flex justify-between px-6 pb-4">
+					<md-text-button href="/admin/login"> Login </md-text-button>
+					<md-filled-button type="submit" disabled={passkeyDisabled}>
+						Create Passkey
+					</md-filled-button>
+				</div>
+				{#if loading}
+					<md-linear-progress indeterminate />
+				{/if}
+				{#if response}
+					<div class="text-center">{response}</div>
+				{/if}
+			</form>
+		</div>
+		<div class="flex justify-end mt-1 gap-2">
+			<md-text-button href=""> Terms </md-text-button>
+			<md-text-button href=""> Privacy Policy </md-text-button>
+			<md-text-button href=""> Help </md-text-button>
+		</div>
+	</div>
 </div>
-
-<style>
-	/*.pressdown_effect:hover {*/
-	/*    transform: translateY(-3px);*/
-	/*    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);*/
-	/*}*/
-
-	/*.pressdown_effect:active {*/
-	/*    transform: translateY(1px);*/
-	/*    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);*/
-	/*}*/
-
-	/*.rainbow_pulse {*/
-	/*    background: linear-gradient(124deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3);*/
-
-	/*    animation: rainbow 19s ease infinite;*/
-	/*    background-size: 1000% 1000%;*/
-	/*}*/
-
-	/*@keyframes rainbow {*/
-	/*    0%{background-position:0 82%}*/
-	/*    50%{background-position:100% 19%}*/
-	/*    100%{background-position:0 82%}*/
-	/*}*/
-</style>

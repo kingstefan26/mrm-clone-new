@@ -146,7 +146,7 @@ Post.belongsTo(Status, { through: 'statusPost' });
 Status.hasMany(Post);
 
 export const User = sequelize.define('user', {
-	username: DataTypes.STRING,
+	username: { type: DataTypes.STRING, unique: true },
 	email: DataTypes.STRING,
 	passHash: DataTypes.STRING,
 	salt: DataTypes.STRING,
@@ -166,3 +166,26 @@ export const View = sequelize.define('view', {
 	postId: DataTypes.STRING,
 	chapterId: DataTypes.STRING
 });
+
+export const PasskeyCredentials = sequelize.define('passkeyCredentials', {
+	credId: DataTypes.STRING,
+	pubKey: DataTypes.STRING,
+	counter: DataTypes.INTEGER,
+	credentialDeviceType: DataTypes.STRING,
+	credentialBackedUp: DataTypes.STRING,
+	transports: DataTypes.STRING
+});
+
+export const PasskeyChallenges = sequelize.define('passkeyChallanges', {
+	challenge: {
+		type: DataTypes.STRING,
+		required: true
+	},
+	sessionId: {
+		type: DataTypes.STRING,
+		required: true
+	}
+});
+
+PasskeyCredentials.belongsTo(User, { through: 'userPasskey' });
+User.hasMany(PasskeyCredentials);
