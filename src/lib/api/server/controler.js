@@ -28,48 +28,6 @@ export async function getStubAutor() {
 	return author;
 }
 
-export async function getFeed(pageIndex = 0, pageSize = 10, showUnpublishedPosts = false) {
-	let where = { published: true };
-
-	if (showUnpublishedPosts) {
-		where = {};
-	}
-
-	let { count, rows } = await DB.Post.findAndCountAll({
-		offset: pageIndex * pageSize,
-		limit: pageSize,
-		where: where,
-		include: [Author]
-	});
-
-	if (typeof rows !== 'undefined' && rows.length === 0) {
-		return {
-			posts: [],
-			pagesAvalible: 0
-		};
-	}
-
-	rows = rows.map((s) => {
-		return {
-			title: s.title,
-			id: s.id,
-			posterAssetId: s.posterAssetId,
-			Author: {
-				name: s.Author.name
-			}
-		};
-	});
-
-	if (rows.length === 0) {
-		throw new Error('No posts found');
-	}
-
-	return {
-		posts: rows,
-		pagesAvalible: Math.ceil(count / pageSize)
-	};
-}
-
 // chapterIndex -1 means we get all the chapters
 export async function getChapterWithPost(postId = '', chapterIndex = 0) {
 	let post = await Post.findOne({

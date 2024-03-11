@@ -90,7 +90,7 @@
 	</title>
 </svelte:head>
 
-<div class="text-white bg-stone-600">
+<div class="text-[var(--md-sys-color-on-background)]">
 	<div class="w-full mb-3 mt-2">
 		<h1 class="text-center text-2xl">
 			EDITING "{data.post.title}"

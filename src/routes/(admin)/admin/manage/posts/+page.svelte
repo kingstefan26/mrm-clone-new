@@ -1,17 +1,32 @@
 <script>
-	import PostWiget from '../../../../(reader)/[[page=integer]]/PostWiget.svelte';
-
+	import '@material/web/button/filled-button';
+	import '@material/web/fab/fab';
+	import { goto } from '$app/navigation';
 	export let data;
 </script>
 
-<h1 class="text-center text-2xl text-white">Edit existing posts</h1>
-<hr class="w-3/4 mx-auto mb-2" />
-<div class="flex flex-wrap justify-center gap-2 bg-stone-600 mb-4">
-	{#each data.feed.posts as post}
-		<PostWiget showTags={false} link={`/admin/manage/posts/edit/${post.id}`} {post} />
-	{/each}
-</div>
+<div>
+	<div class="flex flex-wrap justify-center gap-2 mb-4">
+		{#each data.posts as post}
+			<a href="/admin/manage/posts/edit/{post.id}" class="w-[10rem] h-[15rem]">
+				{post.title}
+				{post.Author.name}
 
-<a href="/admin/manage/posts/create" class="text-center text-white text-xl w-full block">
-	Create Post ➕
-</a>
+				<img
+					class="h-[80%]"
+					alt="Poster for {post.title}"
+					src="/api/asset/proxy/{post.posterAssetId}"
+				/>
+			</a>
+		{/each}
+	</div>
+
+	<md-fab
+		class="fixed bottom-10 right-12"
+		on:click={() => {
+			goto('/admin/manage/posts/create');
+		}}
+	>
+		<span slot="icon" class="material-symbols-outlined"> add </span>
+	</md-fab>
+</div>

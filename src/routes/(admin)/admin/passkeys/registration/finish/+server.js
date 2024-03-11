@@ -4,18 +4,16 @@ import { rpId, rpOrgin, uint8ArrayToBase64 } from '$lib/api/server/passkeys.js';
 import { PasskeyChallenges, PasskeyCredentials, User } from '$lib/api/server/db.js';
 import { TokenGenerator } from '$lib/api/server/controlers/TokenUtil.js';
 
-function getMethods(obj) {
-	var result = [];
+export function getMethods(obj) {
 	for (var id in obj) {
 		try {
 			if (typeof obj[id] == 'function') {
-				result.push(id + ': ' + obj[id].toString());
+				console.log(id, obj[id]);
 			}
 		} catch (err) {
-			result.push(id + ': inaccessible');
+			/* empty */
 		}
 	}
-	return result;
 }
 
 /** @type {import("./$types").RequestHandler} */
