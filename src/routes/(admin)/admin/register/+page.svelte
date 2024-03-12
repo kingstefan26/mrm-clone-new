@@ -1,8 +1,8 @@
 <script>
-	import '@material/web/textfield/outlined-text-field';
-	import '@material/web/button/filled-button';
-	import '@material/web/button/text-button';
-	import '@material/web/progress/linear-progress';
+	import '@material/web/textfield/outlined-text-field.js';
+	import '@material/web/button/filled-button.js';
+	import '@material/web/button/text-button.js';
+	import '@material/web/progress/linear-progress.js';
 	import { browserSupportsWebAuthn, startRegistration } from '@simplewebauthn/browser';
 	import { goto } from '$app/navigation';
 	import postJson from '$lib/util.js';
@@ -26,12 +26,12 @@
 		});
 
 		if (!res.ok) {
+			loading = false;
 			response = 'User already exists or failed to get registration options from server';
+			return
 		}
 
 		const opt = await res.json();
-
-		console.log(opt);
 
 		const attestationResponse = await startRegistration(opt);
 		if (!attestationResponse) {
@@ -53,7 +53,7 @@
 				goto('/admin');
 			}, 2000);
 		} else {
-			response = 'Registration failed';
+			response = `Registration failed: ${((await verificationResponse.json()).message)}`;
 		}
 	}
 </script>

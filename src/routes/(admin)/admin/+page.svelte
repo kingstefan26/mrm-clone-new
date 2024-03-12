@@ -1,6 +1,6 @@
 <script>
-	import '@material/web/progress/circular-progress';
-	import '@material/web/button/filled-button';
+	import '@material/web/progress/circular-progress.js';
+	import '@material/web/button/filled-button.js';
 	import postJson from '$lib/util.js';
 
 	async function refreshSearchIndex() {

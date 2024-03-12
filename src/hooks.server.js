@@ -1,8 +1,38 @@
 import { sequelize } from '$lib/api/server/db.js';
-import { redirect } from '@sveltejs/kit';
 import { recreateIndex } from '$lib/api/server/SearchIndex.js';
 import { TokenGenerator } from '$lib/api/server/controlers/TokenUtil.js';
-import * as DB from '$lib/api/server/db.js';
+import {User} from '$lib/api/server/db.js';
+
+export function saveSessionInJWT(user, locals, cookies) {
+	let token = new TokenGenerator('a', 'a', {
+		algorithm: 'HS256',
+		keyid: '1',
+		noTimestamp: false,
+		expiresIn: '10d',
+		notBefore: '0'
+	}).sign(
+		{
+			username: user.username,
+			id: user.id,
+			admin: user.admin
+		},
+		{
+			audience: 'myaud',
+			issuer: 'mrm-main-server',
+			jwtid: '1',
+			subject: 'user'
+		}
+	);
+
+	cookies.set('jwt', token, { path: '/' });
+	cookies.set('userid', user.username, { path: '/' });
+
+	locals.user = {
+		username: user.username,
+		id: user.id,
+		admin: user.admin
+	}
+}
 
 let dbInnted = false;
 
@@ -18,44 +48,37 @@ export async function handle({ event, resolve }) {
 			salt: 'ar@',
 			admin: true
 		};
-		let user = await DB.User.findOne({
+		let user = await User.findOne({
 			where: {
 				email: data.email
 			}
 		});
 		if (!user) {
-			await DB.User.create(data);
+			await User.create(data);
 		}
 		await recreateIndex();
 
 		dbInnted = true;
 	}
 
+	let sessionId = event.cookies.get('sessionid');
+	if(!sessionId) {
+		sessionId = crypto.randomUUID()
+		event.cookies.set('sessionid', sessionId, { path: '/' });	 
+	}
+	event.locals.sessionId = sessionId
+
 	const jwt = event.cookies.get('jwt');
 	if (jwt) {
-		let user = null;
 		try {
-			user = new TokenGenerator().decode(jwt, 'a');
+			event.locals.user = new TokenGenerator().decode(jwt, 'a');
 		} catch (e) {
-			console.log('Failed decoding jwt');
+			console.log('Failed decoding jwt, expired?');
 			event.cookies.delete('jwt', { path: '/' });
+			event.locals.user = null;
 		}
-		event.locals.user = user;
 	}
 
-	// login guards
-	let shouldRedirect;
-	shouldRedirect = !event.locals.user || !event.locals.user.admin;
-	shouldRedirect =
-		shouldRedirect &&
-		!event.url.pathname.startsWith('/admin/login') &&
-		!event.url.pathname.startsWith('/admin/register') &&
-		!event.url.pathname.startsWith('/admin/passkeys');
-
-	if (shouldRedirect) {
-		redirect(307, '/admin/login');
-		return;
-	}
 
 	const response = await resolve(event);
 	response.headers.set('X-Frame-Options', 'SAMEORIGIN');

@@ -3,12 +3,14 @@ import { chapterAssetsFromFormData } from '$lib/api/server/import.js';
 import { getStubAutor } from '$lib/api/server/controler.js';
 import { json } from '@sveltejs/kit';
 import * as DB from '$lib/api/server/db.js';
+import {protectEndpoint} from '$lib/util.js';
 
 export async function POST({ locals, request }) {
-	if (!locals.user.admin) {
-		return json({ status: 'error', message: 'You are not logged in' });
+	let a = protectEndpoint(locals)
+	if(a) {
+		return a
 	}
-
+	
 	// create stub title
 	const title = 'stub title';
 	// generate radom uuid as the id

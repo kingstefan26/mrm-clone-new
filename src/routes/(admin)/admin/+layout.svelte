@@ -18,8 +18,6 @@
 		applyTheme(theme, { target: document.body, dark: true });
 	});
 
-	let postCount = data.postCount;
-
 	// view count but add k M suffixes
 	let viewCountFormated = data.viewCount;
 	$: {
@@ -57,8 +55,8 @@
 					{#if liveUpdating}
 						<div>
 							<div class="font-[var(--md-sys-color-on-tertiary-container)] text-center">
-								{postCount}
-								<span class="flex text-lg flex items-center text-red-700 font-bold uppercase">
+								{data.postCount}
+								<span class="flex text-lg items-center text-red-700 font-bold uppercase">
 									<span class="w-3 h-3 mr-3 relative live_icon" /> ORNOT
 								</span>
 							</div>

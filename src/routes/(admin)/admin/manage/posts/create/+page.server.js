@@ -1,14 +1,15 @@
 import { fail, redirect } from '@sveltejs/kit';
-import { Author, Post } from '$lib/api/server/db.js';
+import { Post } from '$lib/api/server/db.js';
 
 /** @type {import('./$types').Actions} */
 export const actions = {
-	default: async ({ request }) => {
+	default: async ({ request, locals }) => {
 		const formData = await request.formData();
 
 		const title = formData.get('title');
 
 		// replace non ascii characters
+		// eslint-disable-next-line no-control-regex
 		let id = title.replace(/[^\x00-\x7F]/g, '');
 		// to lowercase
 		id = title.toLowerCase();

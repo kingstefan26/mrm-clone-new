@@ -1,8 +1,8 @@
 <script>
 	import { fade, fly } from 'svelte/transition';
 	import '@material/web/dialog/dialog.js';
-	import '@material/web/button/text-button'
-	import '@material/web/iconbutton/icon-button'
+	import '@material/web/button/text-button.js'
+	import '@material/web/iconbutton/icon-button.js'
 
 	export let expanded = false;
 

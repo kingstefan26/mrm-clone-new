@@ -1,12 +1,10 @@
 import { getChapterWithPost } from '$lib/api/server/controler.js';
 import { error } from '@sveltejs/kit';
-import { Post } from '$lib/api/server/db.js';
+import { Post, View } from '$lib/api/server/db.js';
 
 /** @type {import("./$types").Load} */
 export async function load({ params, locals }) {
 	const chapterIndex = Number.parseInt(params.chapter || '0');
-
-	// const postDataForReader = await getPostDataForReader(params.title, chapterIndex);
 
 	// catch errors
 	let postDataForReader;
@@ -76,6 +74,11 @@ export async function load({ params, locals }) {
 	} catch (exeption) {
 		error(404, 'cant find post');
 	}
+
+	await View.create({
+		postId: postDataForReader.id,
+		chapterIndex
+	});
 
 	return {
 		current_chapter: chapterIndex,

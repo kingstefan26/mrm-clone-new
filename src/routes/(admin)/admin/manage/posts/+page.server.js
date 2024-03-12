@@ -1,11 +1,12 @@
-import { error } from '@sveltejs/kit';
 import * as DB from '$lib/api/server/db.js';
 import { Author, paginate } from '$lib/api/server/db.js';
+import {protectPage} from '$lib/util.js'
 
 const pageSize = 20;
 
 /** @type {import("./$types").Load} */
-export async function load() {
+export async function load({locals}) {
+	protectPage(locals)
 	const { count, rows } = await DB.Post.findAndCountAll(
 		paginate(
 			{
@@ -15,12 +16,10 @@ export async function load() {
 		)
 	);
 
-	const posts = rows.map((s) => {
-		return s.get({ plain: true });
-	});
-
 	return {
-		posts: posts,
+		posts: rows.map((s) => {
+			return s.get({ plain: true });
+		}),
 		totalPages: Math.ceil(count / pageSize)
 	};
 }

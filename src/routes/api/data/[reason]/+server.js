@@ -1,9 +1,11 @@
 import { Author, Category, Genere, Series } from '$lib/api/server/db.js';
 import { json } from '@sveltejs/kit';
+import { protectEndpoint } from '$lib/util.js';
 
 export async function GET({ locals, params, url }) {
-	if (!locals.user.admin) {
-		return json({ status: 'error', message: 'You are not logged in' });
+	let a = protectEndpoint(locals)
+	if(a) {
+		return a
 	}
 
 	let returnData = { status: 'ok' };

@@ -1,6 +1,5 @@
 import { Post, View } from '$lib/api/server/db.js';
 import { Op } from 'sequelize';
-import { redirect } from '@sveltejs/kit';
 
 /** @type {import('./$types').LayoutServerLoad}
  * @return {Promise<{

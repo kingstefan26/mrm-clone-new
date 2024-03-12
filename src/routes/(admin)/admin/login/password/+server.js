@@ -2,11 +2,10 @@ import { error, json, redirect } from '@sveltejs/kit';
 import * as DB from '$lib/api/server/db.js';
 import { getHash } from '$lib/sha.js';
 import { TokenGenerator } from '$lib/api/server/controlers/TokenUtil.js';
+import { saveSessionInJWT } from '../../../../../hooks.server';
 
-/** @type {import("../../../../../../../.svelte-kit/types/src/routes").RequestHandler} */
-export async function POST({ request, cookies }) {
-	await new Promise((resolve) => setTimeout(resolve, 3000));
-
+/** @type {import("$types").RequestHandler} */
+export async function POST({ request, cookies, locals }) {
 	const { email, password } = await request.json();
 
 	if (!email) {
@@ -34,26 +33,7 @@ export async function POST({ request, cookies }) {
 	const hash = await getHash(user.salt + passHash);
 
 	if (hash === user.passHash) {
-		const token = new TokenGenerator('a', 'a', {
-			algorithm: 'HS256',
-			keyid: '1',
-			noTimestamp: false,
-			expiresIn: '10d',
-			notBefore: '0'
-		}).sign(
-			{
-				username: user.username,
-				id: user.id,
-				admin: user.admin
-			},
-			{
-				audience: 'myaud',
-				issuer: 'mrm-main-server',
-				jwtid: '1',
-				subject: 'user'
-			}
-		);
-		cookies.set('jwt', token, { path: '/' });
+		saveSessionInJWT(user, locals, cookies)
 		redirect(307, '/admin');
 	} else {
 		error(401, 'Invalid Hash');

@@ -1,9 +1,9 @@
 <script>
 	import { onMount } from 'svelte';
 	import { fly } from 'svelte/transition';
-	import '@material/web/textfield/outlined-text-field';
-	import '@material/web/button/filled-button';
-	import '@material/web/button/text-button';
+	import '@material/web/textfield/outlined-text-field.js';
+	import '@material/web/button/filled-button.js';
+	import '@material/web/button/text-button.js';
 	import '@material/web/progress/linear-progress.js';
 	import { goto } from '$app/navigation';
 	import {
@@ -42,6 +42,8 @@
 				console.log('WebAuthn is not supported in this browser');
 				return;
 			}
+
+			console.log('using challange: ', data.conditionalUiOptions.challenge);
 
 			let credential = await navigator.credentials.get({
 				mediation: 'conditional',

@@ -4,15 +4,12 @@ import { base64ToUint8Array, rpId, rpOrgin, uint8ArrayToBase64 } from '$lib/api/
 import { verifyAuthenticationResponse } from '@simplewebauthn/server';
 import { TokenGenerator } from '$lib/api/server/controlers/TokenUtil.js';
 import { isoBase64URL } from '@simplewebauthn/server/helpers';
+import { saveSessionInJWT } from '../../../../../../hooks.server'
 
 /** @type {import("./$types").RequestHandler} */
-export async function POST({ request, cookies }) {
-	const userid = cookies.get('userid', { path: '/' });
-	if (!userid) {
-		error(400, 'missing userid');
-	}
+export async function POST({ request, cookies, locals }) {
 
-	const pc = await PasskeyChallenges.findOne({ where: { sessionId: userid } });
+	const pc = await PasskeyChallenges.findOne({ where: { sessionId: locals.sessionId } });
 
 	if (!pc) {
 		return error(400, 'Cant find challenge');
@@ -20,7 +17,7 @@ export async function POST({ request, cookies }) {
 
 	let challenge = pc.challenge;
 	pc.destroy().then(() => {
-		console.log(`deleted challenge for sid ${userid}`);
+		console.log(`deleted challenge for sid ${locals.sessionId}`);
 	});
 
 	const jsonData = await request.json();
@@ -52,27 +49,7 @@ export async function POST({ request, cookies }) {
 		passkey.counter = authenticationInfo.newCounter;
 		passkey.save(); // don't await to save this, to speed up the request
 		const user = await passkey.getUser();
-		let token = new TokenGenerator('a', 'a', {
-			algorithm: 'HS256',
-			keyid: '1',
-			noTimestamp: false,
-			expiresIn: '10d',
-			notBefore: '0'
-		}).sign(
-			{
-				username: user.username,
-				id: user.id,
-				admin: user.admin
-			},
-			{
-				audience: 'myaud',
-				issuer: 'mrm-main-server',
-				jwtid: '1',
-				subject: 'user'
-			}
-		);
-
-		cookies.set('jwt', token, { path: '/' });
+		saveSessionInJWT(user, locals, cookies)
 
 		return json({ verified: true });
 	} else {

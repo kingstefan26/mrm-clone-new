@@ -1,7 +1,9 @@
 <script>
-	import '@material/web/button/filled-button';
-	import '@material/web/fab/fab';
+	import '@material/web/button/filled-button.js';
+	import '@material/web/fab/fab.js';
 	import { goto } from '$app/navigation';
+
+	/** @type {import('./$types').PageData} */
 	export let data;
 </script>
 
@@ -13,7 +15,7 @@
 				{post.Author.name}
 
 				<img
-					class="h-[80%]"
+					class="h-[80%] object-cover"
 					alt="Poster for {post.title}"
 					src="/api/asset/proxy/{post.posterAssetId}"
 				/>

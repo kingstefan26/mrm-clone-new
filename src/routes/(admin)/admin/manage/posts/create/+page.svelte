@@ -2,7 +2,7 @@
     import {enhance} from '$app/forms';
     import {goto} from "$app/navigation";
     import Popup from "$lib/components/popup/Popup.svelte";
-    import '@material/web/button/filled-button'
+    import '@material/web/button/filled-button.js'
 
     function uploadMrmZip(){
         const file = this.files[0];

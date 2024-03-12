@@ -4,7 +4,7 @@ import { generateAuthenticationOptions } from '@simplewebauthn/server';
 import { rpId } from '$lib/api/server/passkeys.js';
 import { Op } from 'sequelize';
 
-export async function POST({ request, cookies }) {
+export async function POST({ request, locals }) {
 	const { username } = await request.json();
 
 	const user = await User.findOne({
@@ -13,7 +13,6 @@ export async function POST({ request, cookies }) {
 	if (!user) {
 		error(404, `Could not find user with username "${username}"`);
 	}
-	cookies.set('userid', username, { path: '/' });
 
 	const options = await generateAuthenticationOptions({
 		timeout: 60000,
@@ -21,8 +20,9 @@ export async function POST({ request, cookies }) {
 		userVerification: 'preferred',
 		rpId
 	});
-	console.log(`creating challenge for the sessionId ${username}: ${options.challenge}`);
-	await PasskeyChallenges.create({ challenge: options.challenge, sessionId: username });
+	console.log(`creating challenge for the sessionId ${locals.sessionId}: ${options.challenge}`);
+	await PasskeyChallenges.destroy({where: {sessionId: locals.sessionId}})
+	await PasskeyChallenges.create({ challenge: options.challenge, sessionId: locals.sessionId });
 
 	return json(options);
 }

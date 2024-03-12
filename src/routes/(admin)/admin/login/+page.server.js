@@ -4,8 +4,9 @@ import { PasskeyChallenges } from '$lib/api/server/db.js';
 import { generateAuthenticationOptions } from '@simplewebauthn/server';
 
 /** @type {import('./$types').PageServerLoad} */
-export async function load({ locals, cookies }) {
+export async function load({ locals }) {
 	if (locals.user && locals.user.admin) {
+		console.log("redirectig to admin");
 		redirect(307, '/admin');
 	}
 
@@ -19,10 +20,10 @@ export async function load({ locals, cookies }) {
 		rpId
 	});
 
-	const sessionId = crypto.randomUUID();
-	cookies.set('userid', sessionId, { path: '/' });
-	console.log(`creating challenge for the sessionId ${sessionId}: ${options.challenge}`);
+	const {sessionId} = locals;
 
+	console.log(`creating challenge for the sessionId ${sessionId}: ${options.challenge}`);
+	await PasskeyChallenges.destroy({where: { sessionId: sessionId }});
 	await PasskeyChallenges.create({ challenge: options.challenge, sessionId: sessionId });
 
 	return {

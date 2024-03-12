@@ -1,10 +1,12 @@
 import { paginate, User } from '$lib/api/server/db.js';
 import { getHash } from '$lib/sha.js';
+import {protectPage} from '$lib/util.js'
 
 /** @type {import("./$types").PageServerLoad}
  * @returns {{ users: UserObject[], page: number, totalPages: number }}
  */
-export async function load({ params }) {
+export async function load({ params, locals }) {
+	protectPage(locals)
 	const pageSize = 20;
 
 	/** @type {number} */

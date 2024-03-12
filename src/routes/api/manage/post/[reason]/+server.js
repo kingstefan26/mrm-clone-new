@@ -9,7 +9,6 @@ import {
 	Status
 } from '$lib/api/server/db.js';
 import { json } from '@sveltejs/kit';
-import * as DB from '$lib/api/server/db.js';
 
 export async function POST({ locals, request, params }) {
 	if (!locals.user.admin) {
@@ -112,7 +111,7 @@ export async function POST({ locals, request, params }) {
 
 		await chapter.setPost(post);
 
-		post.chapterCount = await DB.Chapter.count({
+		post.chapterCount = await Chapter.count({
 			where: {
 				postId: post.id
 			}

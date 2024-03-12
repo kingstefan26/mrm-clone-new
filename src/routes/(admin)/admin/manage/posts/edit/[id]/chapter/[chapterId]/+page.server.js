@@ -1,10 +1,10 @@
 import { error } from '@sveltejs/kit';
-import * as DB from '$lib/api/server/db.js';
+import { Chapter } from '$lib/api/server/db.js';
 import { Asset } from '$lib/api/server/db.js';
 
 /** @type {import("./$types").Load} */
 export async function load({ params }) {
-	let chapter = await DB.Chapter.findOne({
+	let chapter = await Chapter.findOne({
 		where: {
 			postId: params.id,
 			indexInParentPost: params.chapterId

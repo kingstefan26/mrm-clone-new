@@ -3,21 +3,11 @@ import { verifyRegistrationResponse } from '@simplewebauthn/server';
 import { rpId, rpOrgin, uint8ArrayToBase64 } from '$lib/api/server/passkeys.js';
 import { PasskeyChallenges, PasskeyCredentials, User } from '$lib/api/server/db.js';
 import { TokenGenerator } from '$lib/api/server/controlers/TokenUtil.js';
+import { saveSessionInJWT } from '../../../../../../hooks.server';
 
-export function getMethods(obj) {
-	for (var id in obj) {
-		try {
-			if (typeof obj[id] == 'function') {
-				console.log(id, obj[id]);
-			}
-		} catch (err) {
-			/* empty */
-		}
-	}
-}
 
 /** @type {import("./$types").RequestHandler} */
-export async function POST({ request, cookies }) {
+export async function POST({ request, cookies, locals }) {
 	const userid = cookies.get('userid', { path: '/' });
 	if (!userid) {
 		error(400, 'missing userid');
@@ -26,7 +16,7 @@ export async function POST({ request, cookies }) {
 	const pc = await PasskeyChallenges.findOne({ where: { sessionId: userid } });
 
 	if (!pc) {
-		return error(400, 'Cant find challenge');
+		error(400, 'Cant find challenge');
 	}
 
 	let challenge = pc.challenge;
@@ -57,27 +47,7 @@ export async function POST({ request, cookies }) {
 		await user.addPasskeyCredential([passkey]);
 		await passkey.setUser(user);
 
-		let token = new TokenGenerator('a', 'a', {
-			algorithm: 'HS256',
-			keyid: '1',
-			noTimestamp: false,
-			expiresIn: '10d',
-			notBefore: '0'
-		}).sign(
-			{
-				username: user.username,
-				id: user.id,
-				admin: user.admin
-			},
-			{
-				audience: 'myaud',
-				issuer: 'mrm-main-server',
-				jwtid: '1',
-				subject: 'user'
-			}
-		);
-
-		cookies.set('jwt', token, { path: '/' });
+		saveSessionInJWT(user, locals, cookies)
 		return json({ verified: true });
 	} else {
 		error(400, 'Verification failed');

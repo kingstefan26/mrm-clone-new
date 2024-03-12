@@ -1,8 +1,8 @@
-import * as DB from '$lib/api/server/db.js';
+import {Post} from '$lib/api/server/db.js';
 import { Author, paginate } from '$lib/api/server/db.js';
 
 async function getFeed(pageIndex = 0, pageSize = 10) {
-	let { count, rows } = await DB.Post.findAndCountAll(
+	let { count, rows } = await Post.findAndCountAll(
 		paginate(
 			{
 				offset: pageIndex * pageSize,
